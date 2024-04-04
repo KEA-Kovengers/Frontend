@@ -40,6 +40,7 @@ export function overrides(theme) {
             },
           },
         },
+        // Imgage
         img: {
           maxWidth: '100%',
           display: 'inline-block',
