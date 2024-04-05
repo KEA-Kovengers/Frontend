@@ -81,7 +81,7 @@ export default function PostCard({ post, index }) {
       {[
         { number: comment, icon: 'eva:message-circle-fill' },
         { number: view, icon: 'eva:eye-fill' },
-        { number: share, icon: 'eva:share-fill' },
+        { number: share, icon: 'eva:heart-fill' },
       ].map((info, _index) => (
         <Stack
           key={_index}
