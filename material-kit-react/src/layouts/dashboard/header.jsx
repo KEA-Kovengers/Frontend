@@ -27,12 +27,12 @@ export default function Header({ onOpenNav }) {
 
   const renderContent = (
     <>
+      {/* 화면 작아졌을 때 메뉴 버튼 */}
       {!lgUp && (
         <IconButton onClick={onOpenNav} sx={{ mr: 1 }}>
           <Iconify icon="eva:menu-2-fill" />
         </IconButton>
       )}
-
       <Searchbar />
 
       <Box sx={{ flexGrow: 1 }} />
