@@ -15,9 +15,9 @@ pipeline {
                 }
             }
         }
-        stage('./') {
+        stage('Build Docker images') {
             steps {
-                dir('material-kit-react') {
+                dir('./') {
                     script {
                         docker.build("${DOCKER_HUB_USERNAME}/${IMAGE_NAME}")
                     }
