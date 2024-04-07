@@ -1,15 +1,37 @@
-pipeline{
-  agent any
-  stages{
-    stage('Build'){
-      steps{
-        echo 'This is Build stage - First Stage 1'
-      } 
+pipeline {
+    agent any
+    environment {
+        DOCKER_CREDENTIAL_ID = 'docker_credentials'
+        DOCKER_HUB_USERNAME = 'kovengers'
+        IMAGE_NAME = 'frontend'
+        VERSION = "${env.BUILD_NUMBER}" // Jenkins 빌드 번호를 버전으로 사용합니다.
     }
-    stage('Test'){
-      steps{
-        echo 'This is Test stage - Second Stage 2'
-      }
+    stages {
+        stage('Build React app') {
+            steps {
+                dir('material-kit-react') {
+                    sh 'npm install'
+                    sh 'npm run build'
+                }
+            }
+        }
+        stage('Build Docker images') {
+            steps {
+                dir('material-kit-react') {
+                    script {
+                        docker.build("${DOCKER_HUB_USERNAME}/${IMAGE_NAME}")
+                    }
+                }
+            }
+        }
+        stage('Push Docker images') {
+            steps {
+                script {
+                    docker.withRegistry('https://registry.hub.docker.com', "${DOCKER_CREDENTIAL_ID}") {
+                        docker.image("${DOCKER_HUB_USERNAME}/${IMAGE_NAME}").push("${VERSION}")
+                    }
+                }
+            }
+        }
     }
-  }
 }
