@@ -15,7 +15,7 @@ pipeline {
                 }
             }
         }
-        stage('Build Docker images') {
+        stage('./') {
             steps {
                 dir('material-kit-react') {
                     script {
