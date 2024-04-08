@@ -18,7 +18,7 @@ export const grey = {
 };
 
 export const primary = {
-  lighter: '#D0ECFE',
+  lighter: '#E7E9F9',
   light: '#73BAFB',
   main: '#1A2CDD',
   dark: '#0C44AE',
@@ -27,12 +27,16 @@ export const primary = {
 };
 
 export const secondary = {
-  lighter: '#EFD6FF',
+  lighter: '#E7E9F9',
   light: '#C684FF',
   main: '#8E33FF',
   dark: '#5119B7',
   darker: '#27097A',
   contrastText: '#FFFFFF',
+};
+
+export const third = {
+  main: '#E7E9F9',
 };
 
 export const info = {
@@ -89,6 +93,7 @@ export const action = {
 const base = {
   primary,
   secondary,
+  third,
   info,
   success,
   warning,
