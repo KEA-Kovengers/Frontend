@@ -44,7 +44,6 @@ export default function ProductsView() {
             onOpenFilter={handleOpenFilter}
             onCloseFilter={handleCloseFilter}
           />
-
           <ProductSort />
         </Stack>
       </Stack>
