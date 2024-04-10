@@ -33,5 +33,12 @@ pipeline {
                 }
             }
         }
+        stage('Docker image cleanup') {
+        steps {
+            script {
+                sh 'docker rmi ${DOCKER_HUB_USERNAME}/${IMAGE_NAME}:${VERSION}'
+            }
+        }
+}
     }
 }
