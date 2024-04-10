@@ -9,10 +9,8 @@ pipeline {
     stages {
         stage('Build Docker images') {
             steps {
-                dir('./') {
-                    script {
-                        docker.build("${DOCKER_HUB_USERNAME}/${IMAGE_NAME}")
-                    }
+                script {
+                    docker.build("${DOCKER_HUB_USERNAME}/${IMAGE_NAME}") // 이미지 빌드 및 버전 태그
                 }
             }
         }
@@ -20,7 +18,7 @@ pipeline {
             steps {
                 script {
                     docker.withRegistry('https://registry.hub.docker.com', "${DOCKER_CREDENTIAL_ID}") {
-                        docker.image("${DOCKER_HUB_USERNAME}/${IMAGE_NAME}").push("${VERSION}")
+                        docker.image("${DOCKER_HUB_USERNAME}/${IMAGE_NAME}").push("${VERSION}") // Docker Hub에 푸시
                     }
                 }
             }
