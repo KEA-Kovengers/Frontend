@@ -7,14 +7,6 @@ pipeline {
         VERSION = "${env.BUILD_NUMBER}" // Jenkins 빌드 번호를 버전으로 사용합니다.
     }
     stages {
-        // stage('Build React app') {
-        //     steps {
-        //         dir('material-kit-react') {
-        //             sh 'npm install'
-        //             sh 'npm run build'
-        //         }
-        //     }
-        // }
         stage('Build Docker images') {
             steps {
                 dir('./') {
