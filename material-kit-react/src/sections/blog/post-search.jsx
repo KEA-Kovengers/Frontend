@@ -15,7 +15,7 @@ PostSearch.propTypes = {
 export default function PostSearch({ posts }) {
   return (
     <Autocomplete
-      sx={{ width: 280 }}
+      sx={{ width: 800 }}
       autoHighlight
       popupIcon={null}
       slotProps={{
@@ -34,7 +34,7 @@ export default function PostSearch({ posts }) {
       renderInput={(params) => (
         <TextField
           {...params}
-          placeholder="Search post..."
+          placeholder="Search..."
           InputProps={{
             ...params.InputProps,
             startAdornment: (
