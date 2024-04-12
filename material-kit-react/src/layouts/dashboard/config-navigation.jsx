@@ -14,7 +14,7 @@ const navConfig = [
   },
   {
     title: '검색',
-    path: '/products',
+    path: '/search',
     icon: icon('ic_cart'),
   },
   {
