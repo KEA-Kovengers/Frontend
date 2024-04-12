@@ -6,6 +6,9 @@ import Box from '@mui/material/Box';
 import Tabs from '@mui/material/Tabs';
 import Typography from '@mui/material/Typography';
 
+// import { ReactComponents as Articles } from '../../../public/assets/icons/articles.svg';
+// import { ReactComponents as User } from '../../../public/assets/icons/user.svg';
+
 function CustomTabPanel(props) {
   const { children, value, index, ...other } = props;
 
@@ -50,8 +53,8 @@ export default function SearchFilter() {
     <Box sx={{ width: '100%' }}>
       <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
         <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
-          <Tab label="게시글" {...a11yProps(0)} />
-          <Tab label="닉네임" {...a11yProps(1)} />
+          {/* <Tab icon={< />} label="게시글" {...a11yProps(0)} /> */}
+          {/* <Tab icon={<User />} label="닉네임" {...a11yProps(1)} /> */}
         </Tabs>
       </Box>
       <CustomTabPanel value={value} index={0}>
