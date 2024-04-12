@@ -1,18 +1,22 @@
 import { useState } from 'react';
 
 import Stack from '@mui/material/Stack'; 
+import Container from '@mui/material/Container';
 
 import AppFilters from '../app-filters';
+
 // ----------------------------------------------------------------------
 
 export default function AppView() {
   const [openFilter] = useState(false);
 
   return (
-    <Stack direction="row" spacing={1} flexShrink={0} sx={{ my: 1 }}>
-      <AppFilters
-        openFilter={openFilter}
-      />
-    </Stack>
+    <Container>
+      <Stack direction="row" alignItems="center" justifyContent="space-between">
+          <AppFilters openFilter={openFilter}/>
+      </Stack>
+
+    </Container>
+
   );
 }
