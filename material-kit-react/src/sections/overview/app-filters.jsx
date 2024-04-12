@@ -1,4 +1,5 @@
-import Box from '@mui/material/Box';
+import React, {useState} from 'react';
+
 import Chip from '@mui/material/Chip';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
@@ -8,62 +9,90 @@ import { styled,emphasize } from '@mui/material/styles';
 
 import Iconify from 'src/components/iconify';
 
-const StyledBreadcrumb = styled(Chip)(({ theme }) => {
-    const backgroundColor = theme.palette.grey[300];
-    const primaryColor = theme.palette.primary.lighter; 
-  
-    return {
-      backgroundColor,
-      height: theme.spacing(3),
-      color: theme.palette.text.primary,
-      fontWeight: theme.typography.fontWeightRegular,
-      '&:hover, &:focus': {
-        backgroundColor: primaryColor,
-        color: theme.palette.primary.main,
-        fontWeight: 'bold', 
-      },
-      '&:active': {
-        backgroundColor: emphasize(backgroundColor),
-      },
-    };
-  });
-  
-  function handleClick(event) {
-    event.preventDefault();
-    console.info('You clicked a breadcrumb.');
+import AppPost from './app-post';
+import AppAddFilters from './app-filter-add';
+
+// ----------------------------------------------------------------------
+
+const StyledBreadcrumb = styled(Chip)(({ theme, selected }) => {
+  const backgroundColor = theme.palette.grey[300];
+  const primaryColor = theme.palette.primary.lighter;
+
+  return {
+    backgroundColor: selected ? backgroundColor : backgroundColor,
+    height: theme.spacing(3),
+    color: selected ? theme.palette.primary.main : theme.palette.text.primary,
+    fontWeight: selected ? 'bold' : theme.typography.fontWeightRegular,
+    '&:hover, &:focus': {
+      backgroundColor: primaryColor,
+      color: theme.palette.primary.main,
+      fontWeight: 'bold',
+    },
+    '&:active': {
+      backgroundColor: emphasize(backgroundColor),
+    },
+    alignItems: 'center', 
+    justifyContent: 'center', 
+  };
+});
+
+export default function AppFilters() {
+
+  const [selectedBreadcrumb, setSelectedBreadcrumb] = useState(0);
+  const [isAddModalOpen,setIsAddModalOpen] = useState(false);
+  const [filtersList,setFiltersList] = useState(['최신순','인기 급상승','해시태그1','해시태그2']);
+
+  const handleBreadcrumbClick = (index) => {
+    setSelectedBreadcrumb(index);
+    console.log(`${filtersList[index]} filter clicked.`);
+  };
+
+  const handleAddButtonClick = () => {
+    setIsAddModalOpen(true);
   }
 
-export default function AppFilters(){
+  const handleAddModalClose = () => {
+    setIsAddModalOpen(false);
+  }
 
-    return (
-        <Container maxWidth="xl">
-        <Stack     
-        direction="row"
-        alignItems="center"
-        flexWrap="wrap-reverse"
-        justifyContent="center">
-            <Button
-              disableRipple
-              color="inherit"
-              endIcon={<Iconify icon="ic:round-filter-list" />}
-            >
-              Filters&nbsp;
-            </Button>
-        
-          <Box>
-            <div 
-              role="presentation" 
-              onClick={handleClick}>
-              <Breadcrumbs separator=" " aria-label="breadcrumb">
-                <StyledBreadcrumb component="a" href="#" label="최신순" />
-                <StyledBreadcrumb component="a" href="#" label="인기 급상승" />
-                <StyledBreadcrumb component="a" href="#" label="해시태그1" />
-                <StyledBreadcrumb component="a" href="#" label="해시태그2" />
-                <StyledBreadcrumb component="a" href="#" label="+" />
-              </Breadcrumbs>
-            </div>
-          </Box>
+  const handleAddFilter = (newFilterText) => {
+    setFiltersList([...filtersList, newFilterText]);
+  };
+
+
+  return (
+    <Container maxWidth="lg">
+      <Stack direction="row" spacing="36.27px">
+          <Button
+            disableRipple
+            color="inherit"
+            endIcon={<Iconify icon="ic:round-filter-list" />}
+          >
+            Filters&nbsp;
+          </Button>
+
+          <div role="presentation" > 
+            <Breadcrumbs separator=" " aria-label="breadcrumb">
+              {filtersList.map((filter, index) => (
+                  <StyledBreadcrumb
+                    key={index}
+                    href="#"
+                    label={filter}
+                    selected={selectedBreadcrumb === index}
+                    onClick={() => handleBreadcrumbClick(index)}
+                  />
+                ))}
+              <StyledBreadcrumb key="add" label="+" onClick={handleAddButtonClick} />
+            </Breadcrumbs>
+          </div>
         </Stack>
-      </Container>
-    );
+
+      <AppAddFilters open={isAddModalOpen} onClose={handleAddModalClose} onAdd={handleAddFilter} />
+
+      <Stack direction='column' sx={{pt:"30px"}}>
+        <AppPost filter={selectedBreadcrumb} />
+      </Stack>
+
+    </Container>
+  );
 }
