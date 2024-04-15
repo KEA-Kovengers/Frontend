@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 
-import AppCard from './app-card';
+import AppCard2 from './app-card2';
 
 // ----------------------------------------------------------------------
 
@@ -8,7 +8,7 @@ export default function AppPost({ filter }) {
 
     switch (filter) {
       case 0:
-        return <AppCard/>;
+        return <AppCard2/>;
       case 1:
         return <div>인기 급상승 게시물</div>;
       case 2:
