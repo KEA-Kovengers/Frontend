@@ -1,53 +1,51 @@
-import {useState} from 'react';
+import { useState } from 'react';
 import PropTypes from 'prop-types';
 
-import {Box,Stack,Modal,Button,TextField,Typography} from '@mui/material';
+import { Box, Stack, Modal, Button, TextField, Typography } from '@mui/material';
 
 // ----------------------------------------------------------------------
 
 export default function AppAddFilters({ open, onClose, onAdd }){
-    // 새로운 필터 텍스트 상태 관리
     const [newFilterText,setNewFilterText] = useState('');
 
-    const handleAddFilter = () => {
-        if (newFilterText.trim() !== '') {
-          onAdd([newFilterText.trim()]);
-          onClose();
-          setNewFilterText('');
-        }
-      };
+  const handleAddFilter = () => {
+    if (newFilterText.trim() !== '') {
+      onAdd([newFilterText.trim()]);
+      onClose();
+      setNewFilterText('');
+    }
+  };
 
-      const modal_style = {
-        position: 'absolute',
-        top: '50%',
-        left: '50%',
-        transform: 'translate(-50%, -50%)',
-        width: 537,
-        height: 350,
-        bgcolor: 'background.paper',
-        borderRadius: 3,
-      
-        left_button: {
-          width:155,
-          height:51,
-          border: '3px solid #E3E6FF', 
-          borderRadius: 3,
-          color: 'black',
-          marginRight: '49px', 
-          fontSize:'18px',
-        },
-        right_button: {
-          width:155,
-          height:51,
-          bgcolor:'#1A2CDD',
-          borderRadius: 3,
-          color: 'white',
-          fontSize:'18px',
-        }
-      };
+  const modal_style = {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: 537,
+    height: 350,
+    bgcolor: 'background.paper',
+    borderRadius: 3,
+
+    left_button: {
+      width: 155,
+      height: 51,
+      border: '3px solid #E3E6FF',
+      borderRadius: 3,
+      color: 'black',
+      marginRight: '49px',
+      fontSize: '18px',
+    },
+    right_button: {
+      width: 155,
+      height: 51,
+      bgcolor: '#1A2CDD',
+      borderRadius: 3,
+      color: 'white',
+      fontSize: '18px',
+    }
+  };
 
       return (
-        // 모달창이 열려있는 경우에만 렌더링
           open && (
             <Modal
             open={open}
@@ -55,7 +53,6 @@ export default function AppAddFilters({ open, onClose, onAdd }){
             aria-labelledby="modal-modal-title"
             aira-describeby="modal-modal-description"
           >
-            {/* 모달 내용 */}
             <Box sx={modal_style}>
               <Stack sx={{
                 pt:'53px',
@@ -89,18 +86,19 @@ export default function AppAddFilters({ open, onClose, onAdd }){
               />
               </Stack>
 
-              <Stack direction='row' justifyContent="center" sx={{marginTop: '30px'}}>
-                <Button onClick={onClose} sx={modal_style.left_button}>취소</Button>
-                <Button onClick={handleAddFilter} sx={modal_style.right_button}>생성</Button>
-              </Stack>
-            </Box>
-          </Modal>
-          )
-      );
+          <Stack direction='row' justifyContent="center" sx={{ marginTop: '30px' }}>
+            <Button onClick={onClose} sx={modal_style.left_button}>취소</Button>
+            <Button onClick={handleAddFilter} sx={modal_style.right_button}>생성</Button>
+          </Stack>
+        </Box>
+      </Modal>
+    )
+  );
 }
 
+
 AppAddFilters.propTypes = {
-    open: PropTypes.bool.isRequired, 
-    onClose: PropTypes.func.isRequired, 
-    onAdd: PropTypes.func.isRequired 
+  open: PropTypes.bool.isRequired,
+  onClose: PropTypes.func.isRequired,
+  onAdd: PropTypes.func.isRequired
 };
