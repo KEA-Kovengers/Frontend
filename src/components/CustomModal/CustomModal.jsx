@@ -93,7 +93,7 @@ export default function CustomModal({ rightButton, mode, onClose, open, title, c
                       variant="body2"
                       component="body2"
                       color="text.secondary"
-                      sx={{ paddingTop: '16px', fontSize: '16px' }}
+                      sx={{ fontSize: '16px' }}
                     >
                       {contents}
                     </Typography>
@@ -104,7 +104,7 @@ export default function CustomModal({ rightButton, mode, onClose, open, title, c
                       onChange={(e) => setTextField(e.target.value)}
                       margin="normal"
                       sx={{
-                        width: 360,
+                        width: 330,
                         height: 53,
                       }}
                     />
