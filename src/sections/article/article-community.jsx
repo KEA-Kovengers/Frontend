@@ -57,9 +57,9 @@ export default function ArticleCommunity() {
 
     return (
         <div style={{ flexDirection: 'column', alignItems: 'flex-start', marginRight: "100px", marginTop: "10px", marginLeft: "100px" }}>
-            <div style={{ flexDirection: 'row', alignItems: 'center', display: 'flex', color: 'pink' }}>
-                <IconButton onClick={handleLike} color={like ? '#FF5631' : '#637381'} size='small'>
-                    <Iconify icon={like ? "flat-color-icons:like" : "icon-park-outline:like"} />
+            <div style={{ flexDirection: 'row', alignItems: 'center', display: 'flex', width: '23%', justifyContent: 'space-evenly' }}>
+                <IconButton onClick={handleLike} color={like ? '#FF5631' : '#637381'} >
+                    <Iconify icon={like ? "flat-color-icons:like" : "icon-park-outline:like"} sx={{ width: "20px", height: "20px" }} />
                 </IconButton>
                 <span
                     style={{ fontSize: "13px", color: '#637381', cursor: 'pointer' }}
@@ -75,14 +75,13 @@ export default function ArticleCommunity() {
                     {likeCount}
                 </span>
 
-
                 <IconButton color='#637381' size="small">
-                    <Iconify icon="iconoir:chat-bubble" />
+                    <Iconify icon="iconoir:chat-bubble" sx={{ width: "20px", height: "20px" }} />
                 </IconButton>
                 <div style={{ fontSize: "13px", color: '#637381' }}>{commentCount}</div>
 
                 <IconButton color='#637381' >
-                    <Iconify icon="mdi:eye" />
+                    <Iconify icon="mdi:eye" sx={{ width: "20px", height: "20px" }} />
                 </IconButton>
                 <div style={{ fontSize: "13px", color: '#637381' }}>{viewCount}</div>
             </div>

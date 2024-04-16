@@ -3,15 +3,13 @@ import PropTypes from 'prop-types';
 
 import Stack from '@mui/material/Stack';
 import Avatar from '@mui/material/Avatar';
-import Popover from '@mui/material/Popover';
+
 import TableRow from '@mui/material/TableRow';
-import Checkbox from '@mui/material/Checkbox';
-import MenuItem from '@mui/material/MenuItem';
+
 import TableCell from '@mui/material/TableCell';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 
-import Label from 'src/components/label';
 import Iconify from 'src/components/iconify';
 
 import { colors } from 'src/theme/variableColors'
@@ -50,8 +48,8 @@ export default function LikeRow({
 
 
                 <TableCell align="right">
-                    <IconButton onClick={handleOpenMenu} color={isFriend && colors.first}>
-                        <Iconify icon={isFriend ? "bxs:user-check" : "bxs:user-plus"} />
+                    <IconButton >
+                        <Iconify icon={isFriend ? "bxs:user-check" : "bxs:user-plus"} sx={{ color: isFriend && colors.first }} />
                     </IconButton>
                 </TableCell>
             </TableRow>
@@ -64,5 +62,4 @@ LikeRow.propTypes = {
     name: PropTypes.any,
     company: PropTypes.any,
     isFriend: PropTypes.bool,
-
 };
