@@ -1,6 +1,9 @@
 import { Helmet } from 'react-helmet-async';
 
+// import Button from '@mui/material/Button';
+
 import { BlogView } from 'src/sections/blog/view';
+// import SelectOptionView from 'src/sections/thumbnail/select-option';
 
 // ----------------------------------------------------------------------
 
@@ -10,8 +13,9 @@ export default function BlogPage() {
       <Helmet>
         <title> Blog | Minimal UI </title>
       </Helmet>
-
       <BlogView />
+      {/* <Button>Blog</Button> */}
+      {/* <SelectOptionView /> */}
     </>
   );
 }
