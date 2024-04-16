@@ -6,6 +6,7 @@ import {Box,Stack,Modal,Button,TextField,Typography} from '@mui/material';
 // ----------------------------------------------------------------------
 
 export default function AppAddFilters({ open, onClose, onAdd }){
+    // 새로운 필터 텍스트 상태 관리
     const [newFilterText,setNewFilterText] = useState('');
 
     const handleAddFilter = () => {
@@ -46,6 +47,7 @@ export default function AppAddFilters({ open, onClose, onAdd }){
       };
 
       return (
+        // 모달창이 열려있는 경우에만 렌더링
           open && (
             <Modal
             open={open}
@@ -53,6 +55,7 @@ export default function AppAddFilters({ open, onClose, onAdd }){
             aria-labelledby="modal-modal-title"
             aira-describeby="modal-modal-description"
           >
+            {/* 모달 내용 */}
             <Box sx={modal_style}>
               <Stack sx={{
                 pt:'53px',
