@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 
 import Chip from '@mui/material/Chip';
 import Stack from '@mui/material/Stack';
+import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
 import Breadcrumbs from '@mui/material/Breadcrumbs';
@@ -11,9 +12,9 @@ import Iconify from 'src/components/iconify';
 
 import AppPost from './app-post';
 import AppAddFilters from './app-filter-add';
-
 // ----------------------------------------------------------------------
 
+// 필터 형식 스타일 (hover,focus 및 active된 상태 포함)
 const StyledBreadcrumb = styled(Chip)(({ theme, selected }) => {
   const backgroundColor = theme.palette.grey[300];
   const primaryColor = theme.palette.primary.lighter;
@@ -37,6 +38,7 @@ const StyledBreadcrumb = styled(Chip)(({ theme, selected }) => {
 });
 
 export default function AppFilters() {
+  // 선택된 Breadcrumb의 index와 모달 상태 및 필터 목록 상태 관리
   const [selectedBreadcrumb, setSelectedBreadcrumb] = useState(0);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [filtersList, setFiltersList] = useState([
@@ -51,14 +53,17 @@ export default function AppFilters() {
     console.log(`${filtersList[index]} filter clicked.`);
   };
 
+  // 필터 추가할 때, + 버튼 클릭 
   const handleAddButtonClick = () => {
     setIsAddModalOpen(true);
   };
 
+  // 필터 추가 모달 닫기 핸들러
   const handleAddModalClose = () => {
     setIsAddModalOpen(false);
   };
 
+  // 필터 추가 핸들러
   const handleAddFilter = (newFilterText) => {
     setFiltersList([...filtersList, newFilterText]);
   };
@@ -86,11 +91,14 @@ export default function AppFilters() {
         </div>
       </Stack>
 
+      {/* 필터 추가 모달 */}
       <AppAddFilters open={isAddModalOpen} onClose={handleAddModalClose} onAdd={handleAddFilter} />
 
-      <Stack direction="column" sx={{ pt: '30px' }}>
+      {/* 필터에 해당하는 컴포넌트 표시 */}
+      <Box direction='column' sx={{pt:"30px"}}>
         <AppPost filter={selectedBreadcrumb} />
-      </Stack>
+      </Box>
+
     </Container>
   );
 }

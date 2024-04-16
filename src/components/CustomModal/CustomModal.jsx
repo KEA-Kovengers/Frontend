@@ -1,4 +1,4 @@
-import React from 'react';
+import React,{ useState } from 'react';
 import PropTypes from 'prop-types';
 
 // import IconButton from '@mui/material/IconButton';
@@ -15,8 +15,6 @@ import {
 } from '@mui/material';
 import Iconify from 'src/components/iconify';
 import { colors } from '../../theme/variableColors';
-
-import { useState } from 'react';
 
 export default function CustomModal({ rightButton, mode, onClose, open, title, contents }) {
   const [textField, setTextField] = useState('');
