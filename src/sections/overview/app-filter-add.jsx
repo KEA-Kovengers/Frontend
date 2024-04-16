@@ -2,11 +2,10 @@ import { useState } from 'react';
 import PropTypes from 'prop-types';
 
 import { Box, Stack, Modal, Button, TextField, Typography } from '@mui/material';
-
 // ----------------------------------------------------------------------
 
-export default function AppAddFilters({ open, onClose, onAdd }){
-    const [newFilterText,setNewFilterText] = useState('');
+export default function AppAddFilters({ open, onClose, onAdd }) {
+  const [newFilterText, setNewFilterText] = useState('');
 
   const handleAddFilter = () => {
     if (newFilterText.trim() !== '') {
@@ -45,46 +44,46 @@ export default function AppAddFilters({ open, onClose, onAdd }){
     }
   };
 
-      return (
-          open && (
-            <Modal
-            open={open}
-            onClose={onClose}
-            aria-labelledby="modal-modal-title"
-            aira-describeby="modal-modal-description"
-          >
-            <Box sx={modal_style}>
-              <Stack sx={{
-                pt:'53px',
-                pl:'68px',
-              }}>
-                <Typography id="modal-modal-title" 
-                  variant='h3' component='h3'
-                  color='text.primary'
-                  sx={{fontSize: '32px'}}>
-                  Hashtag
-                </Typography>
-                <Typography id="modal-modal-description" 
-                  variant='body2' component='body2' 
-                  color='text.secondary' 
-                  sx={{paddingTop: '16px',fontSize:'16px'}}>
-                  해시태그를 추가해 보세요!
-                </Typography>
-              </Stack>
-              
-              <Stack direction='column' alignItems="center" sx={{ paddingTop: '20px' }}>
-              <TextField
-                id="filter-text"
-                label="#"
-                value={newFilterText}
-                onChange={(e) => setNewFilterText(e.target.value)}
-                margin="normal"
-                sx={{
-                  width:360,
-                  height:53
-                }}
-              />
-              </Stack>
+  return (
+    open && (
+      <Modal
+        open={open}
+        onClose={onClose}
+        aria-labelledby="modal-modal-title"
+        aira-describeby="modal-modal-description"
+      >
+        <Box sx={modal_style}>
+          <Stack sx={{
+            pt: '53px',
+            pl: '68px',
+          }}>
+            <Typography id="modal-modal-title"
+              variant='h3' component='h3'
+              color='text.primary'
+              sx={{ fontSize: '32px' }}>
+              Hashtag
+            </Typography>
+            <Typography id="modal-modal-description"
+              variant='body2' component='body2'
+              color='text.secondary'
+              sx={{ paddingTop: '16px', fontSize: '16px' }}>
+              해시태그를 추가해 보세요!
+            </Typography>
+          </Stack>
+
+          <Stack direction='column' alignItems="center" sx={{ paddingTop: '20px' }}>
+            <TextField
+              id="filter-text"
+              label="#"
+              value={newFilterText}
+              onChange={(e) => setNewFilterText(e.target.value)}
+              margin="normal"
+              sx={{
+                width: 360,
+                height: 53
+              }}
+            />
+          </Stack>
 
           <Stack direction='row' justifyContent="center" sx={{ marginTop: '30px' }}>
             <Button onClick={onClose} sx={modal_style.left_button}>취소</Button>
@@ -94,11 +93,12 @@ export default function AppAddFilters({ open, onClose, onAdd }){
       </Modal>
     )
   );
-}
 
+}
 
 AppAddFilters.propTypes = {
   open: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
   onAdd: PropTypes.func.isRequired
 };
+

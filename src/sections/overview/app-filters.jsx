@@ -12,7 +12,6 @@ import Iconify from 'src/components/iconify';
 
 import AppPost from './app-post';
 import AppAddFilters from './app-filter-add';
-
 // ----------------------------------------------------------------------
 
 // 필터 형식 스타일 (hover,focus 및 active된 상태 포함)
