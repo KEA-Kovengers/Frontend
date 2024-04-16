@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useState } from 'react';
 import PropTypes from 'prop-types';
 
 import { Box, Stack, Modal, Button, TextField, Typography } from '@mui/material';
@@ -95,6 +96,7 @@ export default function AppAddFilters({ open, onClose, onAdd }) {
     )
   );
 }
+
 
 AppAddFilters.propTypes = {
   open: PropTypes.bool.isRequired,

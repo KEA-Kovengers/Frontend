@@ -50,7 +50,7 @@ export default function LikeRow({
 
 
                 <TableCell align="right">
-                    <IconButton onClick={handleOpenMenu} color={isFriend && colors.blueBlack}>
+                    <IconButton onClick={handleOpenMenu} color={isFriend && colors.first}>
                         <Iconify icon={isFriend ? "bxs:user-check" : "bxs:user-plus"} />
                     </IconButton>
                 </TableCell>
