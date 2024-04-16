@@ -9,19 +9,19 @@ import { RouterLink } from 'src/routes/components';
 // ----------------------------------------------------------------------
 
 const Logo = forwardRef(({ disabledLink = false, sx, ...other }, ref) => {
-
   // OR using local (public folder)
   // -------------------------------------------------------
   const logo = (
     <Box
       component="img"
       src="src\components\logo\newcord_logo.jpg"
-      sx={{ 
-        width: 151, 
-        height: 44.89, 
+      sx={{
+        width: 151,
+        height: 44.89,
         display: 'inline-flex',
-        cursor: 'pointer', 
-        ...sx }}
+        cursor: 'pointer',
+        ...sx,
+      }}
     />
   );
 
