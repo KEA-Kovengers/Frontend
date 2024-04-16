@@ -1,6 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+// import IconButton from '@mui/material/IconButton';
+
 import {
   Container,
   Box,
@@ -24,14 +26,14 @@ export default function CustomModalBig({ rightButton, mode, onClose, open, title
     top: '50%',
     left: '50%',
     transform: 'translate(-50%, -50%)',
-    width: 280 * 1.534,
-    height: 280,
+    width: '63%',
+    height: '63%',
     bgcolor: 'background.paper',
     borderRadius: 3,
 
     left_button: {
-      width: 40 * 3,
-      height: 40,
+      width: 155,
+      height: 51,
       border: '3px solid #E3E6FF',
       borderRadius: 3,
       color: 'black',
@@ -39,8 +41,8 @@ export default function CustomModalBig({ rightButton, mode, onClose, open, title
       fontSize: '18px',
     },
     right_button: {
-      width: 40 * 3,
-      height: 40,
+      width: 155,
+      height: 51,
       bgcolor: '#1A2CDD',
       borderRadius: 3,
       color: 'white',
@@ -58,25 +60,16 @@ export default function CustomModalBig({ rightButton, mode, onClose, open, title
         sx={{ display: 'flex' }}
       >
         <Box sx={modal_style}>
-          <div
-            style={{
-              width: '100%',
-              // backgroundColor: 'grey',
-              justifyContent: 'end',
-              display: 'flex',
-            }}
-          >
-            <IconButton onClick={onClose} sx={{ backgroundColor: 'pink', mt: '5px', mr: '5px' }}>
-              <Iconify icon="eva:close-fill" />
-            </IconButton>
-          </div>
+          <IconButton onClick={onClose} sx={{ backgroundColor: 'pink', right: 3 }}>
+            <Iconify icon="eva:close-fill" />
+          </IconButton>
           <Box
             sx={{
-              // mt: '20px',
+              mt: '20px',
               justifyContent: 'center',
               display: 'flex',
-              // backgroundColor: 'teal',
-              height: '70%',
+              backgroundColor: 'grey',
+              height: '55%',
             }}
           >
             {mode !== 'content' && (
@@ -85,10 +78,15 @@ export default function CustomModalBig({ rightButton, mode, onClose, open, title
                   // mt: '20px',
                   // pl: '68px',
                   width: '80%',
-                  backgroundColor: 'grey',
+                  // backgroundColor: 'pink',
                 }}
               >
-                <Typography id="modal-modal-title" variant="h4" component="h4">
+                <Typography
+                  id="modal-modal-title"
+                  variant="h3"
+                  component="h3"
+                  sx={{ fontSize: 32 }}
+                >
                   {title}
                 </Typography>
                 {mode === 'textfield' && (
@@ -116,35 +114,26 @@ export default function CustomModalBig({ rightButton, mode, onClose, open, title
                   </>
                 )}
                 {mode === 'title' && (
-                  <div
-                    style={{
-                      height: '70%',
-                      justifyContent: 'center',
-                      display: 'flex',
-                      alignItems: 'center',
+                  <Typography
+                    id="modal-modal-description"
+                    color={colors.blueBlack}
+                    sx={{
+                      // paddingTop: '16px',
+                      mt: '50px',
+                      fontSize: 24,
+                      fontAlign: 'center',
+                      backgroundColor: 'pink',
                     }}
                   >
-                    <Typography
-                      id="modal-modal-description"
-                      color={colors.blueBlack}
-                      sx={{
-                        // paddingTop: '16px',
-                        // mt: '33px',
-                        fontSize: 20,
-                        textAlign: 'center',
-                        // backgroundColor: 'pink',
-                      }}
-                    >
-                      {contents}
-                    </Typography>
-                  </div>
+                    {contents}
+                  </Typography>
                 )}
               </Stack>
             )}
           </Box>
 
           {rightButton && (
-            <Stack direction="row" justifyContent="center" sx={{}}>
+            <Stack direction="row" justifyContent="center" sx={{ marginTop: '25px' }}>
               <Button onClick={onClose} sx={modal_style.left_button}>
                 취소
               </Button>

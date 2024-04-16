@@ -26,14 +26,14 @@ export default function CustomModal({ rightButton, mode, onClose, open, title, c
     top: '50%',
     left: '50%',
     transform: 'translate(-50%, -50%)',
-    width: 100,
-    height: 60,
+    width: 270 * 1.534,
+    height: 270,
     bgcolor: 'background.paper',
     borderRadius: 3,
 
     left_button: {
-      width: 155,
-      height: 51,
+      width: 120,
+      height: 40,
       border: '3px solid #E3E6FF',
       borderRadius: 3,
       color: 'black',
@@ -41,8 +41,8 @@ export default function CustomModal({ rightButton, mode, onClose, open, title, c
       fontSize: '18px',
     },
     right_button: {
-      width: 155,
-      height: 51,
+      width: 120,
+      height: 40,
       bgcolor: '#1A2CDD',
       borderRadius: 3,
       color: 'white',
@@ -60,16 +60,18 @@ export default function CustomModal({ rightButton, mode, onClose, open, title, c
         sx={{ display: 'flex' }}
       >
         <Box sx={modal_style}>
-          <IconButton onClick={onClose} sx={{ backgroundColor: 'pink', right: 3 }}>
-            <Iconify icon="eva:close-fill" />
-          </IconButton>
+          <div style={{ display: 'flex', justifyContent: 'end', zIndex: 2 }}>
+            <IconButton onClick={onClose} sx={{ mt: '5px', mr: '5px' }}>
+              <Iconify icon="eva:close-fill" sx={{ width: '25px', height: '25px' }} />
+            </IconButton>
+          </div>
           <Box
             sx={{
-              mt: '20px',
+              // mt: '20px',
               justifyContent: 'center',
               display: 'flex',
-              backgroundColor: 'grey',
-              height: '55%',
+              // backgroundColor: 'grey',
+              height: '63%',
             }}
           >
             {mode !== 'content' && (
@@ -81,12 +83,7 @@ export default function CustomModal({ rightButton, mode, onClose, open, title, c
                   // backgroundColor: 'pink',
                 }}
               >
-                <Typography
-                  id="modal-modal-title"
-                  variant="h3"
-                  component="h3"
-                  sx={{ fontSize: 32 }}
-                >
+                <Typography id="modal-modal-title" variant="h4" component="h4">
                   {title}
                 </Typography>
                 {mode === 'textfield' && (
@@ -114,26 +111,36 @@ export default function CustomModal({ rightButton, mode, onClose, open, title, c
                   </>
                 )}
                 {mode === 'title' && (
-                  <Typography
-                    id="modal-modal-description"
-                    color={colors.blueBlack}
-                    sx={{
-                      // paddingTop: '16px',
-                      mt: '50px',
-                      fontSize: 24,
-                      fontAlign: 'center',
-                      backgroundColor: 'pink',
+                  <div
+                    style={{
+                      height: '63%',
+                      display: 'flex',
+                      // backgroundColor: 'grey',
+                      justifyContent: 'center',
+                      alignItems: 'center',
                     }}
                   >
-                    {contents}
-                  </Typography>
+                    <Typography
+                      id="modal-modal-description"
+                      color={colors.blueBlack}
+                      sx={{
+                        // paddingTop: '16px',
+                        // mt: '50px',
+                        fontSize: 20,
+                        textAlign: 'center',
+                        // backgroundColor: 'pink',
+                      }}
+                    >
+                      {contents}
+                    </Typography>
+                  </div>
                 )}
               </Stack>
             )}
           </Box>
 
           {rightButton && (
-            <Stack direction="row" justifyContent="center" sx={{ marginTop: '25px' }}>
+            <Stack direction="row" justifyContent="center" sx={{}}>
               <Button onClick={onClose} sx={modal_style.left_button}>
                 취소
               </Button>
