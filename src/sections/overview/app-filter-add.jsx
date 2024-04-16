@@ -5,7 +5,7 @@ import { Box, Stack, Modal, Button, TextField, Typography } from '@mui/material'
 
 // ----------------------------------------------------------------------
 
-export default function AppAddFilters({ open, onClose }) {
+export default function AppAddFilters({ open, onClose, onAdd }) {
   const [newFilterText, setNewFilterText] = useState('');
 
   const handleAddFilter = () => {
@@ -42,7 +42,7 @@ export default function AppAddFilters({ open, onClose }) {
       borderRadius: 3,
       color: 'white',
       fontSize: '18px',
-    },
+    }
   };
 
   return (
@@ -54,33 +54,25 @@ export default function AppAddFilters({ open, onClose }) {
         aira-describeby="modal-modal-description"
       >
         <Box sx={modal_style}>
-          <Stack
-            sx={{
-              pt: '53px',
-              pl: '68px',
-            }}
-          >
-            <Typography
-              id="modal-modal-title"
-              variant="h3"
-              component="h3"
-              color="text.primary"
-              sx={{ fontSize: '32px' }}
-            >
+          <Stack sx={{
+            pt: '53px',
+            pl: '68px',
+          }}>
+            <Typography id="modal-modal-title"
+              variant='h3' component='h3'
+              color='text.primary'
+              sx={{ fontSize: '32px' }}>
               Hashtag
             </Typography>
-            <Typography
-              id="modal-modal-description"
-              variant="body2"
-              component="body2"
-              color="text.secondary"
-              sx={{ paddingTop: '16px', fontSize: '16px' }}
-            >
+            <Typography id="modal-modal-description"
+              variant='body2' component='body2'
+              color='text.secondary'
+              sx={{ paddingTop: '16px', fontSize: '16px' }}>
               해시태그를 추가해 보세요!
             </Typography>
           </Stack>
 
-          <Stack direction="column" alignItems="center" sx={{ paddingTop: '20px' }}>
+          <Stack direction='column' alignItems="center" sx={{ paddingTop: '20px' }}>
             <TextField
               id="filter-text"
               label="#"
@@ -89,18 +81,14 @@ export default function AppAddFilters({ open, onClose }) {
               margin="normal"
               sx={{
                 width: 360,
-                height: 53,
+                height: 53
               }}
             />
           </Stack>
 
-          <Stack direction="row" justifyContent="center" sx={{ marginTop: '30px' }}>
-            <Button onClick={onClose} sx={modal_style.left_button}>
-              취소
-            </Button>
-            <Button onClick={handleAddFilter} sx={modal_style.right_button}>
-              생성
-            </Button>
+          <Stack direction='row' justifyContent="center" sx={{ marginTop: '30px' }}>
+            <Button onClick={onClose} sx={modal_style.left_button}>취소</Button>
+            <Button onClick={handleAddFilter} sx={modal_style.right_button}>생성</Button>
           </Stack>
         </Box>
       </Modal>
@@ -108,8 +96,9 @@ export default function AppAddFilters({ open, onClose }) {
   );
 }
 
+
 AppAddFilters.propTypes = {
   open: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
-  onAdd: PropTypes.func.isRequired,
+  onAdd: PropTypes.func.isRequired
 };

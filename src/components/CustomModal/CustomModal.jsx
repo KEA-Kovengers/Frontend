@@ -74,69 +74,69 @@ export default function CustomModal({ rightButton, mode, onClose, open, title, c
               height: '63%',
             }}
           >
-            {mode !== 'content' && (
-              <Stack
-                sx={{
-                  // mt: '20px',
-                  // pl: '68px',
-                  width: '80%',
-                  // backgroundColor: 'pink',
-                }}
-              >
-                <Typography id="modal-modal-title" variant="h4" component="h4">
-                  {title}
-                </Typography>
-                {mode === 'textfield' && (
-                  <>
-                    <Typography
-                      id="modal-modal-description"
-                      variant="body2"
-                      component="body2"
-                      color="text.secondary"
-                      sx={{ fontSize: '16px' }}
-                    >
-                      {contents}
-                    </Typography>
-                    <TextField
-                      id="filter-text"
-                      label="#"
-                      value={textField}
-                      onChange={(e) => setTextField(e.target.value)}
-                      margin="normal"
-                      sx={{
-                        width: 330,
-                        height: 53,
-                      }}
-                    />
-                  </>
-                )}
-                {mode === 'title' && (
-                  <div
-                    style={{
-                      height: '63%',
-                      display: 'flex',
-                      // backgroundColor: 'grey',
-                      justifyContent: 'center',
-                      alignItems: 'center',
+
+            <Stack
+              sx={{
+                // mt: '20px',
+                // pl: '68px',
+                width: '80%',
+                // backgroundColor: 'pink',
+              }}
+            >
+              {mode !== 'content' && (<Typography id="modal-modal-title" variant="h4" component="h4">
+                {title}
+              </Typography>)}
+              {mode === 'textfield' && (
+                <>
+                  <Typography
+                    id="modal-modal-description"
+                    variant="body2"
+                    component="body2"
+                    color="text.secondary"
+                    sx={{ fontSize: '16px' }}
+                  >
+                    {contents}
+                  </Typography>
+                  <TextField
+                    id="filter-text"
+                    label="#"
+                    value={textField}
+                    onChange={(e) => setTextField(e.target.value)}
+                    margin="normal"
+                    sx={{
+                      width: 330,
+                      height: 53,
+                    }}
+                  />
+                </>
+              )}
+              {(mode === 'title' || mode === 'content') && (
+                <div
+                  style={{
+                    height: '100%',
+                    display: 'flex',
+                    // backgroundColor: 'grey',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                  }}
+                >
+                  <Typography
+                    id="modal-modal-description"
+                    color={colors.blueBlack}
+                    sx={{
+                      // paddingTop: '16px',
+                      // mt: '50px',
+                      fontSize: 20,
+                      textAlign: 'center',
+                      // backgroundColor: 'pink',
                     }}
                   >
-                    <Typography
-                      id="modal-modal-description"
-                      color={colors.blueBlack}
-                      sx={{
-                        // paddingTop: '16px',
-                        // mt: '50px',
-                        fontSize: 20,
-                        textAlign: 'center',
-                        // backgroundColor: 'pink',
-                      }}
-                    >
-                      {contents}
-                    </Typography>
-                  </div>
-                )}
-              </Stack>
-            )}
+                    {contents}
+                  </Typography>
+                </div>
+              )}
+            </Stack>
+
           </Box>
 
           {rightButton && (
