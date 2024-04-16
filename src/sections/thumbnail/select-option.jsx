@@ -11,7 +11,7 @@ import Iconify from 'src/components/iconify';
 import { colors } from 'src/theme/variableColors';
 import { useState } from 'react';
 import CustomModalBig from 'src/components/CustomModalBig/CustomModalBig';
-import AppAddFilters from '../overview/app-filter-add';
+import CustomModal from 'src/components/CustomModal/CustomModal';
 
 export default function SelectOptionView() {
   const [isSelected, setIsSelected] = useState(null);
@@ -29,15 +29,6 @@ export default function SelectOptionView() {
     setIsModalOpen(false);
   };
 
-  // const modalConfig = {
-  //   rightButton: '생성',
-  //   mode: 'content',
-  //   onClose: handleCloseModal,
-  //   title: '모달 테스트',
-  //   contents: '모달 테스트입니다.',
-  //   open: isModalOpen,
-  // };
-
   const renderHeader = (
     <Box
       component="header"
@@ -52,10 +43,10 @@ export default function SelectOptionView() {
     >
       <Logo />
       <Button onClick={handleOpenModalClick}>모달 테스트</Button>
-      <CustomModalBig
+      <CustomModal
         rightButton={'생성'}
         // mode={'textfield'}
-        mode={'title'}
+        mode={'textfield'}
         onClose={handleCloseModal}
         title={'모달 테스트'}
         contents={'모달 테스트입니다.'}
