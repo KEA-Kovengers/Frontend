@@ -3,7 +3,7 @@ pipeline {
     environment {
         DOCKER_CREDENTIAL_ID = 'docker_credentials'
         DOCKER_HUB_USERNAME = 'kovengers'
-        IMAGE_NAME = 'my-app'
+        IMAGE_NAME = 'frontend'
         VERSION = "${env.BUILD_NUMBER}" // Jenkins 빌드 번호를 버전으로 사용합니다.
     }
     stages {
