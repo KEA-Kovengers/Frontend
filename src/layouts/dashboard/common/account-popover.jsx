@@ -17,7 +17,6 @@ import AccountModal from './account-modal';
 export default function AccountPopover() {
   const [open, setOpen] = useState(null);
   const [IsModalOpen,setIsModalOpen] = useState(false);
-  const [modalTitle,setModalTitle] = useState('');
 
   const handleOpen = (event) => {
     setOpen(event.currentTarget);
@@ -28,9 +27,8 @@ export default function AccountPopover() {
   };
 
   // 모달 열기 핸들러
-  const handleModalOpen = (title,contents) => {
+  const handleModalOpen = () => {
     setIsModalOpen(true);
-    setModalTitle(title);
     handleClose(); // 팝오버 닫기
   }
 
@@ -103,7 +101,7 @@ export default function AccountPopover() {
         <MenuItem
           disableRipple
           disableTouchRipple
-          onClick={() => handleModalOpen('Withdraw')}
+          onClick={handleModalOpen}
           sx={{ typography: 'body2', color: 'text.secondary', py: 1.5 }}
         >
           Withdraw  
@@ -114,7 +112,7 @@ export default function AccountPopover() {
         <MenuItem
           disableRipple
           disableTouchRipple
-          onClick={() => handleModalOpen('Logout')}
+          onClick={handleModalOpen}
           sx={{ typography: 'body2', color: 'error.main', py: 1.5 }}
         >
           Logout
@@ -124,7 +122,6 @@ export default function AccountPopover() {
       <AccountModal
         open={IsModalOpen}
         onClose={handleModalClose}
-        title={modalTitle}
       />
     </>
   );
