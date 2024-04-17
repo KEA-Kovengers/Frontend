@@ -11,7 +11,7 @@ pipeline {
             steps {
                 script{
                     if (env.ARTICLE_SERVICE_CHANGED == 'true') {
-                    // YAML 파일을 credential로부터 읽어와서 특정 위치에 복사
+                    // 파일명 폴더 아이디 수정
                     withCredentials([file(credentialsId: 'frontend', variable: 'FE_API_KEY_FILE')]) {
                         // 파일 복사 명령 실행
                         sh('mkdir -p ' + WORKSPACE + '/config/frontend-api-key/')
