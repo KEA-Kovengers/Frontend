@@ -23,7 +23,7 @@ pipeline {
         stage('Build Docker images') {
             steps {
                 script {
-                    docker.build("${DOCKER_HUB_USERNAME}/${IMAGE_NAME}:${VERSION}") // 이미지 빌드 및 버전 태그
+                    docker.build("${DOCKER_HUB_USERNAME}/${IMAGE_NAME}", "-t ${DOCKER_HUB_USERNAME}/${IMAGE_NAME}:latest -t ${DOCKER_HUB_USERNAME}/${IMAGE_NAME}:${VERSION} .")
                 }
             }
         }
@@ -31,7 +31,10 @@ pipeline {
             steps {
                 script {
                     docker.withRegistry('https://registry.hub.docker.com', "${DOCKER_CREDENTIAL_ID}") {
-                        docker.image("${DOCKER_HUB_USERNAME}/${IMAGE_NAME}:${VERSION}").push() // Docker Hub에 푸시
+                        // 'latest' 태그 푸시
+                        docker.image("${DOCKER_HUB_USERNAME}/${IMAGE_NAME}:latest").push()
+                        // 버전 태그 푸시
+                        docker.image("${DOCKER_HUB_USERNAME}/${IMAGE_NAME}:${VERSION}").push()
                     }
                 }
             }
@@ -39,7 +42,9 @@ pipeline {
         stage('Docker image cleanup') {
             steps {
                 script {
+                    sh 'docker rmi ${DOCKER_HUB_USERNAME}/${IMAGE_NAME}:latest'
                     sh 'docker rmi ${DOCKER_HUB_USERNAME}/${IMAGE_NAME}:${VERSION}'
+                    sh 'docker rmi registry.hub.docker.com/${DOCKER_HUB_USERNAME}/${IMAGE_NAME}:latest'
                     sh 'docker rmi registry.hub.docker.com/${DOCKER_HUB_USERNAME}/${IMAGE_NAME}:${VERSION}'
                 }
             }
