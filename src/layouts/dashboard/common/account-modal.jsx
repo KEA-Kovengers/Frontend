@@ -15,7 +15,7 @@ import {
 } from '@mui/material';
 import Iconify from 'src/components/iconify';
 
-export default function AccountModal({ rightButton, mode, onClose, open, title, contents }) {
+export default function AccountModal({ rightButton, mode, onClose, open }) {
   const [textField, setTextField] = useState('');
 
   const modal_style = {
@@ -80,33 +80,19 @@ export default function AccountModal({ rightButton, mode, onClose, open, title, 
                 // backgroundColor: 'pink',
               }}
             >
-              {mode !== 'content' && (<Typography id="modal-modal-title" variant="h4" component="h4">
-                {title}
-              </Typography>)}
-              {mode === 'textfield' && (
-                <>
-                  <Typography
-                    id="modal-modal-description"
-                    variant="body2"
-                    component="body2"
-                    color="text.secondary"
-                    sx={{ fontSize: '16px' }}
-                  >
-                    {contents}
-                  </Typography>
-                  <TextField
-                    id="filter-text"
-                    label="#"
-                    value={textField}
-                    onChange={(e) => setTextField(e.target.value)}
-                    margin="normal"
-                    sx={{
-                      width: 330,
-                      height: 53,
-                    }}
-                  />
-                </>
-              )}
+              <Typography id="modal-modal-title" variant="h4" component="h4">
+                Withdraw
+              </Typography>
+              <Typography
+                id="modal-modal-description"
+                variant="body2"
+                component="body2"
+                color="text.secondary"
+                sx={{ fontSize: '16px' }}
+              >
+                정말로 탈퇴하시겠습니까?
+              </Typography>
+
               {(mode === 'title' || mode === 'content') && (
                 <div
                   style={{
