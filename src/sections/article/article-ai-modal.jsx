@@ -75,4 +75,5 @@ export default function AiModal({ open, onClose }) {
 AiModal.propTypes = {
     open: PropTypes.bool.isRequired,
     onClose: PropTypes.func.isRequired,
+
 };

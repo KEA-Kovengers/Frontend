@@ -2,6 +2,8 @@ import ArticleKakaoMap from "./article-kakao-map";
 
 
 export default function ArticleContent() {
+
+
     return (
         <div style={{ borderBottom: '1px solid #E4E8EB', borderRadius: '1px 1px 0px 0px', display: 'flex', flexDirection: 'column', backgroundColor: '#F9F9F9', marginLeft: "100px", marginRight: "100px" }}>
             <div style={{ flexDirection: 'column', backgroundColor: '#F9F9F9', marginTop: "40px" }}>
