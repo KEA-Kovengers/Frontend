@@ -7,4 +7,6 @@ export const colors = {
   first: '#1A2CDD',
   second: '#8A94EF',
   third: '#E7E9F9',
+
+  divider1:'#E4E8EB'
 };
