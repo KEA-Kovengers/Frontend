@@ -10,13 +10,11 @@ pipeline {
         stage('Copy YAML File') {
             steps {
                 script{
-                    if (env.ARTICLE_SERVICE_CHANGED == 'true') {
                     // 파일명 폴더 아이디 수정
                     withCredentials([file(credentialsId: 'frontend', variable: 'FE_API_KEY_FILE')]) {
                         // 파일 복사 명령 실행
                         sh('mkdir -p ' + WORKSPACE + '/config/frontend-api-key/')
-                        sh('cp ' + FE_API_KEY_FILE + ' ' + WORKSPACE + './env')
-                    }
+                        sh('cp ' + FE_API_KEY_FILE + ' ' + WORKSPACE + '/config/frontend-api-key/')
                     }
                 }
             }
