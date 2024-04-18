@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import PropTypes from 'prop-types';
+import { Link } from 'react-router-dom';
 
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
@@ -21,6 +22,7 @@ import Scrollbar from 'src/components/scrollbar';
 
 import { NAV } from './config-layout';
 import navConfig from './config-navigation';
+import { colors } from 'src/theme/variableColors';
 
 // ----------------------------------------------------------------------
 
@@ -38,6 +40,8 @@ export default function Nav({ openNav, onCloseNav }) {
 
   const renderAccount = (
     <Box
+    component={Link}
+    to='/user'
       sx={{
         my: 3,
         mx: 2.5,
@@ -47,16 +51,13 @@ export default function Nav({ openNav, onCloseNav }) {
         borderRadius: 1.5,
         alignItems: 'center',
         bgcolor: (theme) => alpha(theme.palette.grey[500], 0.12),
+        textDecoration: 'none',
       }}
     >
       <Avatar src={account.photoURL} alt="photoURL" />
 
       <Box sx={{ ml: 2 }}>
-        <Typography variant="subtitle2">{account.displayName}</Typography>
-
-        <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-          {account.role}
-        </Typography>
+        <Typography variant="subtitle2" color={colors.blueBlack}>{account.displayName}</Typography>
       </Box>
     </Box>
   );

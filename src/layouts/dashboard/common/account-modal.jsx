@@ -15,7 +15,9 @@ import {
 } from '@mui/material';
 import Iconify from 'src/components/iconify';
 
-export default function AccountModal({ rightButton, mode, onClose, open }) {
+import { colors } from 'src/theme/variableColors';
+
+export default function AccountModal({ rightButton, onClose, open, contents, subcontents }) {
   const [textField, setTextField] = useState('');
 
   const modal_style = {
@@ -64,72 +66,64 @@ export default function AccountModal({ rightButton, mode, onClose, open }) {
           </div>
           <Box
             sx={{
-              // mt: '20px',
               justifyContent: 'center',
               display: 'flex',
-              // backgroundColor: 'grey',
               height: '63%',
             }}
           >
 
             <Stack
               sx={{
-                // mt: '20px',
-                // pl: '68px',
                 width: '80%',
-                // backgroundColor: 'pink',
               }}
             >
-              <Typography id="modal-modal-title" variant="h4" component="h4">
-                Withdraw
-              </Typography>
-              <Typography
-                id="modal-modal-description"
-                variant="body2"
-                component="body2"
-                color="text.secondary"
-                sx={{ fontSize: '16px' }}
-              >
-                정말로 탈퇴하시겠습니까?
-              </Typography>
-
-              {(mode === 'title' || mode === 'content') && (
-                <div
+              <div
                   style={{
                     height: '100%',
                     display: 'flex',
-                    // backgroundColor: 'grey',
                     justifyContent: 'center',
                     alignItems: 'center',
+                    flexDirection: 'column'
                   }}
                 >
                   <Typography
                     id="modal-modal-description"
-                    color={colors.blueBlack}
+                    color={colors.textGrey}
                     sx={{
-                      // paddingTop: '16px',
-                      // mt: '50px',
                       fontSize: 20,
                       textAlign: 'center',
-                      // backgroundColor: 'pink',
                     }}
                   >
-                    {contents}
+                    {contents}                  
                   </Typography>
+
+                  <Typography
+                    id="modal-modal-description2"
+                    color={colors.textGrey1}
+                    sx={{
+                      fontSize: 15,
+                      textAlign: 'center',
+                    }}
+                  >
+                    {subcontents} 
+                  </Typography>
+
                 </div>
-              )}
+
             </Stack>
 
           </Box>
 
-          {rightButton && (
+          
             <Stack direction="row" justifyContent="center" sx={{}}>
               <Button onClick={onClose} sx={modal_style.left_button}>
                 취소
               </Button>
-              <Button sx={modal_style.right_button}>{rightButton}</Button>
+              <Button sx={modal_style.right_button}>
+                {rightButton}
+              </Button>
             </Stack>
-          )}
+          
         </Box>
       </Modal>
     )
@@ -137,11 +131,9 @@ export default function AccountModal({ rightButton, mode, onClose, open }) {
 }
 
 AccountModal.propTypes = {
-  //   modalConfig: PropTypes.object.isRequired,
-  mode: PropTypes.string,
   rightButton: PropTypes.string,
   onClose: PropTypes.func,
   open: PropTypes.bool,
-  title: PropTypes.string,
   contents: PropTypes.string,
+  subcontents: PropTypes.string,
 };
