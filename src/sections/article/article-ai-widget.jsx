@@ -4,7 +4,7 @@ import { styled } from '@mui/material/styles';
 
 import Iconify from 'src/components/iconify';
 import AiModal from './article-ai-modal';
-import { PostSummary } from 'src/api/ai.api';
+// import { PostSummary } from 'src/api/ai.api';
 // ----------------------------------------------------------------------
 
 const StyledRoot = styled('div')(({ theme }) => ({
