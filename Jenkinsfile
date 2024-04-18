@@ -52,7 +52,9 @@ pipeline {
         stage('Kubernetes deploy') {
             steps{
                 script {
-                    sh "kubectl rollout restart deployment/frontend-deployment"
+                    withCredentials([file(credentialsId: 'kubeconfig', variable: 'KUBECONFIG')]) {
+                        sh "kubectl --kubeconfig=${KUBECONFIG} rollout restart deployment/frontend-deployment"
+                    }
                 }
             }    
         }
