@@ -45,10 +45,10 @@
     "react-simple-image-slider": "^2.4.1",
     "react-slick": "^0.30.2",
     "simplebar-react": "^3.2.4",
-    "styled-components": "^6.1.8",
-    "zustand": "^4.5.0",
     "slick-carousel": "^1.8.1",
-    "vite-plugin-html": "^3.2.2"
+    "styled-components": "^6.1.8",
+    "vite-plugin-html": "^3.2.2",
+    "zustand": "^4.5.2"
   },
   "devDependencies": {
     "@vitejs/plugin-react-swc": "^3.4.0",

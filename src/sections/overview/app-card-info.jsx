@@ -1,4 +1,4 @@
-import React from 'react';
+import React,{ useState } from 'react';
 import { Link } from 'react-router-dom';
 
 import { faker } from '@faker-js/faker';
@@ -83,12 +83,22 @@ export default function AppCardInfo(){
           {fDate(faker.date.past())}
         </Typography>
       );
-      
+
+      const [like, setLike] = useState(false);
+      const [likeCount, setLikeCount] = useState(12);
+
+      const handleLike = () => {
+        setLike(!like);
+    }
+      const handleLikeCount = () => {
+        setLikeCount(likeCount + 1);
+    }
+
       const CommunityInformation = (
         <Stack flexDirection="row">
           <Stack direction="row">
-            <IconButton>
-            <Iconify icon= 'icon-park-outline:like' sx={{ display:'flex',mr: 0.5 }} color={colors.blueBlack}/>
+            <IconButton onClick={handleLike} color={like ? '#FF5631' : '#637381'}>
+            <Iconify icon= {like ? "flat-color-icons:like" : "icon-park-outline:like"} sx={{ display:'flex',mr: 0.5 }} color={colors.blueBlack}/>
             </IconButton>
             <Typography sx={{display:'flex',justifyContent:'center',alignItems:'center',verticalAlign:'center'}}>12</Typography>
           </Stack>
