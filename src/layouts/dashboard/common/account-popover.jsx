@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import {Link} from 'react-router-dom';
 
 import Box from '@mui/material/Box';
 import Avatar from '@mui/material/Avatar';
@@ -17,7 +18,11 @@ import AccountModal from './account-modal';
 export default function AccountPopover() {
   const [open, setOpen] = useState(null);
   const [IsModalOpen,setIsModalOpen] = useState(false);
+  const [modalRightButton,setModalRightButton] = useState('');
+  const [modalContents, setModalContents] = useState('');
+  const [modalSubContents,setModalSubContents] = useState('');
 
+  // 메뉴 옵션 핸들러
   const handleOpen = (event) => {
     setOpen(event.currentTarget);
   };
@@ -27,8 +32,11 @@ export default function AccountPopover() {
   };
 
   // 모달 열기 핸들러
-  const handleModalOpen = () => {
+  const handleModalOpen = (rightButton,contents,subcontents) => {
     setIsModalOpen(true);
+    setModalRightButton(rightButton);
+    setModalContents(contents);
+    setModalSubContents(subcontents);
     handleClose(); // 팝오버 닫기
   }
 
@@ -56,7 +64,7 @@ export default function AccountPopover() {
           sx={{
             width: 36,
             height: 36,
-            border: (theme) => `solid 2px ${theme.palette.background.default}`,
+            border: (colors) => `solid 2px ${colors.first}`,
           }}
         >
           {account.displayName.charAt(0).toUpperCase()}
@@ -90,6 +98,8 @@ export default function AccountPopover() {
         <Divider sx={{ borderStyle: 'dashed' }} />
 
         <MenuItem
+          component={Link}
+          to='/user'
           disableRipple
           disableTouchRipple
           onClick={handleClose}
@@ -101,7 +111,7 @@ export default function AccountPopover() {
         <MenuItem
           disableRipple
           disableTouchRipple
-          onClick={handleModalOpen}
+          onClick={()=>handleModalOpen('탈퇴','정말로 탈퇴하시겠습니까?','탈퇴시 계정은 삭제되며\n복구되지 없습니다.')}
           sx={{ typography: 'body2', color: 'text.secondary', py: 1.5 }}
         >
           Withdraw  
@@ -112,7 +122,7 @@ export default function AccountPopover() {
         <MenuItem
           disableRipple
           disableTouchRipple
-          onClick={handleModalOpen}
+          onClick={()=>handleModalOpen('로그아웃','로그아웃 하시겠습니까?')}
           sx={{ typography: 'body2', color: 'error.main', py: 1.5 }}
         >
           Logout
@@ -122,6 +132,9 @@ export default function AccountPopover() {
       <AccountModal
         open={IsModalOpen}
         onClose={handleModalClose}
+        rightButton={modalRightButton}
+        contents={modalContents}
+        subcontents={modalSubContents}
       />
     </>
   );

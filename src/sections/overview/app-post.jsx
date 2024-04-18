@@ -28,11 +28,19 @@ export default function AppPost({ filter }) {
       case 2:
         return (
           <div>
-            해시태그1 게시물
+            <AppCard3/>
+            <AppCard3/>
+            <AppCard3/>
           </div>
       );
       case 3:
-        return <div>해시태그2 게시물</div>;
+        return (
+          <div>
+            <AppCard3/>
+            <AppCard3/>
+            <AppCard3/>
+          </div>
+        );
       default:
         return null;
     };
