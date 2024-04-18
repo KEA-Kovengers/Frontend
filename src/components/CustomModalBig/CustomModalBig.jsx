@@ -33,6 +33,7 @@ export default function CustomModalBig({
   title,
   contents,
   rightAction,
+  image,
 }) {
   const [textField, setTextField] = useState('');
 
@@ -97,6 +98,9 @@ export default function CustomModalBig({
       decrement(); // count -1
       console.log('aiCreateCount decrement', aiCreateCount);
       //이미지 재생성 추가
+    }
+    if (mode === 'image' || mode === 'video') {
+      //파일 다시 선택
     }
   };
   //right button
@@ -206,18 +210,17 @@ export default function CustomModalBig({
                 // backgroundColor: 'pink',
               }}
             >
-              {mode === 'ai_select' && (
+              {mode !== 'ai_creating' && (
                 <Box
-                  component="img"
+                  component={mode === 'video' ? 'video' : 'img'}
                   // alt={title}
-                  src={
-                    'https://cdn.pixabay.com/photo/2023/06/03/18/04/ai-generated-8038224_640.jpg'
-                  }
+
+                  src={image.imgUrl}
                   sx={{
-                    // top: '15%',
                     width: '50%',
                     height: '30%',
                     objectFit: 'cover',
+                    backgroundColor: colors.divider2,
                   }}
                 />
               )}
@@ -235,11 +238,15 @@ export default function CustomModalBig({
             <Box sx={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
               <Stack direction="row" justifyContent="space-between" sx={{ width: '42%' }}>
                 <Button
-                  onClick={aiCreateCount !== 0 && handleLeftButtonClick}
+                  onClick={handleLeftButtonClick}
                   sx={modal_style.left_button}
                   disabled={aiCreateCount === 0}
                 >
-                  {mode === 'ai_select' ? `재생성 ${aiCreateCount}/5` : '취소'}
+                  {mode === 'ai_select'
+                    ? `재생성 ${aiCreateCount}/5`
+                    : mode === 'ai'
+                      ? '취소'
+                      : '아니오'}
                 </Button>
                 <Button onClick={handleRightButtonClick} sx={modal_style.right_button}>
                   {rightButton}
@@ -262,4 +269,8 @@ CustomModalBig.propTypes = {
   title: PropTypes.string,
   contents: PropTypes.string,
   rightAction: PropTypes.func,
+  image: PropTypes.shape({
+    imgUrl: PropTypes.string,
+    imgFile: PropTypes.object,
+  }),
 };
