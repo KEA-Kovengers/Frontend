@@ -26,6 +26,15 @@ export const primary = {
   contrastText: '#FFFFFF',
 };
 
+export const black = {
+  lighter: '#E0E0E0',
+  light: '#BDBDBD',
+  main: '#000000',
+  dark: '#616161',
+  darker: '#424242',
+  contrastText: '#FFFFFF',
+};
+
 export const secondary = {
   lighter: '#E7E9F9',
   light: '#C684FF',
@@ -92,6 +101,7 @@ export const action = {
 
 const base = {
   primary,
+  black,
   secondary,
   third,
   info,

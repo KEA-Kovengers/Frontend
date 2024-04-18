@@ -4,7 +4,7 @@ import { styled } from '@mui/material/styles';
 
 import Iconify from 'src/components/iconify';
 import AiModal from './article-ai-modal';
-import { PostSummary } from 'src/api/ai.api';
+// import { PostSummary } from 'src/api/ai.api';
 // ----------------------------------------------------------------------
 
 const StyledRoot = styled('div')(({ theme }) => ({
@@ -35,12 +35,12 @@ export default function AiWidget() {
         setIsAddModalOpen(true);
 
         //여기서 하면 돼요 res를 가공해서 띄우세여
-        PostSummary(text).then((res) => {
-            console.log(res);
-        }
-        ).catch((err) => {
-            console.log(err);
-        });
+        // PostSummary(text).then((res) => {
+        //     console.log(res);
+        // }
+        // ).catch((err) => {
+        //     console.log(err);
+        // });
     }
 
     const handleAddModalClose = () => {
