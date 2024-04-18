@@ -10,28 +10,13 @@ import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 
 import { account } from 'src/_mock/account';
-
-// ----------------------------------------------------------------------
-
-const MENU_OPTIONS = [
-  {
-    label: 'Home',
-    icon: 'eva:home-fill',
-  },
-  {
-    label: 'Profile',
-    icon: 'eva:person-fill',
-  },
-  {
-    label: 'Settings',
-    icon: 'eva:settings-2-fill',
-  },
-];
+import AccountModal from './account-modal';
 
 // ----------------------------------------------------------------------
 
 export default function AccountPopover() {
   const [open, setOpen] = useState(null);
+  const [IsModalOpen,setIsModalOpen] = useState(false);
 
   const handleOpen = (event) => {
     setOpen(event.currentTarget);
@@ -40,6 +25,16 @@ export default function AccountPopover() {
   const handleClose = () => {
     setOpen(null);
   };
+
+  // 모달 열기 핸들러
+  const handleModalOpen = () => {
+    setIsModalOpen(true);
+    handleClose(); // 팝오버 닫기
+  }
+
+  const handleModalClose = () => {
+    setIsModalOpen(false);
+}
 
   return (
     <>
@@ -94,23 +89,40 @@ export default function AccountPopover() {
 
         <Divider sx={{ borderStyle: 'dashed' }} />
 
-        {MENU_OPTIONS.map((option) => (
-          <MenuItem key={option.label} onClick={handleClose}>
-            {option.label}
-          </MenuItem>
-        ))}
+        <MenuItem
+          disableRipple
+          disableTouchRipple
+          onClick={handleClose}
+          sx={{ typography: 'body2', color: 'text.secondary', py: 1.5 }}
+        >
+          Profile
+        </MenuItem>
+
+        <MenuItem
+          disableRipple
+          disableTouchRipple
+          onClick={handleModalOpen}
+          sx={{ typography: 'body2', color: 'text.secondary', py: 1.5 }}
+        >
+          Withdraw  
+        </MenuItem>
 
         <Divider sx={{ borderStyle: 'dashed', m: 0 }} />
 
         <MenuItem
           disableRipple
           disableTouchRipple
-          onClick={handleClose}
+          onClick={handleModalOpen}
           sx={{ typography: 'body2', color: 'error.main', py: 1.5 }}
         >
           Logout
         </MenuItem>
       </Popover>
+
+      <AccountModal
+        open={IsModalOpen}
+        onClose={handleModalClose}
+      />
     </>
   );
 }

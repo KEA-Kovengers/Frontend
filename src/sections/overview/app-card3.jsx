@@ -19,7 +19,6 @@ import Iconify from 'src/components/iconify';
 const card_style = {
   borderRadius: 0,
   bgcolor: 'background.default',
-
 }
 
 const images = [
@@ -27,6 +26,14 @@ const images = [
     id:0,
     src:'/assets/images/pizza.png',
   },
+  {
+    id:1,
+    src:'/assets/images/meeting.png',
+  },
+  {
+    id:2,
+    src:'/assets/images/santamonica.jpg',
+  }
 ];
 
 const Userimage = (
@@ -117,8 +124,7 @@ export default function AppCard3(){
 
     return (
       <div className="slider-container">
-    
-    {/* 이미지 개수에 따라 Slider가 보여지는 여부가 달라짐 */}
+
       {images.length > 1 ? (
               <Slider {...settings} ref={sliderRef}>
                 {images.map((image) => (
@@ -184,7 +190,6 @@ export default function AppCard3(){
     );
 }
 
-// Slider의 화살표 커스텀
 const CustomPrevArrow = ({onClick}) => (
 <IconButton
   onClick={onClick}
