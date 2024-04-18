@@ -53,7 +53,7 @@ export default function AppCardInfo(){
             }
             }}
         >
-        오늘은 다같이 피자 먹은 날 오늘은 다같이 피자 먹은 날 오늘은 다같이 피자 먹은 날
+        CI/CD Pipeline 테스트
         </Typography>
       );
       
