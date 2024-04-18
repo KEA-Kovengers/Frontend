@@ -49,5 +49,12 @@ pipeline {
                 }
             }
         }
+        stage('Kubernetes deploy') {
+            steps{
+                script {
+                    sh "kubectl rollout restart deployment/frontend-deployment"
+                }
+            }    
+        }
     }
 }
