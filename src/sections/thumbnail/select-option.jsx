@@ -124,7 +124,7 @@ export default function SelectOptionView() {
 
       <CustomModalBig
         rightButton={'예'}
-        mode={'image'}
+        mode={'img'}
         onClose={imageConfirmModalToggle.toggle}
         title={'사진'}
         contents={'해당 사진으로 결정하시겠습니까?'}

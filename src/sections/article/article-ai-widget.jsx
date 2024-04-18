@@ -4,7 +4,7 @@ import { styled } from '@mui/material/styles';
 
 import Iconify from 'src/components/iconify';
 import AiModal from './article-ai-modal';
-// import { PostSummary } from 'src/api/ai.api';
+import { PostSummary } from 'src/api/ai.api';
 // ----------------------------------------------------------------------
 
 const StyledRoot = styled('div')(({ theme }) => ({
@@ -30,6 +30,7 @@ const StyledRoot = styled('div')(({ theme }) => ({
 
 export default function AiWidget() {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [aiSummaryText, setAiSummaryText] = useState('');
 
   const handleRootClick = () => {
     setIsAddModalOpen(true);
@@ -38,6 +39,8 @@ export default function AiWidget() {
     PostSummary(text)
       .then((res) => {
         console.log(res);
+        console.log(res.data);
+        setAiSummaryText(res.data);
       })
       .catch((err) => {
         console.log(err);
@@ -58,7 +61,7 @@ export default function AiWidget() {
         <Iconify icon="basil:lightbulb-alt-outline" width={26} height={28} color="#E8C300" />
         <div style={{ fontSize: '10px', color: '#808080' }}>AI 요약</div>
       </StyledRoot>
-      <AiModal open={isAddModalOpen} onClose={handleAddModalClose} />
+      <AiModal open={isAddModalOpen} onClose={handleAddModalClose} aiSummaryText={aiSummaryText} />
     </>
   );
 }
