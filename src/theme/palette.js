@@ -38,7 +38,7 @@ export const black = {
 export const secondary = {
   lighter: '#E7E9F9',
   light: '#C684FF',
-  main: '#8E33FF',
+  main: '#8A94EF',
   dark: '#5119B7',
   darker: '#27097A',
   contrastText: '#FFFFFF',

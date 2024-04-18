@@ -13,20 +13,54 @@ import { useState } from 'react';
 import CustomModalBig from 'src/components/CustomModalBig/CustomModalBig';
 import CustomModal from 'src/components/CustomModal/CustomModal';
 
+import { useToggle } from 'src/hooks/useToggle';
+
+import { useCounter } from 'src/commons/store/aiCreateCount';
+
 export default function SelectOptionView() {
   const [isSelected, setIsSelected] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const handleClick = (option) => {
+  const count = useCounter((state) => state.count);
+  const decrement = useCounter((state) => state.decrement);
+  const reset = useCounter((state) => state.reset);
+
+  // Define toggle hooks for modals
+  const aiModalToggle = useToggle();
+  const aiSelectModalToggle = useToggle();
+  const aiCreatingModalToggle = useToggle();
+
+  const handleOpenModalClick = (option) => {
+    if (option === 'image') {
+      const input = document.createElement('input');
+      input.type = 'file';
+      input.accept = 'image/*';
+      input.onchange = function (event) {
+        const file = event.target.files[0];
+        console.log(file);
+      };
+      input.click();
+    }
     setIsSelected(option);
+    // {
+    //   option === 'image' && toggle();
+    // }
+    {
+      option === 'video' && toggle();
+    }
+    if (option === 'ai') {
+      aiModalToggle.toggle();
+    } else if (option === 'ai_select') {
+      aiSelectModalToggle.toggle();
+    }
   };
-
-  const handleOpenModalClick = () => {
-    setIsModalOpen(true);
+  //rightAction 함수
+  const CreateAiImage = () => {
+    console.log('CreateAiImage');
+    aiCreatingModalToggle.toggle();
   };
-
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
+  const ConfirmAiImage = () => {
+    console.log('ConfirmAiImage');
+    reset();
   };
 
   const renderHeader = (
@@ -42,15 +76,33 @@ export default function SelectOptionView() {
       }}
     >
       <Logo />
-      <Button onClick={handleOpenModalClick}>모달 테스트</Button>
-      <CustomModal
+
+      <CustomModalBig
         rightButton={'생성'}
-        // mode={'textfield'}
-        mode={'textfield'}
-        onClose={handleCloseModal}
-        title={'모달 테스트'}
-        contents={'모달 테스트입니다.'}
-        open={isModalOpen}
+        mode={'ai'}
+        onClose={aiModalToggle.toggle}
+        title={'AI 생성 이미지'}
+        open={aiModalToggle.isOpen}
+        leftButton={'취소'}
+        rightAction={CreateAiImage}
+      />
+      <CustomModalBig
+        mode={'ai_creating'}
+        onClose={aiCreatingModalToggle.toggle}
+        title={'AI 생성 이미지'}
+        contents={'이미지를 생성 중입니다...'}
+        open={aiCreatingModalToggle.isOpen}
+        rightAction={aiSelectModalToggle.toggle}
+      />
+      <CustomModalBig
+        rightButton={'예'}
+        mode={'ai_select'}
+        onClose={aiSelectModalToggle.toggle}
+        title={'AI 생성 이미지'}
+        contents={'해당 사진으로 결정하시겠습니까?'}
+        open={aiSelectModalToggle.isOpen}
+        rightAction={ConfirmAiImage}
+        // leftButton={`재설정 ${count}/5`}
       />
     </Box>
   );
@@ -99,7 +151,7 @@ export default function SelectOptionView() {
             >
               <IconButton
                 sx={{ flexDirection: 'column', borderRadius: 2 }}
-                onClick={() => handleClick('image')} // Use arrow function to pass a function reference
+                onClick={() => handleOpenModalClick('image')} // Use arrow function to pass a function reference
               >
                 <Iconify
                   icon="eva:image-2-fill"
@@ -113,7 +165,7 @@ export default function SelectOptionView() {
               </IconButton>
               <IconButton
                 sx={{ flexDirection: 'column', borderRadius: 2 }}
-                onClick={() => handleClick('video')} // Use arrow function to pass a function reference
+                onClick={() => handleOpenModalClick('video')} // Use arrow function to pass a function reference
               >
                 <Iconify
                   icon="eva:video-fill"
@@ -127,7 +179,7 @@ export default function SelectOptionView() {
               </IconButton>
               <IconButton
                 sx={{ flexDirection: 'column', borderRadius: 2 }}
-                onClick={() => handleClick('ai')} // Use arrow function to pass a function reference
+                onClick={() => handleOpenModalClick('ai')} // Use arrow function to pass a function reference
               >
                 <Iconify
                   icon="ri:robot-3-fill"
