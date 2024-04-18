@@ -1,46 +1,73 @@
-import Stack from '@mui/material/Stack';
-import Button from '@mui/material/Button';
-import Container from '@mui/material/Container';
-import Grid from '@mui/material/Unstable_Grid2';
-import Typography from '@mui/material/Typography';
+import React from 'react';
+import { Box, Container, Stack, Button, Typography, AppBar, Toolbar } from '@mui/material';
+import Grid from '@mui/material/Grid';
+import { useTheme } from '@mui/material/styles';
+import { useResponsive } from 'src/hooks/use-responsive'; 
+import { HEADER } from '../../../layouts/dashboard/config-layout';
+import Logo from 'src/components/logo';
 
-import { posts } from 'src/_mock/blog';
+import CollabProfile from '../header/collab-profile';
+import ModifyPopover from '../header/modify-popover';
+import InvitePopover from '../header/invite-popover';
 
-import Iconify from 'src/components/iconify';
 
-import PostCard from '../post-card';
-import PostSort from '../post-sort';
-import PostSearch from '../post-search';
-
-// ----------------------------------------------------------------------
+import MdEditor from '../editor/md-editor';
 
 export default function BlogView() {
+  const headerHeight = HEADER.H_MOBILE; 
+  const globalTheme = useTheme(); 
+  const lgUp = useResponsive('up', 'lg'); 
+
+  const renderContent = (
+    <Stack direction="row" alignItems="center" spacing={1}>
+      <CollabProfile />
+      <InvitePopover />
+      <ModifyPopover />
+    </Stack>
+  );
+
+  const renderHeader = (
+    <AppBar
+      sx={{
+        boxShadow: 'none',
+        height: headerHeight,
+        width: '100%',
+        zIndex: globalTheme.zIndex.appBar + 1,
+        backgroundColor: globalTheme.palette.background.default,
+        transition: globalTheme.transitions.create(['height'], {
+          duration: globalTheme.transitions.duration.shorter,
+        }),
+        ...(lgUp && {
+          width: '100%',
+          height: HEADER.H_DESKTOP,
+          borderBottom: (theme) => `dashed 1px ${theme.palette.divider}`,
+        }),
+      }}
+    >
+      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', pr: { lg: 1 } }}>
+        <Logo sx={{ mt: 3, ml: 2 }} />
+        <Toolbar sx={{ height: 1 }}>
+          {renderContent}
+          <Button sx={{ width: 54, height: 40, bgcolor: '#1A2CDD', borderRadius: 3, color: 'white', fontSize: '18px', margin: '13px' }}>
+            <Typography variant="body1" sx={{ fontSize: '16px' }}>완료</Typography>
+          </Button>
+        </Toolbar>
+      </Box>
+    </AppBar>
+  );
+
   return (
-    <Container>
-      <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
-        <Typography variant="h4">Blog</Typography>
-
-        <Button variant="contained" color="inherit" startIcon={<Iconify icon="eva:plus-fill" />}>
-          New Post
-        </Button>
-      </Stack>
-
-      <Stack mb={5} direction="row" alignItems="center" justifyContent="space-between">
-        <PostSearch posts={posts} />
-        <PostSort
-          options={[
-            { value: 'latest', label: 'Latest' },
-            { value: 'popular', label: 'Popular' },
-            { value: 'oldest', label: 'Oldest' },
-          ]}
-        />
-      </Stack>
-
-      <Grid container spacing={3}>
-        {posts.map((post, index) => (
-          <PostCard key={post.id} post={post} index={index} />
-        ))}
-      </Grid>
-    </Container>
+    <>
+      {renderHeader}
+      <Container>
+        <Grid container spacing={3}>
+          <Grid item xs={12}>
+            <Box mt={9.5}>
+              <MdEditor />
+            </Box>
+          </Grid>
+        </Grid>
+      </Container>
+    </>
   );
 }
