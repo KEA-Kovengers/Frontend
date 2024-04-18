@@ -53,7 +53,7 @@ pipeline {
             steps{
                 script {
                     withCredentials([file(credentialsId: 'kubeconfig', variable: 'KUBECONFIG')]) {
-                        sh "kubectl --kubeconfig=${KUBECONFIG} rollout restart deployment/frontend-deployment"
+                        sh 'kubectl --kubeconfig=$KUBECONFIG rollout restart deployment/frontend-deployment'
                     }
                 }
             }    
