@@ -1,4 +1,4 @@
-import React,{ useState } from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 
 // import IconButton from '@mui/material/IconButton';
@@ -15,8 +15,17 @@ import {
 } from '@mui/material';
 import Iconify from 'src/components/iconify';
 import { colors } from '../../theme/variableColors';
+import { right } from '@popperjs/core';
 
-export default function CustomModal({ rightButton, mode, onClose, open, title, contents }) {
+export default function CustomModal({
+  rightButton,
+  mode,
+  onClose,
+  open,
+  title,
+  contents,
+  buttonAction,
+}) {
   const [textField, setTextField] = useState('');
 
   const modal_style = {
@@ -48,6 +57,17 @@ export default function CustomModal({ rightButton, mode, onClose, open, title, c
     },
   };
 
+  // left button
+  const handleLeftButtonClick = () => {
+    onClose(); // Close the modal //현재 모달 닫기
+    buttonAction.leftAction();
+  };
+  //right button
+  const handleRightButtonClick = () => {
+    buttonAction.rightAction(); // Open 'ai_select' modal
+    onClose(); // Close the modal
+  };
+
   return (
     open && (
       <Modal
@@ -72,7 +92,6 @@ export default function CustomModal({ rightButton, mode, onClose, open, title, c
               height: '63%',
             }}
           >
-
             <Stack
               sx={{
                 // mt: '20px',
@@ -81,9 +100,11 @@ export default function CustomModal({ rightButton, mode, onClose, open, title, c
                 // backgroundColor: 'pink',
               }}
             >
-              {mode !== 'content' && (<Typography id="modal-modal-title" variant="h4" component="h4">
-                {title}
-              </Typography>)}
+              {mode !== 'content' && (
+                <Typography id="modal-modal-title" variant="h4" component="h4">
+                  {title}
+                </Typography>
+              )}
               {mode === 'textfield' && (
                 <>
                   <Typography
@@ -108,7 +129,7 @@ export default function CustomModal({ rightButton, mode, onClose, open, title, c
                   />
                 </>
               )}
-              {(mode === 'title' || mode === 'content') && (
+              {mode !== 'textfield' && (
                 <div
                   style={{
                     height: '100%',
@@ -118,23 +139,56 @@ export default function CustomModal({ rightButton, mode, onClose, open, title, c
                     alignItems: 'center',
                   }}
                 >
-                  <Typography
-                    id="modal-modal-description"
-                    color={colors.blueBlack}
-                    sx={{
-                      // paddingTop: '16px',
-                      // mt: '50px',
-                      fontSize: 20,
-                      textAlign: 'center',
-                      // backgroundColor: 'pink',
-                    }}
-                  >
-                    {contents}
-                  </Typography>
+                  {mode !== 'video' ? (
+                    <Typography
+                      id="modal-modal-description"
+                      color={colors.blueBlack}
+                      sx={{
+                        // paddingTop: '16px',
+                        // mt: '50px',
+                        fontSize: 20,
+                        textAlign: 'center',
+                        // backgroundColor: 'pink',
+                      }}
+                    >
+                      {contents}
+                    </Typography>
+                  ) : (
+                    <Stack direction="row" justifyContent="space-around" spacing={6}>
+                      <Button
+                        variant="contained"
+                        style={{
+                          flexDirection: 'column',
+                          width: 115,
+                          height: 80,
+                          borderRadius: 17,
+                        }}
+                        onClick={handleLeftButtonClick}
+                      >
+                        <Iconify icon="majesticons:video-plus" sx={{ width: 45, height: 45 }} />
+                        영상 첨부
+                      </Button>
+                      <Button
+                        variant="contained"
+                        style={{
+                          flexDirection: 'column',
+                          width: 115,
+                          height: 80,
+                          borderRadius: 17,
+                        }}
+                        onClick={handleRightButtonClick}
+                      >
+                        <Iconify
+                          icon="material-symbols-light:movie-edit"
+                          sx={{ width: 45, height: 45 }}
+                        />
+                        영상 편집
+                      </Button>
+                    </Stack>
+                  )}
                 </div>
               )}
             </Stack>
-
           </Box>
 
           {rightButton && (
@@ -159,4 +213,8 @@ CustomModal.propTypes = {
   open: PropTypes.bool,
   title: PropTypes.string,
   contents: PropTypes.string,
+  buttonAction: PropTypes.shape({
+    leftAction: PropTypes.func,
+    rightAction: PropTypes.func,
+  }),
 };
