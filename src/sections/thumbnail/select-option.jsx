@@ -19,6 +19,8 @@ import { useCounter } from 'src/commons/store/aiCreateCount';
 
 export default function SelectOptionView() {
   const [isSelected, setIsSelected] = useState(null);
+  const [imageUrl, setImageUrl] = useState(null); // State to store the image URL
+  const [imgFile, setImgFile] = useState(null); // State to store the image file
 
   const count = useCounter((state) => state.count);
   const decrement = useCounter((state) => state.decrement);
@@ -28,6 +30,25 @@ export default function SelectOptionView() {
   const aiModalToggle = useToggle();
   const aiSelectModalToggle = useToggle();
   const aiCreatingModalToggle = useToggle();
+  const imageConfirmModalToggle = useToggle();
+  const videoSelectModalToggle = useToggle();
+  const videoConfirmModalToggle = useToggle();
+
+  const uploadVideo = () => {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'video/*';
+    input.onchange = function (event) {
+      const file = event.target.files[0];
+      const video = URL.createObjectURL(file);
+      console.log('video', video);
+      setImageUrl(video);
+      if (file) {
+        videoConfirmModalToggle.toggle();
+      }
+    };
+    input.click();
+  };
 
   const handleOpenModalClick = (option) => {
     if (option === 'image') {
@@ -36,16 +57,37 @@ export default function SelectOptionView() {
       input.accept = 'image/*';
       input.onchange = function (event) {
         const file = event.target.files[0];
-        console.log(file);
+        console.log('file', file);
+        const imgUrl = URL.createObjectURL(file);
+        setImageUrl(imgUrl);
+        console.log('imgUrl', imgUrl);
+        if (file) {
+          imageConfirmModalToggle.toggle();
+        }
       };
       input.click();
     }
+    // if (option === 'video') {
+    //   const input = document.createElement('input');
+    //   input.type = 'file';
+    //   input.accept = 'video/*';
+    //   input.onchange = function (event) {
+    //     const file = event.target.files[0];
+    //     const video = URL.createObjectURL(file);
+    //     console.log('video', video);
+    //     setImageUrl(video);
+    //     if (file) {
+    //       videoConfirmModalToggle.toggle();
+    //     }
+    //   };
+    //   input.click();
+    // }
     setIsSelected(option);
     // {
-    //   option === 'image' && toggle();
+    //   option === 'image' && fileConfirmModalToggle.toggle();
     // }
     {
-      option === 'video' && toggle();
+      option === 'video' && videoSelectModalToggle.toggle();
     }
     if (option === 'ai') {
       aiModalToggle.toggle();
@@ -62,6 +104,9 @@ export default function SelectOptionView() {
     console.log('ConfirmAiImage');
     reset();
   };
+  const ConfirmFile = () => {
+    console.log('ConfirmFile');
+  };
 
   const renderHeader = (
     <Box
@@ -77,6 +122,33 @@ export default function SelectOptionView() {
     >
       <Logo />
 
+      <CustomModalBig
+        rightButton={'예'}
+        mode={'img'}
+        onClose={imageConfirmModalToggle.toggle}
+        title={'사진'}
+        contents={'해당 사진으로 결정하시겠습니까?'}
+        open={imageConfirmModalToggle.isOpen}
+        rightAction={ConfirmFile}
+        image={{ imgFile: imgFile, imgUrl: imageUrl }}
+      />
+      <CustomModal
+        mode={'video'}
+        onClose={videoSelectModalToggle.toggle}
+        title={'영상'}
+        open={videoSelectModalToggle.isOpen}
+        buttonAction={{ leftAction: uploadVideo, rightAction: null }}
+      />
+      <CustomModalBig
+        rightButton={'예'}
+        mode={'video'}
+        onClose={videoConfirmModalToggle.toggle}
+        title={'영상'}
+        contents={'해당 영상으로 결정하시겠습니까?'}
+        open={videoConfirmModalToggle.isOpen}
+        rightAction={ConfirmFile}
+        // image={imgFile, imageUrl}
+      />
       <CustomModalBig
         rightButton={'생성'}
         mode={'ai'}
