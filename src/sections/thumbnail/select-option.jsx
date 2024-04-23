@@ -15,7 +15,7 @@ import CustomModal from 'src/components/CustomModal/CustomModal';
 
 import { useToggle } from 'src/hooks/useToggle';
 
-import { useCounter } from 'src/commons/store/aiCreateCount';
+import { useCounter } from 'src/hooks/useAiCreateCount';
 
 export default function SelectOptionView() {
   const [isSelected, setIsSelected] = useState(null);
@@ -98,7 +98,9 @@ export default function SelectOptionView() {
   //rightAction 함수
   const CreateAiImage = () => {
     console.log('CreateAiImage');
-    aiCreatingModalToggle.toggle();
+    // aiCreatingModalToggle.toggle();
+
+    aiSelectModalToggle.toggle();
   };
   const ConfirmAiImage = () => {
     console.log('ConfirmAiImage');

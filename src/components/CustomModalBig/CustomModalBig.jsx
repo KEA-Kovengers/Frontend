@@ -21,8 +21,8 @@ import { colors } from '../../theme/variableColors';
 import { useState } from 'react';
 import { secondary } from 'src/theme/palette';
 
-import { useCounter } from 'src/commons/store/aiCreateCount';
-import { PostSummary } from 'src/api/ai.api';
+import { useCounter } from 'src/hooks/useAiCreateCount';
+import { PostSummary, PostGenerateImage } from 'src/api/ai.api';
 
 export default function CustomModalBig({
   leftButton,
@@ -38,6 +38,7 @@ export default function CustomModalBig({
   const [textField, setTextField] = useState('');
 
   const [progress, setProgress] = React.useState(0);
+  const [imgUrl, setImgUrl] = React.useState('');
 
   // React.useEffect(() => {
   //   if (mode === 'ai_creating') {
@@ -106,6 +107,14 @@ export default function CustomModalBig({
   //right button
   const handleRightButtonClick = () => {
     rightAction(); // Open 'ai_select' modal
+    PostGenerateImage(textField)
+      .then((res) => {
+        console.log(res);
+        setImgUrl(res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
     onClose(); // Close the modal
     if (mode === 'ai') {
       console.log('aiCreateCount', aiCreateCount);
@@ -227,6 +236,7 @@ export default function CustomModalBig({
                   // alt={title}
 
                   src={image.imgUrl}
+                  // src={imgUrl}
                   sx={{
                     width: '50%',
                     height: '30%',
