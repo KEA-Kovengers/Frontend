@@ -6,7 +6,7 @@ import AppCardInfo from "./app-card-info";
 const images = [
   {
     id:0,
-    src:'http://172.16.211.100:32001/test/sample.png',
+    src:'/assets/images/cat.jpg',
   },
 ];
 
