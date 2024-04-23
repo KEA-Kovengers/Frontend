@@ -8,21 +8,21 @@ export default function AppCard3(){
   const images = [
     {
       id:0,
-      src:'http://172.16.211.100:32001/test/sample.png',
+      src:'/assets/images/santamonica.jpg',
     },
     {
       id:1,
-      src:'/assets/images/meeting.png',
+      src:'/assets/images/la.jpg',
     },
     {
       id:2,
-      src:'/assets/images/santamonica.jpg',
+      src:'http://172.16.211.100:32001/test/sample.png',
     }
   ];
   
     return (
 
-      <div>
+      <div style={{width: '100%'}}>
           <AppCardImage images={images}/>
           <AppCardInfo/>
       </div>

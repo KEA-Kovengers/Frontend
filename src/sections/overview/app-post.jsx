@@ -12,9 +12,9 @@ export default function AppPost({ filter }) {
       case 0:
         return (
           <div>
-            <AppCard3/>
-            <AppCard3/>
-            <AppCard3/>
+            <AppCard/>
+            <AppCard/>
+            <AppCard/>
           </div>
       );
       case 1:

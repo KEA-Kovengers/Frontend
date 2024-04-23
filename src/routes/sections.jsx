@@ -28,7 +28,6 @@ export default function Router() {
         { element: <IndexPage />, index: true },
         { path: 'user', element: <UserPage /> },
         { path: 'search', element: <ProductsPage /> },
-        { path: 'blog', element: <BlogPage /> },
         { path: 'article', element: <ArticlePage /> },
 
       ],
@@ -36,6 +35,10 @@ export default function Router() {
     {
       path: 'login',
       element: <LoginPage />,
+    },
+    {
+      path: 'blog',
+      element: <BlogPage />,
     },
     {
       path: '404',

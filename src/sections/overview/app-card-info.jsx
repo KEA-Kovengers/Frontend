@@ -24,15 +24,14 @@ export default function AppCardInfo(){
       
     const Userimage = (
         <img 
-        src='/assets/images/userimage.png'
+        src='assets\images\avatars\somi.jpg'
         alt="user" 
         style={{
             borderRadius: '50%', 
-            marginLeft: '5px',
             width:'100%',
             height:'100%',
             maxWidth: '50px',
-            maxHeight:'50px'
+            maxHeight:'50px',
         }}/>
       );
       
@@ -53,7 +52,7 @@ export default function AppCardInfo(){
             }
             }}
         >
-        CI/CD Pipeline 테스트
+        고양이 감기
         </Typography>
       );
       
@@ -67,7 +66,7 @@ export default function AppCardInfo(){
             textOverflow: 'ellipsis' ,
             paddingRight: '10px'}}                  
         noWrap>
-        남솜2 남솜2 남솜2 남솜2 남솜2 남솜2 남솜2 
+        Nam Somi
       </Typography>
       );
       
@@ -80,7 +79,8 @@ export default function AppCardInfo(){
                 fontSize:'13px'
             }}
             noWrap>
-          {fDate(faker.date.past())}
+          {/*{fDate(faker.date.past())} */}
+          2024. 03. 15
         </Typography>
       );
 
@@ -100,25 +100,25 @@ export default function AppCardInfo(){
             <IconButton onClick={handleLike} color={like ? '#FF5631' : '#637381'}>
             <Iconify icon= {like ? "flat-color-icons:like" : "icon-park-outline:like"} sx={{ display:'flex',mr: 0.5 }} color={colors.blueBlack}/>
             </IconButton>
-            <Typography sx={{display:'flex',justifyContent:'center',alignItems:'center',verticalAlign:'center'}}>12</Typography>
+            <Typography sx={{display:'flex',justifyContent:'center',alignItems:'center',verticalAlign:'center'}}>7</Typography>
           </Stack>
       
           <Stack direction="row">
           <IconButton>
             <Iconify icon= 'iconoir:chat-bubble' sx={{ display:'flex', ml: 1, mr: 0.5 }} color={colors.blueBlack}  />
             </IconButton>
-            <Typography sx={{display:'flex',justifyContent:'center',alignItems:'center',verticalAlign:'center'}}>31</Typography>
+            <Typography sx={{display:'flex',justifyContent:'center',alignItems:'center',verticalAlign:'center'}}>3</Typography>
           </Stack>
         </Stack>
       );
       
     return (
-        <Card sx={{...card_style,marginBottom:'70px'}} >
-            <Grid container>
-                <Grid item xs={1} sx={{ display:'flex', justifyContent: 'center', alignItems: 'center' }}>
-                    <CardMedia>
+        <Card sx={{...card_style,marginBottom:'70px',paddingLeft:'10px'}} >
+            <Grid container alignItems='center'>
+                <Grid item xs={1}>
+                    <Box sx={{ display:'flex', justifyContent: 'center', alignItems: 'center' }}>
                         {Userimage}
-                    </CardMedia>
+                    </Box>
                 </Grid>
 
                 <Grid item xs={11} >

@@ -9,12 +9,12 @@ import { PostSummary } from 'src/api/ai.api';
 
 const StyledRoot = styled('div')(({ theme }) => ({
   zIndex: 0,
-  right: '0%',
+  right: '63%',
   display: 'flex',
   cursor: 'pointer',
   position: 'fixed',
   alignItems: 'center',
-  top: theme.spacing(16),
+  top: theme.spacing(40),
   paddingLeft: theme.spacing(2),
   paddingRight: theme.spacing(2),
   paddingTop: theme.spacing(1.25),
