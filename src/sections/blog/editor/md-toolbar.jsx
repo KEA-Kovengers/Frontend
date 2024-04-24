@@ -6,7 +6,8 @@ export const toolbar = [
   ['ul', 'ol', 'task', 'indent', 'outdent'],
   ['table', 'link'],
   ['code', 'codeblock'],
-  ['image',
+  [
+    'image',
     {
       name: 'video',
       tooltip: 'Insert video',
@@ -16,8 +17,9 @@ export const toolbar = [
       name: 'music',
       tooltip: 'Insert music',
       el: musicIcon,
-   }],
-   [
+    },
+  ],
+  [
     {
       name: 'map',
       tooltip: 'Insert map',
@@ -27,11 +29,11 @@ export const toolbar = [
       name: 'grammar',
       tooltip: 'Correct grammar',
       el: grammarIcon,
-   },
-   {
-    name: 'auto',
-    tooltip: 'Auto complete',
-    el: autoIcon,
-    }
-   ]
+    },
+    {
+      name: 'auto',
+      tooltip: 'Auto complete',
+      el: autoIcon,
+    },
+  ],
 ];

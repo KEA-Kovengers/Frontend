@@ -21,7 +21,7 @@ import { colors } from '../../theme/variableColors';
 import { useState } from 'react';
 import { secondary } from 'src/theme/palette';
 
-import { useCounter } from 'src/hooks/useAiCreateCount';
+import { useCounter } from 'src/hooks/aiCreateCount';
 import { PostSummary, PostGenerateImage } from 'src/api/ai.api';
 
 import { styled } from 'styled-components';
@@ -40,7 +40,7 @@ export default function CustomModalBig({
   const [textField, setTextField] = useState('');
 
   const [progress, setProgress] = React.useState(0);
-  const [imgUrl, setImgUrl] = React.useState('');
+  const [imgUrl, setImgUrl] = useState('');
 
   // React.useEffect(() => {
   //   if (mode === 'ai_creating') {
@@ -113,6 +113,8 @@ export default function CustomModalBig({
       .then((res) => {
         console.log(res);
         setImgUrl(res.data);
+        console.log('생성 이미지', res.data);
+        console.log('생성 이미지', imgUrl);
       })
       .catch((err) => {
         console.log(err);
@@ -232,13 +234,16 @@ export default function CustomModalBig({
                 // backgroundColor: 'pink',
               }}
             >
-              {(mode === 'video' || mode === 'img') && (
+              {(mode === 'video' || mode === 'img' || mode === 'ai_select') && (
                 <Box
                   component={mode === 'video' ? 'video' : 'img'}
                   // alt={title}
 
-                  src={image.imgUrl}
+                  // src={image.imgUrl}
                   // src={imgUrl}
+                  src={
+                    'https://mk.kakaocdn.net/dna/karlo/image/2024-04-24/17/4bbce248-2ed9-48c0-9a17-0684122f48c6.webp?credential=smxRqiqUEJBVgohptvfXS5JoYeFv4Xxa&expires=1713946324&signature=OCXM%2F7Dlb6OG9zNrTBtWvMF67dA%3D'
+                  }
                   sx={{
                     width: '50%',
                     height: '30%',
