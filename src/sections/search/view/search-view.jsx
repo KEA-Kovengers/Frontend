@@ -19,7 +19,6 @@ export default function SearchView() {
     <Container
       style={{
         alignItems: 'center',
-        backgroundColor: 'pink',
         display: 'flex',
         flexDirection: 'column',
       }}
