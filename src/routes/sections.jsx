@@ -10,7 +10,7 @@ export const LoginPage = lazy(() => import('src/pages/login'));
 export const ProductsPage = lazy(() => import('src/pages/products'));
 export const Page404 = lazy(() => import('src/pages/page-not-found'));
 export const ArticlePage = lazy(() => import('src/pages/article'));
-export const SelectThumbnail = lazy(() => import('src/sections/thumbnail/select-option'));
+export const SelectOptionView = lazy(() => import('/src/sections/thumbnail/select-option.jsx'));
 
 // ----------------------------------------------------------------------
 
@@ -29,7 +29,6 @@ export default function Router() {
         { path: 'user', element: <UserPage /> },
         { path: 'search', element: <ProductsPage /> },
         { path: 'article', element: <ArticlePage /> },
-
       ],
     },
     {
@@ -50,7 +49,7 @@ export default function Router() {
     },
     {
       path: 'select-thumbnail',
-      element: <SelectThumbnail />,
+      element: <SelectOptionView />,
     },
   ]);
 

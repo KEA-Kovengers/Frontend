@@ -229,6 +229,24 @@ export default function MdEditorWithHeader() {
           </Typography>
         </Button>
       </div>
+      <Button
+        onClick={contents.length > 0 ? handleAiTextClick : null}
+        // onClick={handleAiTextClick}
+        sx={{
+          // width: 54,
+          height: 40,
+          bgcolor: 'grey',
+          borderRadius: 3,
+          // border: '2px solid #8A94EF',
+          color: 'white',
+          fontSize: '18px',
+          marginBottom: '10px',
+        }}
+      >
+        <Typography variant="body1" sx={{ fontSize: '16px' }}>
+          ai 텍스트 생성
+        </Typography>
+      </Button>
       {contents.map((content, index) => (
         <Box
           key={index}
