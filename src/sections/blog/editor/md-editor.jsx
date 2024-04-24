@@ -22,7 +22,8 @@ export default function MdEditorWithHeader() {
   const [editingIndex, setEditingIndex] = useState(null); // 수정 중인 문장의 인덱스
 
   const tagRef = useRef(null);
-  const editorRef = useRef(null);
+  const editorRef1 = useRef(null);
+  const editorRef2 = useRef(null);
 
   /*----------------------------------------------------------*/
 
@@ -50,7 +51,7 @@ export default function MdEditorWithHeader() {
       const newTag = `#${tagInput.trim()}`;
       if (newTag) {
         setTags([...tags, newTag]);
-        setTagInput('') ;
+        setTagInput('');
       }
     }
   };
@@ -58,23 +59,34 @@ export default function MdEditorWithHeader() {
   const handleAiTagClick = () => {
     const text = contents.join(' ');
     console.log('text', text);
-    PostGenerateHashtag(text).then((res) => {
-      console.log('res', res);
-      setTags([...tags, res]);
-    }).catch((err) => {
-      console.log('err', err);
-    });
-    
+    PostGenerateHashtag(text)
+      .then((res) => {
+        console.log('res', res);
+        const inputStringList = res.data;
+
+        inputStringList.forEach((inputString) => {
+          const tagsToAdd = inputString.split(' ');
+          tagsToAdd.forEach((tag) => {
+            setTags((prevTags) => [...prevTags, tag]);
+          });
+        });
+      })
+      .catch((err) => {
+        console.log('err', err);
+      });
   };
 
   const handleAiTextClick = () => {
     const text = contents.join(' ');
-    PostGenerateText(text).then((res) => {
-      console.log('res', res);
-      setContents([...contents, res]);
-    }).catch((err) => {
-      console.log('err', err);
-    });
+    console.log('text', text);
+    PostGenerateText(text)
+      .then((res) => {
+        console.log('res', res.data);
+        setContents([...contents, res.data]);
+      })
+      .catch((err) => {
+        console.log('err', err);
+      });
   };
 
   /*----------------------------------------------------------*/
@@ -85,7 +97,7 @@ export default function MdEditorWithHeader() {
   };
 
   const handleCompleteButtonClick = () => {
-    const editorInstance = editorRef.current.getInstance();
+    const editorInstance = editorRef1.current.getInstance();
     const currentContent = editorInstance.getMarkdown();
     setContents([...contents, currentContent]);
 
@@ -97,26 +109,31 @@ export default function MdEditorWithHeader() {
     setEditingIndex(null); // 취소 버튼 클릭 시 편집 중인 상태를 초기화
   };
 
-  const   handleContentClick = (index) => {
+  const handleContentClick = (index) => {
     setEditingIndex(index === editingIndex ? null : index);
   };
-  
 
   const handleEditComplete = () => {
-  if (editorRef.current && editorRef.current.getInstance && editingIndex !== null && editingIndex >= 0 && editingIndex < contents.length) {
-    // Get the current content of the editor being edited
-    const editedContent = editorRef.current.getInstance().getMarkdown();
-    console.log('editedContent', editedContent);
-   
-    const updatedContents = [...contents];
-    // Update the content at the specified index with the edited content
-    updatedContents[editingIndex] = editedContent;
-    // Set the state with the updated contents
-    setContents(updatedContents);
+    if (
+      editorRef2.current &&
+      editorRef2.current.getInstance &&
+      editingIndex !== null &&
+      editingIndex >= 0 &&
+      editingIndex < contents.length
+    ) {
+      // Get the current content of the editor being edited
+      const editedContent = editorRef2.current.getInstance().getMarkdown();
+      console.log('editedContent', editedContent);
 
-    setEditingIndex(null);
-  }
-};
+      const updatedContents = [...contents];
+      // Update the content at the specified index with the edited content
+      updatedContents[editingIndex] = editedContent;
+      // Set the state with the updated contents
+      setContents(updatedContents);
+
+      setEditingIndex(null);
+    }
+  };
 
   // useEffect(() => {
   //   console.log("useEffect triggered with editingIndex:", editingIndex);
@@ -130,7 +147,7 @@ export default function MdEditorWithHeader() {
 
   useEffect(() => {
     console.log(contents.length);
-    console.log("useEffect triggered with contents:", contents);
+    console.log('useEffect triggered with contents:', contents);
   }, [contents]);
 
   /*----------------------------------------------------------*/
@@ -152,8 +169,10 @@ export default function MdEditorWithHeader() {
           color: '#000',
         }}
       />
-      <hr style={{ width: '5%', margin: '6px 0', borderTop: '3px solid black', marginLeft: '0.8%' }} />
-      <div style={{ display: 'flex', alignItems: 'center', marginBottom: '10px'}}>
+      <hr
+        style={{ width: '5%', margin: '6px 0', borderTop: '3px solid black', marginLeft: '0.8%' }}
+      />
+      <div style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
         {tags.map((tag, index) => (
           <div
             key={index}
@@ -193,18 +212,28 @@ export default function MdEditorWithHeader() {
           }}
           ref={tagRef}
         />
-        <Button 
-        // onClick={contents.length > 0 ? handleAiTagClick : null}
-        onClick={handleAiTextClick}
-        sx={{ width: 54, height: 40, bgcolor: '#8A94EF', borderRadius: 3, color: 'white', fontSize: '18px'}}>
-            <Typography variant="body1" sx={{ fontSize: '16px' }}>ai 태그</Typography>
+        <Button
+          onClick={contents.length > 0 ? handleAiTagClick : null}
+          // onClick={handleAiTextClick}
+          sx={{
+            width: 54,
+            height: 40,
+            bgcolor: '#8A94EF',
+            borderRadius: 3,
+            color: 'white',
+            fontSize: '18px',
+          }}
+        >
+          <Typography variant="body1" sx={{ fontSize: '16px' }}>
+            ai 태그
+          </Typography>
         </Button>
       </div>
       {contents.map((content, index) => (
         <Box
           key={index}
           sx={{ marginBottom: '10px', position: 'relative', cursor: 'pointer' }}
-          onClick={() => index!==editingIndex&&handleContentClick(index)} // 문장 클릭 시 편집 가능하도록 설정
+          onClick={() => index !== editingIndex && handleContentClick(index)} // 문장 클릭 시 편집 가능하도록 설정
         >
           {editingIndex === index ? (
             <Stack>
@@ -216,28 +245,45 @@ export default function MdEditorWithHeader() {
                   toolbarItems={toolbar}
                   height="130px"
                   plugins={[colorSyntax, [codeSyntaxHighlight, { highlighter: Prism }]]}
-                  ref={editorRef}
+                  ref={editorRef2}
                 />
               )}
               <Box sx={{ display: 'flex', justifyContent: 'center' }}>
                 <Button
                   onClick={handleCancelButtonClick}
-                  sx={{ width: 20, height: 25, border: '2px solid #E3E6FF', borderRadius: 3, color: 'black', margin: '8px', marginRight: '3px' }}
+                  sx={{
+                    width: 20,
+                    height: 25,
+                    border: '2px solid #E3E6FF',
+                    borderRadius: 3,
+                    color: 'black',
+                    margin: '8px',
+                    marginRight: '3px',
+                  }}
                 >
-                  <Typography variant="body1" sx={{ fontSize: '12px' }}>취소</Typography>
+                  <Typography variant="body1" sx={{ fontSize: '12px' }}>
+                    취소
+                  </Typography>
                 </Button>
                 <Button
                   onClick={() => handleEditComplete()}
-                  sx={{ width: 20, height: 25, bgcolor: '#1A2CDD', borderRadius: 3, color: 'white', margin: '8px' }}
+                  sx={{
+                    width: 20,
+                    height: 25,
+                    bgcolor: '#1A2CDD',
+                    borderRadius: 3,
+                    color: 'white',
+                    margin: '8px',
+                  }}
                 >
-                  <Typography variant="body1" sx={{ fontSize: '12px' }}>완료</Typography>
+                  <Typography variant="body1" sx={{ fontSize: '12px' }}>
+                    완료
+                  </Typography>
                 </Button>
               </Box>
             </Stack>
           ) : (
-            
             <Viewer initialValue={content} />
-           
           )}
         </Box>
       ))}
@@ -248,14 +294,23 @@ export default function MdEditorWithHeader() {
         toolbarItems={toolbar}
         height="300px"
         plugins={[colorSyntax, [codeSyntaxHighlight, { highlighter: Prism }]]}
-        ref={editorRef}
+        ref={editorRef1}
       />
       <Box sx={{ display: 'flex', justifyContent: 'center' }}>
         <Button
           onClick={handleCompleteButtonClick}
-          sx={{ width: 20, height: 25, bgcolor: '#1A2CDD', borderRadius: 3, color: 'white', margin: '8px' }}
+          sx={{
+            width: 20,
+            height: 25,
+            bgcolor: '#1A2CDD',
+            borderRadius: 3,
+            color: 'white',
+            margin: '8px',
+          }}
         >
-          <Typography variant="body1" sx={{ fontSize: '12px' }}>저장</Typography>
+          <Typography variant="body1" sx={{ fontSize: '12px' }}>
+            저장
+          </Typography>
         </Button>
       </Box>
     </div>
