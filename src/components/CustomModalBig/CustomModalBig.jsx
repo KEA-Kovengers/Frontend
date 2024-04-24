@@ -21,7 +21,7 @@ import { colors } from '../../theme/variableColors';
 import { useState } from 'react';
 import { secondary } from 'src/theme/palette';
 
-import { useCounter } from 'src/hooks/useAiCreateCount';
+import { useCounter } from 'src/hooks/aiCreateCount';
 import { PostSummary, PostGenerateImage } from 'src/api/ai.api';
 
 import { styled } from 'styled-components';

@@ -15,7 +15,7 @@ import CustomModal from 'src/components/CustomModal/CustomModal';
 
 import { useToggle } from 'src/hooks/useToggle';
 
-import { useCounter } from 'src/hooks/useAiCreateCount';
+import { useCounter } from 'src/hooks/aiCreateCount';
 
 export default function SelectOptionView() {
   const [isSelected, setIsSelected] = useState(null);

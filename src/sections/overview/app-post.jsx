@@ -1,7 +1,9 @@
 import PropTypes from 'prop-types';
 
 import AppCard from './app-card';
+import AppCard2 from './app-card2';
 import AppCard3 from './app-card3';
+import AppCard4 from './app-card4';
 
 // ----------------------------------------------------------------------
 
@@ -13,8 +15,8 @@ export default function AppPost({ filter }) {
       return (
         <div>
           <AppCard />
-          <AppCard />
-          <AppCard />
+          <AppCard2 />
+          <AppCard4 />
         </div>
       );
     case 1:
