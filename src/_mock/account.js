@@ -20,3 +20,11 @@ export const account3 = {
   email: 'namsomi@gachon.ac.kr',
   photoURL: '/assets/images/avatars/avatar_2.jpg',
 };
+
+
+export const account4 = {
+  displayName: '소정이의 블로그',
+  email: 'sojeong0828@gachon.ac.kr',
+  photoURL: '/assets/images/avatars/avatar_25.jpg',
+};
+

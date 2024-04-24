@@ -10,8 +10,8 @@ import LikeTable from './article-like-table';
 
 export default function ArticleCommunity() {
   const [like, setLike] = useState(false);
-  const [likeCount, setLikeCount] = useState(7);
-  const [commentCount, setCommentCount] = useState(3);
+  const [likeCount, setLikeCount] = useState(6);
+  const [commentCount, setCommentCount] = useState(1);
   const [viewCount, setViewCount] = useState(5);
   const [showLikeTable, setShowLikeTable] = useState(false);
 
