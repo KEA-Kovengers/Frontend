@@ -1,5 +1,19 @@
 import ArticleKakaoMap from './article-kakao-map';
 
+import { styled } from 'styled-components';
+
+export const Wrapper = styled.div`
+    border-bottom: 1px solid #E4E8EB;
+    border-radius: 1px 1px 0px 0px;
+    display: flex;
+    flex-direction: column;
+    background-color: #F9F9F9;
+    margin-left: 100px;
+    margin-right: 100px;
+`;
+
+
+
 export default function ArticleContent() {
   return (
     <div

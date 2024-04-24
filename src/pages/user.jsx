@@ -8,7 +8,7 @@ export default function UserPage() {
   return (
     <div style={{ justifyContent: 'center', display: 'flex' }}>
       <Helmet>
-        <title> User | Minimal UI </title>
+        <title> User | Newcord </title>
       </Helmet>
 
       <ProfileView />

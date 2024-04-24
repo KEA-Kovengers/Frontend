@@ -49,7 +49,7 @@ export default function Router() {
       element: <Navigate to="/404" replace />,
     },
     {
-      path: '/select-thumbnail',
+      path: 'select-thumbnail',
       element: <SelectThumbnail />,
     },
   ]);
