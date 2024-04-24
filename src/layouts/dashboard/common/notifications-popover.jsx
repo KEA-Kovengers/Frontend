@@ -40,7 +40,7 @@ const NOTIFICATIONS = [
     id: faker.string.uuid(),
     title: '새로운 댓글이 달렸어요.',
     description: '우와 맛있겠네요~ 안녕하세요 만나서 반갑습니다. 같이 소식을 나눠요~',
-    avatar: '/assets/images/pizza.png',
+    avatar: '/assets/images/covers/pizza.png',
     type: 'friend_interactive',
     createdAt: sub(new Date(), { days: 1, hours: 3, minutes: 30 }),
     isUnRead: false,
