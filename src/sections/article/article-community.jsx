@@ -15,17 +15,27 @@ export default function ArticleCommunity() {
   const [viewCount, setViewCount] = useState(5);
   const [showLikeTable, setShowLikeTable] = useState(false);
 
+  const addLike = () => {
+    setLikeCount(likeCount + 1);
+  };
+
+  const removeLike = () => {
+    setLikeCount(likeCount - 1);
+  };
+
   const handleLike = () => {
     setLike(!like);
+    like ? removeLike() :
+      addLike();
   };
 
   const handleLikeCountClick = () => {
     setShowLikeTable(!showLikeTable); // 토글
   };
 
-  const handleLikeCount = () => {
-    setLikeCount(likeCount + 1);
-  };
+  // const handleLikeCount = () => {
+  //   setLikeCount(likeCount + 1);
+  // };
 
   const handleCommentCount = () => {
     setCommentCount(commentCount + 1);

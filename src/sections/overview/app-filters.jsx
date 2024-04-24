@@ -44,8 +44,8 @@ export default function AppFilters() {
   const [filtersList, setFiltersList] = useState([
     '최신순',
     '인기 급상승',
-    '해시태그1',
-    '해시태그2',
+    '여행',
+    '운동',
   ]);
 
   const handleBreadcrumbClick = (index) => {
@@ -95,7 +95,7 @@ export default function AppFilters() {
       <AppAddFilters open={isAddModalOpen} onClose={handleAddModalClose} onAdd={handleAddFilter} />
 
       {/* 필터에 해당하는 컴포넌트 표시 */}
-      <Box direction='column' sx={{pt:"30px"}}>
+      <Box direction='column' sx={{ pt: "30px" }}>
         <AppPost filter={selectedBreadcrumb} />
       </Box>
 
