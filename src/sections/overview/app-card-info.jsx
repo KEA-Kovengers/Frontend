@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 
 import { faker } from '@faker-js/faker';
@@ -16,7 +17,7 @@ import Iconify from 'src/components/iconify';
 
 // ----------------------------------------------------------------------
 
-export default function AppCardInfo() {
+export default function AppCardInfo({info}) {
 
   const card_style = {
     borderRadius: 0,
@@ -25,7 +26,7 @@ export default function AppCardInfo() {
 
   const Userimage = (
     <img
-      src='assets\images\avatars\avatar_25.jpg'
+      src={info[0].userImage}
       alt="user"
       style={{
         borderRadius: '50%',
@@ -33,7 +34,7 @@ export default function AppCardInfo() {
         height: '100%',
         maxWidth: '50px',
         maxHeight: '50px',
-      }} />
+      }}/>
   );
 
   const Title = (
@@ -51,15 +52,13 @@ export default function AppCardInfo() {
         '&:hover': {
           textDecoration: 'underline'
         }
-      }}
-    >
-      고양이 감기 : 허피스 바이러스
-    </Typography>
+      }}>
+        {info[0].title}
+      </Typography>
   );
 
   const UserName = (
     <Typography
-      label='UserName'
       sx={{
         color: colors.blueBlack,
         fontSize: '13px',
@@ -68,22 +67,20 @@ export default function AppCardInfo() {
         paddingRight: '10px'
       }}
       noWrap>
-      소정이의 블로그
-    </Typography>
+        {info[0].userName}
+      </Typography>
   );
 
   const Date = (
     <Typography
-      label='date'
       variant="caption"
       sx={{
         color: colors.textGrey,
         fontSize: '13px'
       }}
       noWrap>
-      {/*{fDate(faker.date.past())} */}
-      2024. 03. 15
-    </Typography>
+        {info[0].date}
+      </Typography>
   );
 
   const [like, setLike] = useState(false);
@@ -143,3 +140,7 @@ export default function AppCardInfo() {
     </Card>
   );
 };
+
+AppCardInfo.prototype = {
+  info: PropTypes.arrayOf(PropTypes.object).isRequired,
+}
