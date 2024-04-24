@@ -53,8 +53,8 @@
     "simplebar-react": "^3.2.4",
     "slick-carousel": "^1.8.1",
     "styled-components": "^6.1.8",
-    "vite-plugin-html": "^3.2.2",
-    "zustand": "^4.5.0"
+    "zustand": "^4.5.0",
+    "vite-plugin-html": "^3.2.2"
   },
   "devDependencies": {
     "@vitejs/plugin-react-swc": "^3.4.0",

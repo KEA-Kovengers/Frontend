@@ -1,12 +1,14 @@
 import React, { useRef } from "react";
 import PropTypes from 'prop-types';
+import { Link } from 'react-router-dom';
 
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 
-import {Card, CardMedia,IconButton} from '@mui/material'
+import {Box, Card, CardMedia,IconButton} from '@mui/material'
 
+import { styled } from '@mui/material/styles';
 import { colors } from 'src/theme/variableColors';
 
 import Iconify from 'src/components/iconify'; 
@@ -16,7 +18,19 @@ import Iconify from 'src/components/iconify';
 const card_style = {
     borderRadius: 0,
     bgcolor: 'background.default',
-  }
+    width: '100%',
+    position: 'relative',
+    paddingBottom: '56.25%', //16:9 비율
+}
+
+const CustomCardMedia = styled(CardMedia)({
+    objectFit: 'cover',
+    width: '100%',
+    height: '100%',
+    position: 'absolute',
+    top: 0, // 이거를 안하면 이미지가 겹쳐서 보임
+    left: 0,
+  });
 
 export default function AppCardImage({images}){
 
@@ -35,38 +49,27 @@ export default function AppCardImage({images}){
     return (
 
     <div>
-
     {/* 이미지의 개수에 따라 slider show 여부 정해짐 */}
     {images.length > 1 ? (
         <Slider {...settings} ref={sliderRef}>
         {images.map((image) => (
-        <Card key={image.id} sx={card_style}>
-            <CardMedia
-            component="img"
-            src={image.src} 
-            alt={image.id} 
-            sx={{
-                objectFit: 'cover',
-                objectPosition: 'center',
-                width: '100%',
-                height: '100%',
-            }} />
+            <Card key={image.id} sx={card_style}>
+                <CustomCardMedia 
+                component="img"
+                src={image.src} 
+                alt={image.id} />
         </Card>
         ))}
         </Slider>
         ) : (
         images.map((image) => (
-            <Card key={image.id} sx={card_style}>
-            <CardMedia
+            <Card 
+            key={image.id}             
+            sx={card_style}>
+            <CustomCardMedia 
                 component="img"
                 src={image.src} 
-                alt={image.id} 
-                sx={{
-                objectFit: 'cover',
-                objectPosition: 'center',
-                width: '100%',
-                height: '100%',
-                }} />
+                alt={image.id} />
             </Card>
             ))
         )}  
@@ -116,5 +119,5 @@ CustomNextArrow.propTypes = {
 };
 
 AppCardImage.prototype = {
-    images: PropTypes.image,
+    images: PropTypes.arrayOf(PropTypes.object).isRequired,
 }
