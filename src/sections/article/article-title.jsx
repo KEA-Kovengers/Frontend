@@ -26,7 +26,7 @@ export default function ArticleTitle() {
       }}
     >
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
-        <span style={{ fontSize: '24px', marginTop: '15px' }}>고양이 감기</span>
+        <span style={{ fontSize: '24px', marginTop: '15px' }}>고양이 감기 : 허피스 바이러스</span>
         <div
           style={{
             flexDirection: 'row',
