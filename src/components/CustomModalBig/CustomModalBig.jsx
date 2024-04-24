@@ -24,6 +24,8 @@ import { secondary } from 'src/theme/palette';
 import { useCounter } from 'src/hooks/useAiCreateCount';
 import { PostSummary, PostGenerateImage } from 'src/api/ai.api';
 
+import { styled } from 'styled-components';
+
 export default function CustomModalBig({
   leftButton,
   rightButton,

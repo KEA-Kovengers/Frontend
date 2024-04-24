@@ -5,6 +5,7 @@ import { useTheme } from '@mui/material/styles';
 import { useResponsive } from 'src/hooks/use-responsive'; 
 import { HEADER } from '../../../layouts/dashboard/config-layout';
 import Logo from 'src/components/logo';
+import { useNavigate } from 'react-router-dom';
 
 import CollabProfile from '../header/collab-profile';
 import ModifyPopover from '../header/modify-popover';
@@ -14,6 +15,8 @@ import InvitePopover from '../header/invite-popover';
 import MdEditor from '../editor/md-editor';
 
 export default function BlogView() {
+  const navigate = useNavigate();
+
   const headerHeight = HEADER.H_MOBILE; 
   const globalTheme = useTheme(); 
   const lgUp = useResponsive('up', 'lg'); 
@@ -48,7 +51,9 @@ export default function BlogView() {
         <Logo sx={{ mt: 3, ml: 2 }} />
         <Toolbar sx={{ height: 1 }}>
           {renderContent}
-          <Button sx={{ width: 54, height: 40, bgcolor: '#1A2CDD', borderRadius: 3, color: 'white', fontSize: '18px', margin: '13px' }}>
+          <Button 
+          onClick={()=>navigate('/select-thumbnail')}
+          sx={{ width: 54, height: 40, bgcolor: '#1A2CDD', borderRadius: 3, color: 'white', fontSize: '18px', margin: '13px' }}>
             <Typography variant="body1" sx={{ fontSize: '16px' }}>완료</Typography>
           </Button>
         </Toolbar>

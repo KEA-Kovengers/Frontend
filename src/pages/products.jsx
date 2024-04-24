@@ -8,7 +8,7 @@ export default function SearchPage() {
   return (
     <>
       <Helmet>
-        <title> Products | Minimal UI </title>
+        <title> Products | Newcord </title>
       </Helmet>
 
       <SearchView />
