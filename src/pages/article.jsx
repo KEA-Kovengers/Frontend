@@ -5,7 +5,7 @@ export default function ArticlePage() {
     return (
         <>
             <Helmet>
-                <title> Article | Minimal UI </title>
+                <title> Article | Newcord </title>
             </Helmet>
 
             <ArticleView />

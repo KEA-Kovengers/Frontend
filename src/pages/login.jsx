@@ -9,7 +9,7 @@ export default function LoginPage() {
   return (
     <>
       <Helmet>
-        <title> Newcord | Login  </title>
+        <title> Login | Newcord  </title>
       </Helmet>
 
       <LoginView />

@@ -17,6 +17,8 @@ import ListItemText from '@mui/material/ListItemText';
 import ListSubheader from '@mui/material/ListSubheader';
 import ListItemAvatar from '@mui/material/ListItemAvatar';
 import ListItemButton from '@mui/material/ListItemButton';
+import PersonAddIcon from '/assets/icons/add-friend.svg';
+
 
 import { fToNow } from 'src/utils/format-time';
 
@@ -26,30 +28,54 @@ import Scrollbar from 'src/components/scrollbar';
 // ----------------------------------------------------------------------
 
 const NOTIFICATIONS = [
-  
   {
     id: faker.string.uuid(),
-    title: '2soJeong',
-    description: '님이 친구 신청을 보냈어요.',
-    avatar: '/assets/images/avatars/avatar_1.jpg',
+    title: 'Your order is placed',
+    description: 'waiting for shipping',
+    avatar: null,
+    type: 'order_placed',
+    createdAt: set(new Date(), { hours: 10, minutes: 30 }),
+    isUnRead: true,
+  },
+  {
+    id: faker.string.uuid(),
+    title: faker.person.fullName(),
+    description: 'answered to your comment on the Minimal',
+    avatar: '/assets/images/avatars/avatar_2.jpg',
     type: 'friend_interactive',
     createdAt: sub(new Date(), { hours: 3, minutes: 30 }),
     isUnRead: true,
   },
   {
     id: faker.string.uuid(),
-    title: '새로운 댓글이 달렸어요.',
-    description: '우와 맛있겠네요~ 안녕하세요 만나서 반갑습니다. 같이 소식을 나눠요~',
-    avatar: '/assets/images/pizza.png',
-    type: 'friend_interactive',
+    title: 'You have new message',
+    description: '5 unread messages',
+    avatar: null,
+    type: 'chat_message',
     createdAt: sub(new Date(), { days: 1, hours: 3, minutes: 30 }),
     isUnRead: false,
   },
-
-  
+  {
+    id: faker.string.uuid(),
+    title: 'You have new mail',
+    description: 'sent from Guido Padberg',
+    avatar: null,
+    type: 'mail',
+    createdAt: sub(new Date(), { days: 2, hours: 3, minutes: 30 }),
+    isUnRead: false,
+  },
+  {
+    id: faker.string.uuid(),
+    title: 'Delivery processing',
+    description: 'Your order is being shipped',
+    avatar: null,
+    type: 'order_shipped',
+    createdAt: sub(new Date(), { days: 3, hours: 3, minutes: 30 }),
+    isUnRead: false,
+  },
 ];
 
-export default function NotificationsPopover() {
+export default function InvitePopover() {
   const [notifications, setNotifications] = useState(NOTIFICATIONS);
 
   const totalUnRead = notifications.filter((item) => item.isUnRead === true).length;
@@ -76,9 +102,7 @@ export default function NotificationsPopover() {
   return (
     <>
       <IconButton color={open ? 'primary' : 'default'} onClick={handleOpen}>
-        <Badge badgeContent={totalUnRead} color="error">
-          <Iconify width={24} icon="solar:bell-bing-bold-duotone" />
-        </Badge>
+        <img src={PersonAddIcon} alt="Add Friend" width={24} height={24} />
       </IconButton>
 
       <Popover
@@ -123,7 +147,7 @@ export default function NotificationsPopover() {
               </ListSubheader>
             }
           >
-            {notifications.slice(0, 1).map((notification) => (
+            {notifications.slice(0, 2).map((notification) => (
               <NotificationItem key={notification.id} notification={notification} />
             ))}
           </List>
@@ -136,7 +160,7 @@ export default function NotificationsPopover() {
               </ListSubheader>
             }
           >
-            {notifications.slice(1, 5).map((notification) => (
+            {notifications.slice(2, 5).map((notification) => (
               <NotificationItem key={notification.id} notification={notification} />
             ))}
           </List>
@@ -144,7 +168,11 @@ export default function NotificationsPopover() {
 
         <Divider sx={{ borderStyle: 'dashed' }} />
 
-        
+        <Box sx={{ p: 1 }}>
+          <Button fullWidth disableRipple>
+            View All
+          </Button>
+        </Box>
       </Popover>
     </>
   );
@@ -205,24 +233,39 @@ function NotificationItem({ notification }) {
 // ----------------------------------------------------------------------
 
 function renderContent(notification) {
-  // description 문자열의 최대 길이
-  const maxLength = 35;
-  
-  // description 문자열이 최대 길이보다 길면 생략 부호를 추가하여 자름
-  const truncatedDescription = notification.description.length > maxLength
-    ? notification.description.slice(0, maxLength) + '...' 
-    : notification.description;
-
   const title = (
     <Typography variant="subtitle2">
       {notification.title}
       <Typography component="span" variant="body2" sx={{ color: 'text.secondary' }}>
-        &nbsp; {truncatedDescription}
+        &nbsp; {notification.description}
       </Typography>
     </Typography>
   );
 
-
+  if (notification.type === 'order_placed') {
+    return {
+      avatar: <img alt={notification.title} src="/assets/icons/ic_notification_package.svg" />,
+      title,
+    };
+  }
+  if (notification.type === 'order_shipped') {
+    return {
+      avatar: <img alt={notification.title} src="/assets/icons/ic_notification_shipping.svg" />,
+      title,
+    };
+  }
+  if (notification.type === 'mail') {
+    return {
+      avatar: <img alt={notification.title} src="/assets/icons/ic_notification_mail.svg" />,
+      title,
+    };
+  }
+  if (notification.type === 'chat_message') {
+    return {
+      avatar: <img alt={notification.title} src="/assets/icons/ic_notification_chat.svg" />,
+      title,
+    };
+  }
   return {
     avatar: notification.avatar ? <img alt={notification.title} src={notification.avatar} /> : null,
     title,

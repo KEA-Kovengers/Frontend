@@ -11,8 +11,7 @@ export default function LoginKakao() {
     window.location.href = kakaoURL;
   }
 
-  const code = new URL(window.location.href).searchParams.get("code");
-  console.log(code)
+  let code = new URL(window.location.href).searchParams.get("code");
 
   return (
 
