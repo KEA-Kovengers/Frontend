@@ -224,7 +224,7 @@ export default function MdEditorWithHeader() {
             fontSize: '18px',
           }}
         >
-          <Typography variant="body1" sx={{ fontSize: '16px' }}>
+          <Typography variant="body1" sx={{ fontSize: '13px' }}>
             ai 태그
           </Typography>
         </Button>
