@@ -1,6 +1,5 @@
 import axios from 'axios';
 import { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 
 export default function LoginKakaoAuth() {
     
@@ -38,8 +37,3 @@ export default function LoginKakaoAuth() {
     </div>
   );
 }
-
-// https://velog.io/@rmdnps10/React-KAKAO-%EC%86%8C%EC%85%9C-%EB%A1%9C%EA%B7%B8%EC%9D%B8-%EA%B5%AC%ED%98%84
-// https://data-jj.tistory.com/53
-// https://diddl.tistory.com/157
-// https://cowboysj.tistory.com/15
