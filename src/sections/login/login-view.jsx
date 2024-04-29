@@ -58,7 +58,13 @@ export default function LoginView() {
             <Typography variant="body2" sx={{ paddingTop:'31px' }}>로그인 후 이용 가능해요!</Typography>
           </Box>
 
-          <LoginKakao/>
+          <Box
+            sx={{
+              textAlign: 'center',
+              paddingTop: '72px',
+            }}>
+            <LoginKakao/>
+          </Box>
 
         </Card>
       </Stack>
