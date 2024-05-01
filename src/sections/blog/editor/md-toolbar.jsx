@@ -1,4 +1,5 @@
 import { videoIcon, musicIcon, mapIcon, grammarIcon, autoIcon } from './md-icons';
+import { createLastButton } from './md-icons';
 
 export const toolbar = [
   ['heading', 'bold', 'italic', 'strike'],
@@ -34,6 +35,12 @@ export const toolbar = [
       name: 'auto',
       tooltip: 'Auto complete',
       el: autoIcon,
+    },
+  ],
+  [
+    {
+      el: createLastButton(),
+      tooltip: 'Custom Button',
     },
   ],
 ];
