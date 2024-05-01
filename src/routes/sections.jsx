@@ -30,7 +30,7 @@ export default function Router() {
         { path: 'user', element: <UserPage /> },
         { path: 'search', element: <ProductsPage /> },
         { path: 'article', element: <ArticlePage /> },
-        {path: 'login-auth', element: <LoginAuthPage />},
+        {path: 'api/auth/login', element: <LoginAuthPage />},
       ],
     },
     {
