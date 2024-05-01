@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from "react";
 import PropTypes from 'prop-types';
 
 // import IconButton from '@mui/material/IconButton';
@@ -18,7 +18,6 @@ import LinearProgress from '@mui/material/LinearProgress';
 import Iconify from 'src/components/iconify';
 import { colors } from '../../theme/variableColors';
 
-import { useState } from 'react';
 import { secondary } from 'src/theme/palette';
 
 import { useCounter } from 'src/hooks/aiCreateCount';

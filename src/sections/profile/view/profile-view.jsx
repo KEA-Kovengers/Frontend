@@ -1,7 +1,6 @@
-import React from 'react';
+import React, { useState } from "react";
 import { SpaceBar } from "@mui/icons-material";
 import UserInfo from "../profile-user-info";
-import { useState } from 'react';
 import Tab from '@mui/material/Tab';
 import Box from '@mui/material/Box';
 import Tabs from '@mui/material/Tabs';
