@@ -61,11 +61,12 @@ export default function LoginView() {
 
           <Box
             sx={{
-              textAlign: "center",
-              paddingTop: "72px",
+              textAlign: 'center',
+              paddingTop: '72px',
             }}>
-              <LoginKakao />
+            <LoginKakao/>
           </Box>
+
         </Card>
       </Stack>
     </Box>

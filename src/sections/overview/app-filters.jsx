@@ -6,7 +6,7 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
 import Breadcrumbs from '@mui/material/Breadcrumbs';
-import { styled, emphasize } from '@mui/material/styles';
+import { styled, emphasize } from '@mui/material';
 
 import Iconify from 'src/components/iconify';
 
@@ -36,6 +36,7 @@ const StyledBreadcrumb = styled(Chip)(({ theme, selected }) => {
     justifyContent: 'center',
   };
 });
+
 
 export default function AppFilters() {
   // 선택된 Breadcrumb의 index와 모달 상태 및 필터 목록 상태 관리
@@ -96,7 +97,7 @@ export default function AppFilters() {
 
       {/* 필터에 해당하는 컴포넌트 표시 */}
       <Box direction='column' sx={{ pt: "30px" }}>
-        <AppPost filter={selectedBreadcrumb} />
+          <AppPost filter={selectedBreadcrumb} />
       </Box>
 
     </Container>

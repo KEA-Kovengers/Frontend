@@ -2,9 +2,6 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 
-import { faker } from '@faker-js/faker';
-import { fDate } from 'src/utils/format-time';
-
 import {
   Card, CardContent, CardMedia,
   Stack, Grid, Box,
@@ -141,6 +138,6 @@ export default function AppCardInfo({info}) {
   );
 };
 
-AppCardInfo.prototype = {
+AppCardInfo.propTypes = {
   info: PropTypes.arrayOf(PropTypes.object).isRequired,
 }

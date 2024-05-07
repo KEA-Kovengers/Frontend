@@ -34,6 +34,7 @@ const CustomCardMedia = styled(CardMedia)({
 
 export default function AppCardImage({images}){
 
+    // 슬라이더 추가
     const sliderRef = useRef(null);
     const settings = {
       arrows:true,
@@ -43,7 +44,7 @@ export default function AppCardImage({images}){
       slidesToShow: 1,
       slidesToScroll: 1,
       prevArrow: <CustomPrevArrow onClick={()=>sliderRef.current.slickPrev()}/>,
-      nextArrow: <CustomNextArrow onClick={()=>sliderRef.current.slicNext()}/>,
+      nextArrow: <CustomNextArrow onClick={()=>sliderRef.current.slickNext()}/>,
     };
 
     return (
@@ -78,6 +79,7 @@ export default function AppCardImage({images}){
     );
 }
 
+// 슬라이더 화살표 커스텀
 const CustomPrevArrow = ({onClick}) => (
     <IconButton
         onClick={onClick}
@@ -118,6 +120,6 @@ CustomNextArrow.propTypes = {
     onClick: PropTypes.func.isRequired, 
 };
 
-AppCardImage.prototype = {
+AppCardImage.propTypes = {
     images: PropTypes.arrayOf(PropTypes.object).isRequired,
 }
