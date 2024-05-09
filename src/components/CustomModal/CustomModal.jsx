@@ -15,7 +15,35 @@ import {
 } from '@mui/material';
 import Iconify from 'src/components/iconify';
 import { colors } from '../../theme/variableColors';
-import { right } from '@popperjs/core';
+
+const modal_style = {
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: 270 * 1.534,
+  height: 270,
+  bgcolor: 'background.paper',
+  borderRadius: 3,
+
+  left_button: {
+    width: 120,
+    height: 40,
+    border: '3px solid #E3E6FF',
+    borderRadius: 3,
+    color: 'black',
+    marginRight: '49px',
+    fontSize: '18px',
+  },
+  right_button: {
+    width: 120,
+    height: 40,
+    bgcolor: '#1A2CDD',
+    borderRadius: 3,
+    color: 'white',
+    fontSize: '18px',
+  },
+};
 
 export default function CustomModal({
   rightButton,
@@ -24,38 +52,10 @@ export default function CustomModal({
   open,
   title,
   contents,
+  colorText,
   buttonAction,
 }) {
   const [textField, setTextField] = useState('');
-
-  const modal_style = {
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    width: 270 * 1.534,
-    height: 270,
-    bgcolor: 'background.paper',
-    borderRadius: 3,
-
-    left_button: {
-      width: 120,
-      height: 40,
-      border: '3px solid #E3E6FF',
-      borderRadius: 3,
-      color: 'black',
-      marginRight: '49px',
-      fontSize: '18px',
-    },
-    right_button: {
-      width: 120,
-      height: 40,
-      bgcolor: '#1A2CDD',
-      borderRadius: 3,
-      color: 'white',
-      fontSize: '18px',
-    },
-  };
 
   // left button
   const handleLeftButtonClick = () => {
@@ -65,6 +65,7 @@ export default function CustomModal({
   //right button
   const handleRightButtonClick = () => {
     buttonAction.rightAction(); // Open 'ai_select' modal
+    console.log('handleRightButtonClick');
     onClose(); // Close the modal
   };
 
@@ -140,19 +141,31 @@ export default function CustomModal({
                   }}
                 >
                   {mode !== 'video' ? (
-                    <Typography
-                      id="modal-modal-description"
-                      color={colors.blueBlack}
-                      sx={{
-                        // paddingTop: '16px',
-                        // mt: '50px',
-                        fontSize: 20,
-                        textAlign: 'center',
-                        // backgroundColor: 'pink',
-                      }}
-                    >
-                      {contents}
-                    </Typography>
+                    <>
+                      {colorText && (
+                        <Typography
+                          id="modal-modal-description"
+                          variant="h5"
+                          color="primary"
+                          sx={{ fontSize: '16px' }}
+                        >
+                          {colorText}
+                        </Typography>
+                      )}
+                      <Typography
+                        id="modal-modal-description"
+                        color={colors.blueBlack}
+                        sx={{
+                          // paddingTop: '16px',
+                          ml: 1,
+                          fontSize: 20,
+                          // textAlign: 'center',
+                          // backgroundColor: 'pink',
+                        }}
+                      >
+                        {contents}
+                      </Typography>
+                    </>
                   ) : (
                     <Stack direction="row" justifyContent="space-around" spacing={6}>
                       <Button
@@ -196,7 +209,9 @@ export default function CustomModal({
               <Button onClick={onClose} sx={modal_style.left_button}>
                 취소
               </Button>
-              <Button sx={modal_style.right_button}>{rightButton}</Button>
+              <Button sx={modal_style.right_button} onClick={handleRightButtonClick}>
+                {rightButton}
+              </Button>
             </Stack>
           )}
         </Box>
@@ -213,6 +228,7 @@ CustomModal.propTypes = {
   open: PropTypes.bool,
   title: PropTypes.string,
   contents: PropTypes.string,
+  colorText: PropTypes.string,
   buttonAction: PropTypes.shape({
     leftAction: PropTypes.func,
     rightAction: PropTypes.func,

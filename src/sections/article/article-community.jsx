@@ -4,7 +4,7 @@ import IconButton from '@mui/material/IconButton';
 import OutlinedInput from '@mui/material/OutlinedInput';
 import InputAdornment from '@mui/material/InputAdornment';
 
-import { Button } from '@mui/material';
+import { Button, Divider } from '@mui/material';
 import ArticleComment from './article-coment';
 import LikeTable from './article-like-table';
 
@@ -25,8 +25,7 @@ export default function ArticleCommunity() {
 
   const handleLike = () => {
     setLike(!like);
-    like ? removeLike() :
-      addLike();
+    like ? removeLike() : addLike();
   };
 
   const handleLikeCountClick = () => {
@@ -80,18 +79,18 @@ export default function ArticleCommunity() {
           flexDirection: 'row',
           alignItems: 'center',
           display: 'flex',
-          width: '23%',
-          justifyContent: 'space-evenly',
+          width: 'auto',
         }}
       >
-        <IconButton onClick={handleLike} color={like ? '#FF5631' : '#637381'}>
+        <IconButton onClick={handleLike}>
           <Iconify
-            icon={like ? 'flat-color-icons:like' : 'icon-park-outline:like'}
+            icon={like ? 'gridicons:heart' : 'ph:heart'}
             sx={{ width: '20px', height: '20px' }}
+            color={like ? '#FF5631' : '#637381'}
           />
         </IconButton>
         <span
-          style={{ fontSize: '13px', color: '#637381', cursor: 'pointer' }}
+          style={{ fontSize: '13px', color: '#637381', cursor: 'pointer', marginRight: 3 }}
           onClick={handleLikeCountClick}
           onKeyDown={(event) => {
             if (event.key === 'Enter') {
@@ -104,12 +103,12 @@ export default function ArticleCommunity() {
           {likeCount}
         </span>
 
-        <IconButton color="#637381" size="small">
+        <IconButton color="#637381" size="small" style={{ marginRight: 3 }}>
           <Iconify icon="iconoir:chat-bubble" sx={{ width: '20px', height: '20px' }} />
         </IconButton>
         <div style={{ fontSize: '13px', color: '#637381' }}>{commentCount}</div>
 
-        <IconButton color="#637381">
+        <IconButton color="#637381" style={{ marginRight: 1 }}>
           <Iconify icon="mdi:eye" sx={{ width: '20px', height: '20px' }} />
         </IconButton>
         <div style={{ fontSize: '13px', color: '#637381' }}>{viewCount}</div>
@@ -122,6 +121,7 @@ export default function ArticleCommunity() {
       <div
         style={{
           marginTop: '30px',
+          marginBottom: '20px',
           flexDirection: 'column',
           display: 'flex',
           alignItems: 'flex-start',
@@ -132,8 +132,7 @@ export default function ArticleCommunity() {
           style={{ marginTop: '20px', width: '100%' }}
           // value={filterName}
           // onChange={onFilterName}
-          // placeholder="Search user..."
-
+          placeholder="댓글을 입력해주세요."
           endAdornment={
             <InputAdornment position="end">
               <Button sx={modal_style.right_button}>등록</Button>
@@ -143,6 +142,9 @@ export default function ArticleCommunity() {
       </div>
 
       <ArticleComment />
+      <Divider style={{ margin: 1 }} />
+      <ArticleComment />
+      <Divider style={{ margin: 1 }} />
     </div>
   );
 }

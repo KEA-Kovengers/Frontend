@@ -15,7 +15,7 @@ import CustomModal from 'src/components/CustomModal/CustomModal';
 
 import { useToggle } from 'src/hooks/useToggle';
 
-import { useCounter } from 'src/hooks/aiCreateCount';
+import { useCounter } from 'src/hooks/useCount';
 
 export default function SelectOptionView() {
   const [isSelected, setIsSelected] = useState(null);
@@ -31,7 +31,6 @@ export default function SelectOptionView() {
   const aiSelectModalToggle = useToggle();
   const aiCreatingModalToggle = useToggle();
   const imageConfirmModalToggle = useToggle();
-  const videoSelectModalToggle = useToggle();
   const videoConfirmModalToggle = useToggle();
 
   const uploadVideo = () => {
@@ -67,28 +66,23 @@ export default function SelectOptionView() {
       };
       input.click();
     }
-    // if (option === 'video') {
-    //   const input = document.createElement('input');
-    //   input.type = 'file';
-    //   input.accept = 'video/*';
-    //   input.onchange = function (event) {
-    //     const file = event.target.files[0];
-    //     const video = URL.createObjectURL(file);
-    //     console.log('video', video);
-    //     setImageUrl(video);
-    //     if (file) {
-    //       videoConfirmModalToggle.toggle();
-    //     }
-    //   };
-    //   input.click();
-    // }
-    setIsSelected(option);
-    // {
-    //   option === 'image' && fileConfirmModalToggle.toggle();
-    // }
-    {
-      option === 'video' && videoSelectModalToggle.toggle();
+    if (option === 'video') {
+      const input = document.createElement('input');
+      input.type = 'file';
+      input.accept = 'video/*';
+      input.onchange = function (event) {
+        const file = event.target.files[0];
+        const video = URL.createObjectURL(file);
+        console.log('video', video);
+        setImageUrl(video);
+        if (file) {
+          videoConfirmModalToggle.toggle();
+        }
+      };
+      input.click();
     }
+    setIsSelected(option);
+
     if (option === 'ai') {
       aiModalToggle.toggle();
     } else if (option === 'ai_select') {
@@ -134,13 +128,13 @@ export default function SelectOptionView() {
         rightAction={ConfirmFile}
         image={{ imgFile: imgFile, imgUrl: imageUrl }}
       />
-      <CustomModal
+      {/* <CustomModal
         mode={'video'}
         onClose={videoSelectModalToggle.toggle}
         title={'영상'}
         open={videoSelectModalToggle.isOpen}
         buttonAction={{ leftAction: uploadVideo, rightAction: null }}
-      />
+      /> */}
       <CustomModalBig
         rightButton={'예'}
         mode={'video'}
