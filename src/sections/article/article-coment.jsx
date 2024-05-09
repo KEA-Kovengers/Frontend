@@ -3,82 +3,150 @@ import { useState } from 'react';
 import { account } from 'src/_mock/account';
 import Avatar from '@mui/material/Avatar';
 import CustomModal from 'src/components/CustomModal/CustomModal';
+import { useNavigate } from 'react-router-dom';
+import ReportModal from 'src/sections/article/ReportModal';
+import { useToggle } from 'src/hooks/useToggle';
+import { Link } from 'react-router-dom';
+import Typography from '@mui/material/Typography';
+
 export default function ArticleComment() {
-    const [open, setOpen] = useState(null);
-    const displayName = account.displayName || '';
-    const bio = account.bio || '';
-    const handleOpenMenu = (event) => {
-        setOpen(event.currentTarget);
-    };
+  const navigate = useNavigate();
+  const reportToggle = useToggle();
+  const alertToggle = useToggle();
 
-    const handleCloseMenu = () => {
-        setOpen(null);
-    };
+  const [open, setOpen] = useState(null);
+  const displayName = account.displayName || '';
+  const bio = account.bio || '';
+  const handleOpenMenu = (event) => {
+    setOpen(event.currentTarget);
+  };
 
-    const [isDelModalOpen, setIsModalOpen] = useState(false);
+  const handleCloseMenu = () => {
+    setOpen(null);
+  };
 
-    const [isReModalOpen, setIsReModalOpen] = useState(false);
+  const [isDelModalOpen, setIsModalOpen] = useState(false);
 
+  const [isReModalOpen, setIsReModalOpen] = useState(false);
 
-    const handleOpenModalClick = () => {
-        setIsModalOpen(true);
-    };
+  const handleOpenModalClick = () => {
+    setIsModalOpen(true);
+  };
 
-    const handleCloseModal = () => {
-        setIsModalOpen(false);
-    };
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+  };
 
-    const handleOpenReModalClick = () => {
-        setIsReModalOpen(true);
-    };
+  const handleOpenReModalClick = () => {
+    setIsReModalOpen(true);
+  };
 
-    const handleCloseReModal = () => {
-        setIsReModalOpen(false);
-    };
+  const handleCloseReModal = () => {
+    setIsReModalOpen(false);
+  };
 
-    return (
-        <div style={{ marginTop: '30px', borderBottom: '1px solid #E4E8EB', borderRadius: '1px 1px 0px 0px', display: 'flex', flexDirection: 'column', backgroundColor: '#F9F9F9', marginBottom: '10px' }}>
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
-                <div style={{ flexDirection: 'row', display: 'flex', justifyContent: 'space-between', width: "100%" }}>
-
-                    <div style={{ flexDirection: 'row', display: 'flex' }}>
-
-                        <Avatar src={account.photoURL} alt="photoURL" sx={{ width: 40, height: 40, marginLeft: "10px", marginBottom: "10px" }} />
-                        <div style={{ marginLeft: '20px', flexDirection: 'column', display: 'flex', textAlign: 'start' }}>
-                            <span style={{ fontSize: '14px', fontWeight: 'bold' }}>{displayName}</span>
-                            <span style={{ fontSize: '10px' }}>{bio}</span>
-                        </div>
-                    </div>
-
-                    <span style={{ fontSize: '12px', cursor: 'pointer' }} onClick={handleOpenModalClick}>삭제</span>
-                    <CustomModal
-                        rightButton={'삭제'}
-                        // mode={'textfield'}
-                        mode={'content'}
-                        onClose={handleCloseModal}
-                        contents={'댓글을 삭제하시겠습니까?'}
-                        open={isDelModalOpen}
-                    />
-                </div>
-                <div style={{ flexDirection: 'column', display: 'flex', width: "100%", marginTop: "15px", alignItems: 'start' }}>
-                    <div style={{ fontSize: "14px", color: '#000000', marginBottom: '5px' }}>반가워요 </div>
-                    <div style={{ flexDirection: 'row', display: 'flex', width: '23%', justifyContent: 'space-between' }}>
-
-                        <div style={{ fontSize: "12px", color: '#637381', marginBottom: '15px' }}>2024. 03. 15  17:16 </div>
-                        <span style={{ fontSize: "12px", color: '#637381', marginBottom: '15px', cursor: 'pointer' }} onClick={handleOpenReModalClick}>신고</span>
-                        <CustomModal
-                            rightButton={'신고'}
-                            // mode={'textfield'}
-                            mode={'content'}
-                            onClose={handleCloseReModal}
-                            contents={'신고하시겠습니까?'}
-                            open={isReModalOpen}
-                        />
-                    </div>
-                </div>
-
-
+  return (
+    <div
+      style={{
+        marginTop: '10px',
+        marginBottom: '5px',
+        display: 'flex',
+        flexDirection: 'column',
+        height: 'auto',
+      }}
+    >
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+        <div
+          style={{
+            flexDirection: 'row',
+            display: 'flex',
+            justifyContent: 'space-between',
+            width: '100%',
+          }}
+        >
+          <div style={{ flexDirection: 'row', display: 'flex' }} onClick={() => navigate('/user')}>
+            <Avatar
+              src={account.photoURL}
+              alt="photoURL"
+              sx={{ width: 40, height: 40, marginLeft: '10px', marginBottom: '10px' }}
+            />
+            <div
+              style={{
+                marginLeft: '20px',
+                flexDirection: 'column',
+                display: 'flex',
+                textAlign: 'start',
+              }}
+            >
+              <span style={{ fontSize: '14px', fontWeight: 'bold' }}>{displayName}</span>
+              <span style={{ fontSize: '10px' }}>{bio}</span>
             </div>
+          </div>
+
+          <span style={{ fontSize: '12px', cursor: 'pointer' }} onClick={handleOpenModalClick}>
+            삭제
+          </span>
+          <CustomModal
+            rightButton={'삭제'}
+            mode={'content'}
+            onClose={handleCloseModal}
+            contents={'댓글을 삭제하시겠습니까?'}
+            open={isDelModalOpen}
+          />
         </div>
-    );
+        <div
+          style={{
+            flexDirection: 'column',
+            display: 'flex',
+            width: '100%',
+            marginTop: '10px',
+            alignItems: 'start',
+          }}
+        >
+          <div style={{ fontSize: '14px', color: '#000000', marginBottom: '5px' }}>반가워요 </div>
+
+          <div
+            style={{
+              flexDirection: 'row',
+              display: 'flex',
+              width: '23%',
+              justifyContent: 'space-between',
+            }}
+          >
+            <div style={{ fontSize: '12px', color: '#637381' }}>2024. 03. 15 17:16 </div>
+            <span
+              style={{
+                fontSize: '12px',
+                color: '#637381',
+                cursor: 'pointer',
+              }}
+              onClick={handleOpenReModalClick}
+            >
+              신고
+            </span>
+            <CustomModal
+              rightButton={'신고'}
+              mode={'content'}
+              onClose={handleCloseReModal}
+              contents={'신고하시겠습니까?'}
+              open={isReModalOpen}
+              buttonAction={{ rightAction: reportToggle.toggle }}
+            />
+            <ReportModal
+              open={reportToggle.isOpen}
+              onClose={reportToggle.toggle}
+              buttonAction={() => alertToggle.toggle()}
+            />
+            <CustomModal
+              mode={'alert'}
+              open={alertToggle.isOpen}
+              onClose={alertToggle.toggle}
+              title={'댓글 신고'}
+              contents={'신고 되었습니다.'}
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 }
