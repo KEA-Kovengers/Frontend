@@ -1,14 +1,14 @@
 import React from 'react';
-import AppCardData from './data/app-card-data';
+import AppCardData1 from './data/app-card-data1';
 
 import AppCardImage from "./app-card-image";
 import AppCardInfo from "./app-card-info";
 
 // ----------------------------------------------------------------------
 
-export default function AppCard() {
+export default function AppCard1() {
 
-  const [data, setData] = AppCardData();
+  const [data, setData] = AppCardData1();
 
   return (
 
