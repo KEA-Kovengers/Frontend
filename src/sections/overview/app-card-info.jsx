@@ -81,22 +81,49 @@ export default function AppCardInfo({info}) {
   );
 
   const [like, setLike] = useState(false);
-  const [likeCount, setLikeCount] = useState(12);
+  const [likeCount, setLikeCount] = useState(0);
+
+  const addLike = () => {
+    setLikeCount(likeCount + 1);
+  };
+
+  const removeLike = () => {
+    setLikeCount(likeCount - 1);
+  };
 
   const handleLike = () => {
     setLike(!like);
-  }
-  const handleLikeCount = () => {
-    setLikeCount(likeCount + 1);
-  }
+    like ? removeLike() :
+      addLike();
+  };
+
+  const handleLikeCountClick = () => {
+    setShowLikeTable(!showLikeTable); // 토글
+  };
+
 
   const CommunityInformation = (
     <Stack flexDirection="row">
       <Stack direction="row">
         <IconButton onClick={handleLike} color={like ? '#FF5631' : '#637381'}>
-          <Iconify icon={like ? "flat-color-icons:like" : "icon-park-outline:like"} sx={{ display: 'flex', mr: 0.5 }} color={colors.blueBlack} />
+          <Iconify 
+            icon={like ? "flat-color-icons:like" : "icon-park-outline:like"} 
+            sx={{ display: 'flex', mr: 0.5 }} color={colors.blueBlack} 
+          />
         </IconButton>
-        <Typography sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', verticalAlign: 'center' }}>7</Typography>
+        <Typography
+          style={{ fontSize: '13px', color: colors.blueBlack , cursor: 'pointer' }}
+          onClick={handleLikeCountClick}
+          onKeyDown={(event) => {
+            if (event.key === 'Enter') {
+              handleLikeCountClick();
+            }
+          }}
+          tabIndex={0}
+          sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', verticalAlign: 'center' }}
+        >
+          {likeCount}
+        </Typography>
       </Stack>
 
       <Stack direction="row">

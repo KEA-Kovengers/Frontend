@@ -66,6 +66,7 @@ export default function AppFilters() {
 
   // 필터 추가 핸들러
   const handleAddFilter = (newFilterText) => {
+    // 새로운 필터를 기존 필터 목록에 추가
     setFiltersList([...filtersList, newFilterText]);
   };
 

@@ -50,32 +50,25 @@ export default function AppCardImage({images}){
     return (
 
     <div>
-    {/* 이미지의 개수에 따라 slider show 여부 정해짐 */}
-    {images.length > 1 ? (
-        <Slider {...settings} ref={sliderRef}>
-        {images.map((image) => (
-            <Card key={image.id} sx={card_style}>
-                <CustomCardMedia 
-                component="img"
-                src={image.src} 
-                alt={image.id} />
+    {Array.isArray(images) && images.length > 1 ? (
+      <Slider {...settings} ref={sliderRef}>
+           {images.map((image) => (
+              <Card key={image.id} sx={card_style}>
+                  <CustomCardMedia 
+                  component="img"
+                  src={image.src} 
+                  alt={image.id} />
+          </Card>
+          ))}
+      </Slider>
+      ) : (
+      images.map((image, idx) => (
+        <Card key={idx} sx={card_style}>
+          <CustomCardMedia component="img" src={image.src} alt={image.id} />
         </Card>
-        ))}
-        </Slider>
-        ) : (
-        images.map((image) => (
-            <Card 
-            key={image.id}             
-            sx={card_style}>
-            <CustomCardMedia 
-                component="img"
-                src={image.src} 
-                alt={image.id} />
-            </Card>
-            ))
-        )}  
-    </div>
-
+      ))
+    )}
+  </div>
     );
 }
 
