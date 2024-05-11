@@ -64,7 +64,10 @@ export default function ArticleComment() {
             width: '100%',
           }}
         >
-          <div style={{ flexDirection: 'row', display: 'flex' }} onClick={() => navigate('/user')}>
+          <div
+            style={{ flexDirection: 'row', display: 'flex', cursor: 'pointer' }}
+            onClick={() => navigate('/user')}
+          >
             <Avatar
               src={account.photoURL}
               alt="photoURL"

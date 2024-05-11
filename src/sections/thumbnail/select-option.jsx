@@ -11,7 +11,6 @@ import Iconify from 'src/components/iconify';
 import { colors } from 'src/theme/variableColors';
 import { useState } from 'react';
 import CustomModalBig from 'src/components/CustomModalBig/CustomModalBig';
-import CustomModal from 'src/components/CustomModal/CustomModal';
 
 import { useToggle } from 'src/hooks/useToggle';
 
@@ -128,13 +127,6 @@ export default function SelectOptionView() {
         rightAction={ConfirmFile}
         image={{ imgFile: imgFile, imgUrl: imageUrl }}
       />
-      {/* <CustomModal
-        mode={'video'}
-        onClose={videoSelectModalToggle.toggle}
-        title={'영상'}
-        open={videoSelectModalToggle.isOpen}
-        buttonAction={{ leftAction: uploadVideo, rightAction: null }}
-      /> */}
       <CustomModalBig
         rightButton={'예'}
         mode={'video'}
