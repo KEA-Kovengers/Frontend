@@ -51,6 +51,7 @@ export default function CustomModal({
   onClose,
   open,
   title,
+  label,
   contents,
   colorText,
   buttonAction,
@@ -79,11 +80,22 @@ export default function CustomModal({
         sx={{ display: 'flex' }}
       >
         <Box sx={modal_style}>
+          {mode !== 'content' && (
+            <Typography
+              id="modal-modal-title"
+              variant="h4"
+              component="h4"
+              sx={{ zIndex: 2, position: 'fixed', mt: '13px', ml: '15px' }}
+            >
+              {title}
+            </Typography>
+          )}
           <div style={{ display: 'flex', justifyContent: 'end', zIndex: 2 }}>
             <IconButton onClick={onClose} sx={{ mt: '5px', mr: '5px' }}>
               <Iconify icon="eva:close-fill" sx={{ width: '25px', height: '25px' }} />
             </IconButton>
           </div>
+
           <Box
             sx={{
               // mt: '20px',
@@ -99,13 +111,9 @@ export default function CustomModal({
                 // pl: '68px',
                 width: '80%',
                 // backgroundColor: 'pink',
+                justifyContent: mode === 'textfield' && 'center',
               }}
             >
-              {mode !== 'content' && (
-                <Typography id="modal-modal-title" variant="h4" component="h4">
-                  {title}
-                </Typography>
-              )}
               {mode === 'textfield' && (
                 <>
                   <Typography
@@ -119,7 +127,7 @@ export default function CustomModal({
                   </Typography>
                   <TextField
                     id="filter-text"
-                    label="#"
+                    label={label}
                     value={textField}
                     onChange={(e) => setTextField(e.target.value)}
                     margin="normal"
@@ -138,6 +146,7 @@ export default function CustomModal({
                     // backgroundColor: 'grey',
                     justifyContent: 'center',
                     alignItems: 'center',
+                    flexDirection: 'column',
                   }}
                 >
                   {mode !== 'video' ? (
@@ -227,6 +236,7 @@ CustomModal.propTypes = {
   onClose: PropTypes.func,
   open: PropTypes.bool,
   title: PropTypes.string,
+  label: PropTypes.string,
   contents: PropTypes.string,
   colorText: PropTypes.string,
   buttonAction: PropTypes.shape({
