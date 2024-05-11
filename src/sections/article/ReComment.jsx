@@ -11,7 +11,7 @@ import Typography from '@mui/material/Typography';
 import { IconButton } from '@mui/material';
 import Iconify from 'src/components/iconify';
 
-export default function ArticleComment() {
+export default function ReComment() {
   const navigate = useNavigate();
   const reportToggle = useToggle();
   const alertToggle = useToggle();
@@ -50,14 +50,24 @@ export default function ArticleComment() {
   return (
     <div
       style={{
-        marginTop: '15px',
+        marginTop: '5px',
         marginBottom: '5px',
         display: 'flex',
-        flexDirection: 'column',
+        flexDirection: 'row',
         height: 'auto',
       }}
     >
-      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+      <Iconify icon="clarity:child-arrow-line" sx={{ width: '22px', height: '22px' }} />
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'flex-start',
+          backgroundColor: '#e3e6ea7a',
+          borderRadius: '8px',
+          padding: '10px 3px 10px 10px',
+        }}
+      >
         <div
           style={{
             flexDirection: 'row',
@@ -70,11 +80,7 @@ export default function ArticleComment() {
             style={{ flexDirection: 'row', display: 'flex', cursor: 'pointer' }}
             onClick={() => navigate('/user')}
           >
-            <Avatar
-              src={account.photoURL}
-              alt="photoURL"
-              sx={{ width: 40, height: 40, marginLeft: '10px', marginBottom: '10px' }}
-            />
+            <Avatar src={account.photoURL} alt="photoURL" sx={{ width: 40, height: 40 }} />
             <div
               style={{
                 marginLeft: '20px',

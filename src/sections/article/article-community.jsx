@@ -7,6 +7,7 @@ import InputAdornment from '@mui/material/InputAdornment';
 import { Button, Divider } from '@mui/material';
 import ArticleComment from './article-coment';
 import LikeTable from './article-like-table';
+import ReComment from './ReComment';
 
 export default function ArticleCommunity() {
   const [like, setLike] = useState(false);
@@ -70,7 +71,7 @@ export default function ArticleCommunity() {
         flexDirection: 'column',
         alignItems: 'flex-start',
         marginRight: '100px',
-        marginTop: '10px',
+        marginTop: '5px',
         marginLeft: '100px',
       }}
     >
@@ -142,6 +143,8 @@ export default function ArticleCommunity() {
       </div>
 
       <ArticleComment />
+      <Divider style={{ margin: 1 }} />
+      <ReComment />
       <Divider style={{ margin: 1 }} />
       <ArticleComment />
       <Divider style={{ margin: 1 }} />
