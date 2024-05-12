@@ -10,11 +10,10 @@ import AppCardInfo from "./app-card-info";
 
 export default function AppCard() {
 
-  // 카드 내 데이터를 가져옴 (이미지, 정보)
-  const [data, setData] = AppCardData();
-  const loadMoreRef = useRef();
-  const [isLoaded, setIsLoaded] = useState(false);
+  // const loadMoreRef = useRef();
+  // const [isLoaded, setIsLoaded] = useState(false);
 
+  // #1
   // const [offset, setOffset] = useState(0);
   // const [target, setTarget] = useState(null);
   // const [isLoaded, setIsLoaded] = useState(false);
@@ -77,51 +76,55 @@ export default function AppCard() {
   //   }
   // };
 
-  
-   // 새 데이터를 로드하는 함수
-   async function getMoreItem() {
-    // TODO: 실제로는 API 호출 등을 통해 데이터를 가져와야 합니다.
-    // 이 예제에서는 임의의 데이터를 반환합니다.
-    return [
-      {
-        id: data.length, // 새 항목의 ID는 현재 데이터의 길이로 설정
-        image: { src: '/assets/images/covers/cat.jpg' },
-        info: {
-          userImage: '/assets/images/avatars/avatar_9.jpg',
-          title: '새로운 항목',
-          userName: 'New User',
-          date: '2024-04-01',
-        }
-      }
-    ];
-  }
 
-    // onIntersect 함수는 getMoreItem 함수를 호출하여 새 데이터를 가져오고, setData를 사용하여 이를 기존 data 상태에 추가
-    // callback
-    const onIntersect = async ([entry], observer) => {
-      // entry 요소가 교차되거나 Load중이 아니면
-      if (entry.isIntersecting && !isLoaded) {
-        // 관찰은 일단 멈추고
-        observer.unobserve(entry.target);
-        // 데이터 불러오기
-        const newItems = await getMoreItem();
-        setData(prevData => [...prevData, ...newItems]); // 새 데이터를 기존 데이터에 추가
-        setIsLoaded(true);
-        // 불러온 후 다시 관찰 실행
-        observer.observe(entry.target);
-      }
-    };
+  // #2
+  //  // 새 데이터를 로드하는 함수
+  //  async function getMoreItem() {
+  //   // TODO: 실제로는 API 호출 등을 통해 데이터를 가져와야 합니다.
+  //   // 이 예제에서는 임의의 데이터를 반환합니다.
+  //   return [
+  //     {
+  //       id: data.length, // 새 항목의 ID는 현재 데이터의 길이로 설정
+  //       image: { src: '/assets/images/covers/cat.jpg' },
+  //       info: {
+  //         userImage: '/assets/images/avatars/avatar_9.jpg',
+  //         title: '새로운 항목',
+  //         userName: 'New User',
+  //         date: '2024-04-01',
+  //       }
+  //     }
+  //   ];
+  // }
 
-    // useEffect를 사용하여 IntersectionObserver를 생성하고 관찰 대상을 설정
-    useEffect(() => {
-      let observer;
-      if (loadMoreRef.current) {
-        observer = new IntersectionObserver(onIntersect, { threshold: 1.0 });
-        observer.observe(loadMoreRef.current);
-      }
+  //   // onIntersect 함수는 getMoreItem 함수를 호출하여 새 데이터를 가져오고, setData를 사용하여 이를 기존 data 상태에 추가
+  //   // callback
+  //   const onIntersect = async ([entry], observer) => {
+  //     // entry 요소가 교차되거나 Load중이 아니면
+  //     if (entry.isIntersecting && !isLoaded) {
+  //       // 관찰은 일단 멈추고
+  //       observer.unobserve(entry.target);
+  //       // 데이터 불러오기
+  //       const newItems = await getMoreItem();
+  //       setData(prevData => [...prevData, ...newItems]); // 새 데이터를 기존 데이터에 추가
+  //       setIsLoaded(true);
+  //       // 불러온 후 다시 관찰 실행
+  //       observer.observe(entry.target);
+  //     }
+  //   };
+
+  //   // useEffect를 사용하여 IntersectionObserver를 생성하고 관찰 대상을 설정
+  //   useEffect(() => {
+  //     let observer;
+  //     if (loadMoreRef.current) {
+  //       observer = new IntersectionObserver(onIntersect, { threshold: 1.0 });
+  //       observer.observe(loadMoreRef.current);
+  //     }
   
-      return () => observer && observer.disconnect();
-    }, [loadMoreRef, isLoaded]);
+  //     return () => observer && observer.disconnect();
+  //   }, [loadMoreRef, isLoaded]);
+
+  // 카드 내 데이터를 가져옴 (이미지, 정보)
+  const [data, setData] = AppCardData();
 
   return (
 
@@ -137,7 +140,9 @@ export default function AppCard() {
     <div ref={setTarget}></div>
   */}
   
+  {/*
   <div ref={loadMoreRef}></div>
+  */}
 
   </div>
   );
