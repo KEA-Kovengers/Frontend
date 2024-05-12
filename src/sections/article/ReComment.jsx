@@ -95,14 +95,11 @@ export default function ReComment() {
           </div>
           <div>
             <span
-              style={{ fontSize: '12px', cursor: 'pointer', marginRight: 5 }}
+              style={{ fontSize: '11px', cursor: 'pointer', marginRight: 5 }}
               onClick={handleOpenModalClick}
             >
               삭제
             </span>
-            <IconButton>
-              <Iconify icon="iconoir:chat-add" sx={{ width: '20px', height: '20px' }} />
-            </IconButton>
           </div>
           <CustomModal
             rightButton={'삭제'}
@@ -139,7 +136,7 @@ export default function ReComment() {
             </div>
             <span
               style={{
-                fontSize: '12px',
+                fontSize: '11px',
                 color: '#637381',
                 cursor: 'pointer',
               }}

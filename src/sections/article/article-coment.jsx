@@ -89,13 +89,13 @@ export default function ArticleComment() {
           </div>
           <div>
             <span
-              style={{ fontSize: '12px', cursor: 'pointer', marginRight: 5 }}
+              style={{ fontSize: '11px', cursor: 'pointer', marginRight: 3 }}
               onClick={handleOpenModalClick}
             >
               삭제
             </span>
             <IconButton>
-              <Iconify icon="iconoir:chat-add" sx={{ width: '20px', height: '20px' }} />
+              <Iconify icon="iconoir:chat-add" sx={{ width: '18px', height: '18px' }} />
             </IconButton>
           </div>
           <CustomModal
@@ -133,7 +133,7 @@ export default function ArticleComment() {
             </div>
             <span
               style={{
-                fontSize: '12px',
+                fontSize: '11px',
                 color: '#637381',
                 cursor: 'pointer',
               }}
