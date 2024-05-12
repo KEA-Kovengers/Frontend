@@ -9,6 +9,7 @@ import Iconify from 'src/components/iconify';
 import Scrollbar from 'src/components/scrollbar';
 
 import NOTIFICATIONS from 'src/_mock/Notifications';
+
 import NotificationsMarkAllRead from './NotificationsMarkAllRead';
 import NotificationsList from './NotificationsList';
 // ----------------------------------------------------------------------
@@ -20,7 +21,6 @@ export default function NotificationsPopover() {
   const [notifications, setNotifications] = useState(NOTIFICATIONS);
 
   const totalUnRead = notifications.filter((item) => item.isUnRead === true).length;
-
   const [open, setOpen] = useState(null);
 
   const handleOpen = (event) => {
@@ -32,7 +32,7 @@ export default function NotificationsPopover() {
   };
 
   const handleMarkAllAsRead = () => {
-    setNotifications(
+    setFriendRequests(
       notifications.map((notification) => ({
         ...notification,
         isUnRead: false,
