@@ -1,11 +1,12 @@
 // useData.js
 import { useState } from 'react';
+import { faker } from '@faker-js/faker';
 
 export default function AppCardData() {
 
   const [data, setData] = useState([
     {
-      id: 0,
+      id: faker.string.uuid(),
       image: { src: '/assets/images/covers/cat.jpg' },
       info: {
         userImage: '/assets/images/avatars/avatar_25.jpg',
@@ -15,7 +16,7 @@ export default function AppCardData() {
       }
     },
     {
-      id: 1,
+      id: faker.string.uuid(),
       image: { src: '/assets/images/covers/jadu.jpg' },
       info: {
         userImage: '/assets/images/avatars/avatar_2.jpg',
@@ -25,7 +26,37 @@ export default function AppCardData() {
       }
     },
     {
-      id: 2,
+      id: faker.string.uuid(),
+      image: { src: '/assets/images/covers/ghibli.jpg' },
+      info: {
+        userImage: '/assets/images/avatars/avatar_13.jpg',
+        title: '2 시간 지브리 음악 🌍',
+        userName: 'Ghibli Music',
+        date: '2024-02-26',
+      }
+    },
+    {
+      id: faker.string.uuid(),
+      image: { src: '/assets/images/covers/ghibli.jpg' },
+      info: {
+        userImage: '/assets/images/avatars/avatar_13.jpg',
+        title: '2 시간 지브리 음악 🌍',
+        userName: 'Ghibli Music',
+        date: '2024-02-26',
+      }
+    },
+    {
+      id: faker.string.uuid(),
+      image: { src: '/assets/images/covers/ghibli.jpg' },
+      info: {
+        userImage: '/assets/images/avatars/avatar_13.jpg',
+        title: '2 시간 지브리 음악 🌍',
+        userName: 'Ghibli Music',
+        date: '2024-02-26',
+      }
+    },
+    {
+      id: faker.string.uuid(),
       image: { src: '/assets/images/covers/ghibli.jpg' },
       info: {
         userImage: '/assets/images/avatars/avatar_13.jpg',
