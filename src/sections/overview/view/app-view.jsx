@@ -7,13 +7,17 @@ import AppFilters from '../app-filters';
 // ----------------------------------------------------------------------
 
 export default function AppView() {
-  const [openFilter] = useState(false);
+  const [openFilter,setOpenFilter] = useState(false);
 
   return (
     <Container >
-      <Stack direction="row" alignItems="center" justifyContent="space-between" 
-      style={{ width: '70%', margin: '0 auto' }}>
-          <AppFilters openFilter={openFilter} />
+      <Stack 
+      direction="row" 
+      alignItems="center" 
+      justifyContent="space-between" 
+      style={{ width: '70%', margin: '0 auto' }}
+      >
+        <AppFilters openFilter={openFilter} setOpenFilter={setOpenFilter} />
       </Stack>
     </Container>
   );
