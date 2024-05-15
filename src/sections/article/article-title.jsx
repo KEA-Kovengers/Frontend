@@ -9,10 +9,11 @@ import { useToggle } from 'src/hooks/useToggle';
 
 import CustomModal from 'src/components/CustomModal/CustomModal';
 
-import { Avatar, AvatarGroup, Tooltip } from '@mui/material';
+import { Avatar, AvatarGroup, Icon, Tooltip } from '@mui/material';
 
 import { useNavigate } from 'react-router-dom';
 import ReportModal from 'src/sections/article/ReportModal';
+import DashboardModal from 'src/sections/article/DashboardModal';
 
 const userList = [
   {
@@ -57,10 +58,12 @@ export default function ArticleTitle() {
   const navigate = useNavigate();
   const { toggle, isOpen } = useToggle();
 
+  // let deleteArticleToggle, reportArticleToggle, reportToggle, alertToggle;
   const deleteArticleToggle = useToggle();
   const reportArticleToggle = useToggle();
   const reportToggle = useToggle();
   const alertToggle = useToggle();
+  const dashboardToggle = useToggle();
 
   const [open, setOpen] = useState(null);
   const handleOpenMenu = (event) => {
@@ -69,6 +72,15 @@ export default function ArticleTitle() {
 
   const handleCloseMenu = () => {
     setOpen(null);
+  };
+
+  const [selectedUser, setSelectedUser] = useState(null);
+  const handleSelectedUser = (index) => {
+    if (selectedUser === index) {
+      setSelectedUser(null);
+    } else {
+      setSelectedUser(index);
+    }
   };
 
   return (
@@ -102,17 +114,26 @@ export default function ArticleTitle() {
                 <Tooltip title={acc.name} key={index}>
                   <Avatar
                     src={acc.avatarUrl}
-                    onClick={() => console.log('유저')}
-                    sx={{
+                    onClick={() => {
+                      handleSelectedUser(index);
+                    }}
+                    style={{
                       width: 30,
                       height: 30,
-                      border: (theme) => `solid 2px ${theme.palette.background.default}`,
+                      borderColor: selectedUser === index && '#1A2CDD',
                       '&:hover': { opacity: 0.72 },
+                      cursor: 'pointer',
                     }}
                   />
                 </Tooltip>
               ))}
             </AvatarGroup>
+            <Tooltip title="통계 데이터">
+              <IconButton sx={{ marginLeft: 1 }} onClick={() => dashboardToggle.toggle()}>
+                <Iconify icon="material-symbols:monitoring-rounded" />
+              </IconButton>
+            </Tooltip>
+            <DashboardModal open={dashboardToggle.isOpen} onClose={dashboardToggle.toggle} />
 
             <IconButton onClick={handleOpenMenu}>
               <Iconify icon="eva:more-vertical-fill" />

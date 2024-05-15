@@ -51,6 +51,8 @@ export default function ProfileFolder({ foldername, articlecnt }) {
       }}
       onClick={() => {
         toggleFolder();
+        // setId(id);
+        //get API 호출
       }}
     >
       <Iconify

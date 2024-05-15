@@ -21,6 +21,7 @@ export default function ProfileView() {
   const { isFolder } = useFolder();
 
   const [value, setValue] = useState(0);
+  // const [id, setId] = useState('');
   const createFolderToggle = useToggle();
 
   const handleChange = (event, newValue) => {
@@ -175,6 +176,7 @@ export default function ProfileView() {
             >
               {folderList.map((folder) => (
                 <ProfileFolder
+                  // setId={setId}
                   key={folder.id}
                   foldername={folder.foldername}
                   articlecnt={folder.articlecnt}
