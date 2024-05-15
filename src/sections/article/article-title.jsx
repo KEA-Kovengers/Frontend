@@ -109,12 +109,6 @@ export default function ArticleTitle() {
         >
           <div style={{ fontSize: '13px', color: '#637381' }}>2024. 03. 15 17:16 </div>
           <div style={{ flexDirection: 'row', display: 'flex' }}>
-            <Tooltip title="통계 데이터">
-              <IconButton sx={{ marginRight: 1 }} onClick={() => dashboardToggle.toggle()}>
-                <Iconify icon="material-symbols:monitoring-rounded" />
-              </IconButton>
-            </Tooltip>
-            <DashboardModal open={dashboardToggle.isOpen} onClose={dashboardToggle.toggle} />
             <AvatarGroup max={userList.length} spacing={10}>
               {userList.map((acc, index) => (
                 <Tooltip title={acc.name} key={index}>
@@ -134,6 +128,12 @@ export default function ArticleTitle() {
                 </Tooltip>
               ))}
             </AvatarGroup>
+            <Tooltip title="통계 데이터">
+              <IconButton sx={{ marginLeft: 1 }} onClick={() => dashboardToggle.toggle()}>
+                <Iconify icon="material-symbols:monitoring-rounded" />
+              </IconButton>
+            </Tooltip>
+            <DashboardModal open={dashboardToggle.isOpen} onClose={dashboardToggle.toggle} />
 
             <IconButton onClick={handleOpenMenu}>
               <Iconify icon="eva:more-vertical-fill" />

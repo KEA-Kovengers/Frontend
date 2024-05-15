@@ -11,7 +11,7 @@ import Typography from '@mui/material/Typography';
 import { IconButton } from '@mui/material';
 import Iconify from 'src/components/iconify';
 
-export default function ArticleComment() {
+export default function ArticleComment({ content, time, func }) {
   const navigate = useNavigate();
   const reportToggle = useToggle();
   const alertToggle = useToggle();
@@ -45,6 +45,10 @@ export default function ArticleComment() {
 
   const handleCloseReModal = () => {
     setIsReModalOpen(false);
+  };
+
+  const handleAddReComment = () => {
+    func();
   };
 
   return (
@@ -89,14 +93,14 @@ export default function ArticleComment() {
           </div>
           <div>
             <span
-              style={{ fontSize: '11px', cursor: 'pointer', marginRight: 3 }}
+              style={{ fontSize: '11px', cursor: 'pointer', marginRight: 8 }}
               onClick={handleOpenModalClick}
             >
               삭제
             </span>
-            <IconButton>
-              <Iconify icon="iconoir:chat-add" sx={{ width: '18px', height: '18px' }} />
-            </IconButton>
+            <span style={{ fontSize: '11px', cursor: 'pointer' }} onClick={handleAddReComment}>
+              답글
+            </span>
           </div>
           <CustomModal
             rightButton={'삭제'}
@@ -118,8 +122,7 @@ export default function ArticleComment() {
           <div
             style={{ fontSize: '14px', color: '#000000', marginBottom: '5px', textAlign: 'start' }}
           >
-            반가워요 반가워요 반가워요 반가워요 반가워요 반가워요 반가워요 반가워요 반가워요
-            반가워요 반가워요 반가워요 반가워요 반가워요 반가워요 반가워요 반가워요 반가워요
+            {content}
           </div>
 
           <div
@@ -128,9 +131,7 @@ export default function ArticleComment() {
               display: 'flex',
             }}
           >
-            <div style={{ fontSize: '12px', color: '#637381', marginRight: 13 }}>
-              2024. 03. 15 17:16
-            </div>
+            <div style={{ fontSize: '12px', color: '#637381', marginRight: 13 }}>{time}</div>
             <span
               style={{
                 fontSize: '11px',

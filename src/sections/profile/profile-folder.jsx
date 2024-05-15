@@ -50,8 +50,8 @@ export default function ProfileFolder({ foldername, articlecnt }) {
         cursor: 'pointer',
       }}
       onClick={() => {
-        // toggleFolder();
-        setId(id);
+        toggleFolder();
+        // setId(id);
         //get API 호출
       }}
     >
