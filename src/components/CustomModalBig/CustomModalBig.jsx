@@ -21,7 +21,7 @@ import { colors } from '../../theme/variableColors';
 import { useState } from 'react';
 import { secondary } from 'src/theme/palette';
 
-import { useCounter } from 'src/hooks/aiCreateCount';
+import { useCounter } from 'src/hooks/useCount';
 import { PostSummary, PostGenerateImage } from 'src/api/ai.api';
 
 import { styled } from 'styled-components';
@@ -242,7 +242,7 @@ export default function CustomModalBig({
                   // src={image.imgUrl}
                   // src={imgUrl}
                   src={
-                    'https://mk.kakaocdn.net/dna/karlo/image/2024-04-24/17/4bbce248-2ed9-48c0-9a17-0684122f48c6.webp?credential=smxRqiqUEJBVgohptvfXS5JoYeFv4Xxa&expires=1713946324&signature=OCXM%2F7Dlb6OG9zNrTBtWvMF67dA%3D'
+                    'https://mk.kakaocdn.net/dna/karlo/image/2024-04-24/18/ca597ba8-8279-4897-ad85-7163e2b5fceb.webp?credential=smxRqiqUEJBVgohptvfXS5JoYeFv4Xxa&expires=1713952801&signature=thiNDj15soBkKDIauzFHzjg6tdQ%3D'
                   }
                   sx={{
                     width: '50%',

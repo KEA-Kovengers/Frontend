@@ -1,51 +1,69 @@
 import PropTypes from 'prop-types';
+import { useRef,useEffect } from 'react';
+
+import { styled } from '@mui/system';
 
 import AppCard from './app-card';
+import AppCard1 from './app-card1';
 import AppCard2 from './app-card2';
 import AppCard3 from './app-card3';
-import AppCard4 from './app-card4';
 
 // ----------------------------------------------------------------------
+
+// 스크롤이 가능한 컨테이너에 스타일을 적용합니다.
+const ScrollContainer = styled('div')({
+  // display: 'flex',
+  justifyContent: 'center', // SnapElement를 가로 방향으로 가운데로 정렬
+  flexDirection: 'column',
+  scrollSnapType: 'y mandatory', 
+  overflowY: 'auto', 
+  scrollbarWidth: 'none', 
+  '&::-webkit-scrollbar': {
+    display: 'none'
+  },
+  height: '100vh', 
+});
+
+// AppPost 컴포넌트에 스타일을 적용
+const SnapElement = styled('div')({
+  scrollSnapAlign: 'center',
+  justifyContent: 'center', 
+  alignItems: 'center', 
+});
 
 // AppFilter 속 AppPost: filter가 바뀜에 따라 보여지는 컴포넌트도 달라짐
 export default function AppPost({ filter }) {
 
-  switch (filter) {
-    case 0:
-      return (
-        <div>
-          <AppCard />
-          <AppCard2 />
-          <AppCard4 />
-        </div>
-      );
-    case 1:
-      return (
-        <div>
-          <AppCard />
-          <AppCard />
-          <AppCard />
-        </div>
-      );
-    case 2:
-      return (
-        <div>
-          <AppCard3 />
-          <AppCard3 />
-          <AppCard3 />
-        </div>
-      );
-    case 3:
-      return (
-        <div>
-          <AppCard3 />
-          <AppCard3 />
-          <AppCard3 />
-        </div>
-      );
-    default:
-      return null;
+  // 필터와 컴포넌트를 매핑하는 객체
+  const filterComponentMap = {
+    0: AppCard,
+    1: AppCard1,
+    2: AppCard2,
+    3: AppCard3,
+    // 추가된 필터에 맞는 컴포넌트를 추가
+    4: AppCard,
+    5: AppCard,
+    6: AppCard,
   };
+
+  const Component = filterComponentMap[filter] || null;
+
+  const snapRef = useRef(null);
+
+  useEffect(() => {
+    if (snapRef.current) {
+      snapRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  }, [filter]);
+
+  return (
+    <ScrollContainer>
+      <SnapElement ref={snapRef}>
+        {Component && <Component />}
+      </SnapElement>
+    </ScrollContainer>
+  );
+
 }
 
 AppPost.propTypes = {

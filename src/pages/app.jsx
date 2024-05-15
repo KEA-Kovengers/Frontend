@@ -8,7 +8,7 @@ export default function AppPage() {
   return (
     <>
       <Helmet>
-        <title> Dashboard | Newcord </title>
+        <title> Newcord </title>
       </Helmet>
 
       <AppView />

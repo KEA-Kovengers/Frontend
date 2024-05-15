@@ -94,6 +94,7 @@ export default function MdEditorWithHeader() {
     const updatedTags = [...tags];
     updatedTags.splice(index, 1);
     setTags(updatedTags);
+    console.log('tags', tags);
   };
 
   const handleCompleteButtonClick = () => {
@@ -224,7 +225,7 @@ export default function MdEditorWithHeader() {
             fontSize: '18px',
           }}
         >
-          <Typography variant="body1" sx={{ fontSize: '16px' }}>
+          <Typography variant="body1" sx={{ fontSize: '13px' }}>
             ai 태그
           </Typography>
         </Button>
@@ -251,7 +252,8 @@ export default function MdEditorWithHeader() {
         <Box
           key={index}
           sx={{ marginBottom: '10px', position: 'relative', cursor: 'pointer' }}
-          onClick={() => index !== editingIndex && handleContentClick(index)} // 문장 클릭 시 편집 가능하도록 설정
+          // onClick={() => index !== editingIndex && handleContentClick(index)} // 문장 클릭 시 편집 가능하도록 설정
+          onClick={() => console.log(content)} // 문장 클릭 시 편집 가능하도록 설정
         >
           {editingIndex === index ? (
             <Stack>

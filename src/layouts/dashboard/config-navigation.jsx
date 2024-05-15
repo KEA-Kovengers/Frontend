@@ -24,7 +24,7 @@ const navConfig = [
   },
   {
     title: '글 쓰기',
-    path: '/blog',
+    path: '/create-article',
     icon: icon('ic_blog'),
   },
   {
