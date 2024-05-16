@@ -32,11 +32,11 @@ const navConfig = [
     path: '/login',
     icon: icon('ic_lock'),
   },
-  {
-    title: '더보기',
-    path: '/more',
-    icon: icon('ic_disabled'),
-  },
+  // {
+  //   title: '더보기',
+  //   path: '/more',
+  //   icon: icon('ic_disabled'),
+  // },
 ];
 
 export default navConfig;
