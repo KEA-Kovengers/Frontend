@@ -8,6 +8,7 @@ import {
   Box,
   IconButton,
   Button,
+  OutlinedInput,
 } from '@mui/material';
 import Iconify from 'src/components/iconify';
 import { styled } from 'styled-components';
@@ -51,9 +52,19 @@ export default function AddArticleModal({ open, onClose, buttonAction }) {
               marginBottom: '10px',
             }}
           >
-            <Typography variant="h5" sx={{ mt: '18px', ml: '18px' }}>
+            {/* <Typography variant="h5" sx={{ mt: '18px', ml: '18px' }}>
               폴더 편집
-            </Typography>
+            </Typography> */}
+            <OutlinedInput
+              defaultValue={'폴더 이름'}
+              sx={{ mt: '18px', ml: '18px', height: 40 }}
+              endAdornment={
+                <Iconify
+                  icon={'mynaui:pencil'}
+                  sx={{ color: 'grey', width: '25px', height: '25px' }}
+                />
+              }
+            />
             <IconButton onClick={onClose} sx={{ mt: '5px', mr: '5px' }}>
               <Iconify icon="eva:close-fill" sx={{ width: '25px', height: '25px' }} />
             </IconButton>
@@ -74,7 +85,7 @@ export default function AddArticleModal({ open, onClose, buttonAction }) {
               sx={{ backgroundColor: selectedIndex === null ? 'lightGrey' : '#1a2cdd' }}
               onClick={buttonClick}
             >
-              편집
+              완료
             </ButtonStyled>
           </div>
 
