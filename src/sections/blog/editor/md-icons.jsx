@@ -6,11 +6,11 @@ import MapIcon from '/assets/icons/map.svg';
 import GrammarIcon from '/assets/icons/grammar.svg';
 import AutoIcon from '/assets/icons/auto.svg';
 
-import MusicModal from './MusicModal';
-import VideoModal from './VideoModal';
-import MapModal from './MapModal';
-import GrammarModal from './GrammarModal';
-import AutoModal from './AutoModal';
+import MusicModal from '../modal/MusicModal';
+import VideoModal from '../modal/VideoModal';
+import MapModal from '../modal/MapModal';
+import GrammarModal from '../modal/GrammarModal';
+import AutoModal from '../modal/AutoModal';
 
 export const createIconElement = (iconSrc, iconWidth, onClick) => {
   const iconElement = document.createElement('span');

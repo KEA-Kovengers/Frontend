@@ -97,8 +97,8 @@ export default function InviteModal({ friends, open, onClose}) {
             placeholder="공유 작업을 할 친구의 이름을 검색하세요."
             InputProps={{
                 ...params.InputProps,
-                startAdornment: (
-                <InputAdornment position="start">
+                endAdornment: (
+                <InputAdornment position="end">
                     <IconButton>
                         <Iconify icon="eva:search-fill" sx={{ width: 20, height: 20, color: 'text.disabled' }} />
                     </IconButton>

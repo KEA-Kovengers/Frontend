@@ -252,8 +252,8 @@ export default function MdEditorWithHeader() {
         <Box
           key={index}
           sx={{ marginBottom: '10px', position: 'relative', cursor: 'pointer' }}
-          // onClick={() => index !== editingIndex && handleContentClick(index)} // 문장 클릭 시 편집 가능하도록 설정
-          onClick={() => console.log(content)} // 문장 클릭 시 편집 가능하도록 설정
+          onClick={() => index !== editingIndex && handleContentClick(index)} // 문장 클릭 시 편집 가능하도록 설정
+          // onClick={() => console.log(content)} // 문장 클릭 시 편집 가능하도록 설정
         >
           {editingIndex === index ? (
             <Stack>
@@ -263,7 +263,7 @@ export default function MdEditorWithHeader() {
                   initialValue={content}
                   placeholder="글을 작성해 주세요"
                   toolbarItems={toolbar}
-                  height="130px"
+                  height="300px"
                   plugins={[colorSyntax, [codeSyntaxHighlight, { highlighter: Prism }]]}
                   ref={editorRef2}
                 />

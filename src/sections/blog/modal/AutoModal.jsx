@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
+import PropTypes from 'prop-types';
 
-export default function MapModal(){
+export default function AutoModal({ contents, handleAiTextClick }) {
     const [isOpen, setIsOpen] = useState(true);
 
     const closeModal = () => {
@@ -21,11 +22,17 @@ export default function MapModal(){
                     borderRadius: '3px',
                     padding: '20px'
                 }}>
-                    <h2>Map Modal</h2>
-                    <p>This is a Map modal content.</p>
+                    <h2>Auto Modal</h2>
+                    <p>This is a Auto modal content.</p>
+                    
                     <button onClick={closeModal}>Close</button>
                 </div>
             )}
         </>
     );
+};
+
+AutoModal.propTypes = {
+    contents : PropTypes.string,
+    handleAiTextClick: PropTypes.func,
 };
