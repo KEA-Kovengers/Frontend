@@ -3,10 +3,15 @@ import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 
 import {
-  Card, CardContent, CardMedia,
-  Stack, Grid, Box,
-  Typography, IconButton
-} from '@mui/material'
+  Card,
+  CardContent,
+  CardMedia,
+  Stack,
+  Grid,
+  Box,
+  Typography,
+  IconButton,
+} from '@mui/material';
 
 import { colors } from 'src/theme/variableColors';
 
@@ -14,12 +19,11 @@ import Iconify from 'src/components/iconify';
 
 // ----------------------------------------------------------------------
 
-export default function AppCardInfo({info}) {
-
+export default function AppCardInfo({ info }) {
   const card_style = {
     borderRadius: 0,
     bgcolor: 'background.default',
-  }
+  };
 
   const Userimage = (
     <img
@@ -31,13 +35,14 @@ export default function AppCardInfo({info}) {
         height: '100%',
         maxWidth: '50px',
         maxHeight: '50px',
-      }}/>
+      }}
+    />
   );
 
   const Title = (
     <Typography
       component={Link}
-      to='/article'
+      to="/article"
       sx={{
         color: colors.blueBlack,
         fontSize: '20px',
@@ -47,11 +52,12 @@ export default function AppCardInfo({info}) {
         whiteSpace: 'nowrap',
         textDecoration: 'none',
         '&:hover': {
-          textDecoration: 'underline'
-        }
-      }}>
-        {info[0].title}
-      </Typography>
+          textDecoration: 'underline',
+        },
+      }}
+    >
+      {info[0].title}
+    </Typography>
   );
 
   const UserName = (
@@ -61,11 +67,12 @@ export default function AppCardInfo({info}) {
         fontSize: '13px',
         maxWidth: '150px',
         textOverflow: 'ellipsis',
-        paddingRight: '10px'
+        paddingRight: '10px',
       }}
-      noWrap>
-        {info[0].userName}
-      </Typography>
+      noWrap
+    >
+      {info[0].userName}
+    </Typography>
   );
 
   const Date = (
@@ -73,11 +80,12 @@ export default function AppCardInfo({info}) {
       variant="caption"
       sx={{
         color: colors.textGrey,
-        fontSize: '13px'
+        fontSize: '13px',
       }}
-      noWrap>
-        {info[0].date}
-      </Typography>
+      noWrap
+    >
+      {info[0].date}
+    </Typography>
   );
 
   const [like, setLike] = useState(false);
@@ -93,26 +101,25 @@ export default function AppCardInfo({info}) {
 
   const handleLike = () => {
     setLike(!like);
-    like ? removeLike() :
-      addLike();
+    like ? removeLike() : addLike();
   };
 
   const handleLikeCountClick = () => {
     setShowLikeTable(!showLikeTable); // 토글
   };
 
-
   const CommunityInformation = (
     <Stack flexDirection="row">
       <Stack direction="row">
         <IconButton onClick={handleLike} color={like ? '#FF5631' : '#637381'}>
-          <Iconify 
-            icon={like ? "flat-color-icons:like" : "icon-park-outline:like"} 
-            sx={{ display: 'flex', mr: 0.5 }} color={colors.blueBlack} 
+          <Iconify
+            icon={like ? 'flat-color-icons:like' : 'icon-park-outline:like'}
+            sx={{ display: 'flex', mr: 0.5 }}
+            color={colors.blueBlack}
           />
         </IconButton>
         <Typography
-          style={{ fontSize: '13px', color: colors.blueBlack , cursor: 'pointer' }}
+          style={{ fontSize: '13px', color: colors.blueBlack, cursor: 'pointer' }}
           onClick={handleLikeCountClick}
           onKeyDown={(event) => {
             if (event.key === 'Enter') {
@@ -120,7 +127,12 @@ export default function AppCardInfo({info}) {
             }
           }}
           tabIndex={0}
-          sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', verticalAlign: 'center' }}
+          sx={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            verticalAlign: 'center',
+          }}
         >
           {likeCount}
         </Typography>
@@ -128,33 +140,46 @@ export default function AppCardInfo({info}) {
 
       <Stack direction="row">
         <IconButton>
-          <Iconify icon='iconoir:chat-bubble' sx={{ display: 'flex', ml: 1, mr: 0.5 }} color={colors.blueBlack} />
+          <Iconify
+            icon="iconoir:chat-bubble"
+            sx={{ display: 'flex', ml: 1, mr: 0.5 }}
+            color={colors.blueBlack}
+          />
         </IconButton>
-        <Typography sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', verticalAlign: 'center' }}>3</Typography>
+        <Typography
+          sx={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            verticalAlign: 'center',
+          }}
+        >
+          3
+        </Typography>
       </Stack>
     </Stack>
   );
 
   return (
-    <Card sx={{ ...card_style, marginBottom: '70px', paddingLeft: '10px' }} >
-      <Grid container alignItems='center'>
+    <Card sx={{ ...card_style, marginBottom: '70px', paddingLeft: '10px' }}>
+      <Grid container alignItems="center">
         <Grid item xs={1}>
           <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
             {Userimage}
           </Box>
         </Grid>
 
-        <Grid item xs={11} >
+        <Grid item xs={11}>
           <CardContent sx={{ display: 'flex', flexDirection: 'column' }}>
-            <Box sx={{ display: 'flex', flexDirection: 'row', }}>
-              {Title}
-            </Box>
+            <Box sx={{ display: 'flex', flexDirection: 'row' }}>{Title}</Box>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <Box sx={{ display: 'flex' }}>
                 {UserName}
                 {Date}
               </Box>
-              <Box sx={{ display: 'flex', justifyContent: 'flex-end', flexDirection: 'row-reverse' }}>
+              <Box
+                sx={{ display: 'flex', justifyContent: 'flex-end', flexDirection: 'row-reverse' }}
+              >
                 {CommunityInformation}
               </Box>
             </Box>
@@ -163,8 +188,8 @@ export default function AppCardInfo({info}) {
       </Grid>
     </Card>
   );
-};
+}
 
 AppCardInfo.propTypes = {
   info: PropTypes.arrayOf(PropTypes.object).isRequired,
-}
+};

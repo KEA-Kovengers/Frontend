@@ -9,6 +9,7 @@ export const useAccountStore = create((set) => ({
     blogName: '',
     blogDescription: '',
     friendCount: '',
+    role: 'admin',
   },
   updateAccoutInfo: (field, value) =>
     set((state) => ({ accountInfo: { ...state.accountInfo, [field]: value } })),
