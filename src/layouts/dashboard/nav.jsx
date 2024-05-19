@@ -40,8 +40,8 @@ export default function Nav({ openNav, onCloseNav }) {
 
   const renderAccount = (
     <Box
-    component={Link}
-    to='/user'
+      component={Link}
+      to="/user"
       sx={{
         my: 3,
         mx: 2.5,
@@ -57,14 +57,16 @@ export default function Nav({ openNav, onCloseNav }) {
       <Avatar src={account.photoURL} alt="photoURL" />
 
       <Box sx={{ ml: 2 }}>
-        <Typography variant="subtitle2" color={colors.blueBlack}>{account.displayName}</Typography>
+        <Typography variant="subtitle2" color={colors.blueBlack}>
+          {account.displayName}
+        </Typography>
       </Box>
     </Box>
   );
 
   const renderMenu = (
     <Stack component="nav" spacing={0.5} sx={{ px: 2 }}>
-      {navConfig.map((item) => (
+      {navConfig().map((item) => (
         <NavItem key={item.title} item={item} />
       ))}
     </Stack>
@@ -86,7 +88,6 @@ export default function Nav({ openNav, onCloseNav }) {
       {renderAccount}
 
       {renderMenu}
-
     </Scrollbar>
   );
 

@@ -12,6 +12,7 @@ export const ProductsPage = lazy(() => import('src/pages/products'));
 export const Page404 = lazy(() => import('src/pages/page-not-found'));
 export const ArticlePage = lazy(() => import('src/pages/article'));
 export const SelectOptionView = lazy(() => import('/src/sections/thumbnail/select-option.jsx'));
+export const Monitoring = lazy(() => import('src/pages/Monitoring'));
 
 // ----------------------------------------------------------------------
 
@@ -31,6 +32,7 @@ export default function Router() {
         { path: 'search', element: <ProductsPage /> },
         { path: 'article', element: <ArticlePage /> },
         { path: 'api/auth/login', element: <LoginAuthPage /> },
+        { path: 'monitoring', element: <Monitoring /> },
       ],
     },
     {
