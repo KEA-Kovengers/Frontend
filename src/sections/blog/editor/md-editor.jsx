@@ -316,6 +316,7 @@ export default function MdEditorWithHeader() {
         height="300px"
         plugins={[colorSyntax, [codeSyntaxHighlight, { highlighter: Prism }]]}
         ref={editorRef1}
+        
         hooks={{
           addImageBlobHook: async(blob, callback) => {
             console.log(blob);
