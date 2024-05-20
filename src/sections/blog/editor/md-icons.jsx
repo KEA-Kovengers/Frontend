@@ -1,10 +1,18 @@
+import { createRoot } from 'react-dom/client';
+
 import VideoIcon from '/assets/icons/video.svg';
 import MusicIcon from '/assets/icons/music.svg';
 import MapIcon from '/assets/icons/map.svg';
 import GrammarIcon from '/assets/icons/grammar.svg';
 import AutoIcon from '/assets/icons/auto.svg';
 
-export const createIconElement = (iconSrc, iconWidth) => {
+import MusicModal from '../modal/MusicModal';
+import VideoModal from '../modal/VideoModal';
+import MapModal from '../modal/MapModal';
+import GrammarModal from '../modal/GrammarModal';
+import AutoModal from '../modal/AutoModal';
+
+export const createIconElement = (iconSrc, iconWidth, onClick) => {
   const iconElement = document.createElement('span');
   iconElement.style = 'cursor: pointer; vertical-align: top; ';
   const iconImg = document.createElement('img');
@@ -13,34 +21,31 @@ export const createIconElement = (iconSrc, iconWidth) => {
   iconImg.setAttribute('height', 'auto');
   iconImg.style = 'margin: 0px;';
   iconElement.appendChild(iconImg);
+  iconElement.addEventListener('click', onClick);
   return iconElement;
 };
 
-export const videoIcon = createIconElement(VideoIcon, '26');
-export const musicIcon = createIconElement(MusicIcon, '24');
-export const mapIcon = createIconElement(MapIcon, '23');
-export const grammarIcon = createIconElement(GrammarIcon, '25');
-export const autoIcon = createIconElement(AutoIcon, '23');
+let modalDiv = null;
 
-function createLastButton() {
-  const button = document.createElement('button');
+export const RenderModal = (ModalComponent) => {
+  // 만약 모달이 이미 존재한다면, 제거합니다.
+  if (modalDiv) {
+    document.body.removeChild(modalDiv);
+    modalDiv = null;
+  }
 
-  button.className = 'toastui-editor-toolbar-icons last';
-  button.style.backgroundImage = 'none';
-  button.style.margin = '0';
-  // SVG 파일을 가져와서 요소로 변환하여 버튼에 추가
-  fetch(VideoIcon)
-    .then((response) => response.text())
-    .then((svgText) => {
-      // 가져온 SVG를 버튼 내에 추가
-      button.innerHTML = svgText;
-    })
-    .catch((error) => console.error('Error fetching SVG:', error));
-  button.addEventListener('click', () => {
-    //  editor.exec('bold');
-  });
+  // 새로운 div 요소를 생성합니다.
+  modalDiv = document.createElement('div');
 
-  return button;
-}
+  // 새로운 div 요소를 body에 추가합니다.
+  document.body.appendChild(modalDiv);
 
-export { createLastButton };
+  // ReactDOM을 사용하여 ModalComponent를 새로운 div 요소에 렌더링합니다.
+  createRoot(modalDiv).render(<ModalComponent />);
+};
+
+export const videoIcon = createIconElement(VideoIcon, '26', () => RenderModal(VideoModal));
+export const musicIcon = createIconElement(MusicIcon, '24', () => RenderModal(MusicModal));
+export const mapIcon = createIconElement(MapIcon, '23', () => RenderModal(MapModal));
+export const grammarIcon = createIconElement(GrammarIcon, '25', () => RenderModal(GrammarModal));
+export const autoIcon = createIconElement(AutoIcon, '23', () => RenderModal(AutoModal));

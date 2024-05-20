@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 
 import Stack from '@mui/material/Stack';
@@ -11,55 +12,82 @@ import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 
 import Iconify from 'src/components/iconify';
+import CustomModal from 'src/components/CustomModal/CustomModal';
+import { useToggle } from 'src/hooks/useToggle';
 
-import { colors } from 'src/theme/variableColors'
+import { colors } from 'src/theme/variableColors';
 // ----------------------------------------------------------------------
 
-export default function LikeRow({
-    name,
-    avatarUrl,
-    company,
-    isFriend,
+export default function LikeRow({ name, avatarUrl, company, isFriend }) {
+  const [open, setOpen] = useState(null);
+  const { toggle, isOpen } = useToggle();
 
-}) {
-    const [open, setOpen] = useState(null);
+  return (
+    <>
+      <TableRow>
+        <TableCell component="th" scope="row" padding="none">
+          <Stack direction="row" alignItems="center" spacing={2}>
+            <Avatar alt={name} src={avatarUrl} />
+            <Typography
+              variant="subtitle2"
+              component={Link}
+              to="/user"
+              sx={{
+                color: '#000000',
+                textDecoration: 'none',
+                '&:hover': {
+                  textDecoration: 'underline',
+                },
+              }}
+            >
+              {name}
+            </Typography>
+          </Stack>
+        </TableCell>
 
-    const handleOpenMenu = (event) => {
-        setOpen(event.currentTarget);
-    };
+        <TableCell>
+          <Typography
+            variant="body"
+            component={Link}
+            to="/user"
+            sx={{
+              color: '#000000',
+              textDecoration: 'none',
+              '&:hover': {
+                textDecoration: 'underline',
+              },
+            }}
+          >
+            {company}
+          </Typography>
+        </TableCell>
 
-
-
-    return (
-        <>
-            <TableRow >
-
-                <TableCell component="th" scope="row" padding="none">
-                    <Stack direction="row" alignItems="center" spacing={2}>
-                        <Avatar alt={name} src={avatarUrl} />
-                        <Typography variant="subtitle2" noWrap>
-                            {name}
-                        </Typography>
-                    </Stack>
-                </TableCell>
-
-                <TableCell>{company}</TableCell>
-
-
-
-                <TableCell align="right">
-                    <IconButton >
-                        <Iconify icon={isFriend ? "bxs:user-check" : "bxs:user-plus"} sx={{ color: isFriend && colors.first }} />
-                    </IconButton>
-                </TableCell>
-            </TableRow>
-        </>
-    );
+        <TableCell align="right">
+          <IconButton onClick={() => toggle()} disabled={isFriend}>
+            <Iconify
+              icon={isFriend ? 'bxs:user-check' : 'bxs:user-plus'}
+              sx={{ color: isFriend && colors.first }}
+            />
+          </IconButton>
+          <CustomModal
+            rightButton={'신청'}
+            title={'친구 신청'}
+            mode={'title'}
+            onClose={toggle}
+            colorText={name}
+            contents={'님에게 친구 신청을 보내겠습니까?'}
+            open={isOpen}
+            // buttonAction={{ rightAction: }}
+          />
+        </TableCell>
+      </TableRow>
+    </>
+  );
 }
 
 LikeRow.propTypes = {
-    avatarUrl: PropTypes.any,
-    name: PropTypes.any,
-    company: PropTypes.any,
-    isFriend: PropTypes.bool,
+  avatarUrl: PropTypes.any,
+  name: PropTypes.any,
+  company: PropTypes.any,
+  isFriend: PropTypes.bool,
 };

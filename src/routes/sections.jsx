@@ -7,10 +7,12 @@ export const IndexPage = lazy(() => import('src/pages/app'));
 export const BlogPage = lazy(() => import('src/pages/blog'));
 export const UserPage = lazy(() => import('src/pages/user'));
 export const LoginPage = lazy(() => import('src/pages/login'));
+export const LoginAuthPage = lazy(() => import('src/pages/login-auth'));
 export const ProductsPage = lazy(() => import('src/pages/products'));
 export const Page404 = lazy(() => import('src/pages/page-not-found'));
 export const ArticlePage = lazy(() => import('src/pages/article'));
 export const SelectOptionView = lazy(() => import('/src/sections/thumbnail/select-option.jsx'));
+export const Monitoring = lazy(() => import('src/pages/Monitoring'));
 
 // ----------------------------------------------------------------------
 
@@ -29,6 +31,8 @@ export default function Router() {
         { path: 'user', element: <UserPage /> },
         { path: 'search', element: <ProductsPage /> },
         { path: 'article', element: <ArticlePage /> },
+        { path: 'api/auth/login', element: <LoginAuthPage /> },
+        { path: 'monitoring', element: <Monitoring /> },
       ],
     },
     {
@@ -36,7 +40,7 @@ export default function Router() {
       element: <LoginPage />,
     },
     {
-      path: 'blog',
+      path: 'create-article',
       element: <BlogPage />,
     },
     {

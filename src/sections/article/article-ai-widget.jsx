@@ -9,14 +9,14 @@ import { PostSummary } from 'src/api/ai.api';
 
 const StyledRoot = styled('div')(({ theme }) => ({
   zIndex: 0,
-  right: '63%',
+  // right: '0%',
   display: 'flex',
   cursor: 'pointer',
   position: 'fixed',
   alignItems: 'center',
   top: theme.spacing(40),
-  paddingLeft: theme.spacing(2),
-  paddingRight: theme.spacing(2),
+  paddingLeft: theme.spacing(3),
+  // paddingRight: theme.spacing(2),
   paddingTop: theme.spacing(1.25),
   color: theme.palette.text.primary,
   flexDirection: 'column',

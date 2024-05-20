@@ -11,7 +11,7 @@ export default function BlogPage() {
   return (
     <>
       <Helmet>
-        <title> Blog | Newcord </title>
+        <title> Create | Newcord </title>
       </Helmet>
       <BlogView />
       {/* <Button>Blog</Button> */}
