@@ -12,6 +12,7 @@ import colorSyntax from '@toast-ui/editor-plugin-color-syntax';
 import { toolbar } from './md-toolbar';
 import { PostGenerateHashtag, PostGenerateText } from 'src/api/ai.api';
 import { set } from 'lodash';
+import axios from 'axios';
 
 export default function MdEditorWithHeader() {
   const [title, setTitle] = useState('');
@@ -315,6 +316,35 @@ export default function MdEditorWithHeader() {
         height="300px"
         plugins={[colorSyntax, [codeSyntaxHighlight, { highlighter: Prism }]]}
         ref={editorRef1}
+        hooks={{
+          addImageBlobHook: async(blob, callback) => {
+            console.log(blob);
+
+            const formData = new FormData();
+            formData.append('image', blob);
+            try {
+              // 서버가 이미지를 업로드하고 이미지 URL을 반환하는 엔드포인트
+              const response = await axios.post('http://localhost:3000/create-article', formData, {
+                headers: {
+                  'Content-Type': 'multipart/form-data'
+                }
+              });
+          
+              // Assuming the server responds with the URL of the uploaded image
+              const imageUrl = response.data.url;
+              return imageUrl;
+            } catch (error) {
+              console.error('Failed to upload image', error);
+              return null;
+            }
+            
+            // // 1. 첨부한 이미지 파일을 서버로 전송 후, 이미지 경로를 받아옴
+            // const formData = new FormData();
+            // formData.append('image', blob);
+            // // 2. 첨부된 이미지를 화면에 표시
+            // callback('http://localhost:3000/create-article');
+          },
+        }}
       />
       <Box sx={{ display: 'flex', justifyContent: 'center' }}>
         <Button
