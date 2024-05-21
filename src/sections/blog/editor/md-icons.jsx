@@ -42,7 +42,6 @@ export const RenderModal = (ModalComponent) => {
   createRoot(modalDiv).render(<ModalComponent />);
 };
 
-
 export const videoIcon = createIconElement(VideoIcon, '26', () => RenderModal(VideoModal));
 export const musicIcon = createIconElement(MusicIcon, '24', () => RenderModal(MusicModal));
 export const mapIcon = createIconElement(MapIcon, '23', () => RenderModal(MapModal));

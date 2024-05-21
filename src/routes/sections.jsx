@@ -15,6 +15,7 @@ export const Page404 = lazy(() => import('src/pages/page-not-found'));
 export const ArticlePage = lazy(() => import('src/pages/article'));
 export const SelectOptionView = lazy(() => import('/src/sections/thumbnail/select-option.jsx'));
 export const Monitoring = lazy(() => import('src/pages/Monitoring'));
+export const ConfirmUpload = lazy(() => import('src/pages/ConfirmUpload'));
 
 // ----------------------------------------------------------------------
 
@@ -58,6 +59,10 @@ export default function Router() {
     {
       path: 'select-thumbnail',
       element: <SelectOptionView />,
+    },
+    {
+      path: 'confirm-upload',
+      element: <ConfirmUpload />,
     },
   ]);
 
