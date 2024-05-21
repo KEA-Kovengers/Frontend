@@ -260,6 +260,7 @@ export default function MapModal() {
                         </ul>
                     </Box>
                     <Box sx={mapStyle}>
+                        {/* 현재 위치 관련 위도 경도로 수정해야할ㄷ스 */}
                         <Map
                             center={{ lat: 37.566826, lng: 126.9786567 }}
                             style={{ width: '100%', height: '100%' }}
