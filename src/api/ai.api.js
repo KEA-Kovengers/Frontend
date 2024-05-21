@@ -1,31 +1,31 @@
 import axios from 'axios';
 
 const PostSummary = (text) => {
-  return axios.post('https://d7fd-218-153-129-75.ngrok-free.app/generate/summary', {
+  return axios.post('http://172.16.211.44/generate/summary', {
     text: text,
   });
 };
 
 const PostSpellCheck = (text) => {
-  return axios.post('https://d7fd-218-153-129-75.ngrok-free.app/modify/spell', {
+  return axios.post('http://172.16.211.44/modify/spell', {
     text: text,
   });
 };
 
 const PostGenerateText = (text) => {
-  return axios.post('https://d7fd-218-153-129-75.ngrok-free.app/generate/text', {
+  return axios.post('http://172.16.211.44/generate/text', {
     text: text,
   });
 };
 
 const PostGenerateHashtag = (text) => {
-  return axios.post('https://d7fd-218-153-129-75.ngrok-free.app/generate/hashtag', {
+  return axios.post('http://172.16.211.44/generate/hashtag', {
     text: text,
   });
 };
 
 const PostGenerateImage = (text) => {
-  return axios.post('https://d7fd-218-153-129-75.ngrok-free.app/generate/image', {
+  return axios.post('http://172.16.211.44/generate/image', {
     text: text,
   });
 };
