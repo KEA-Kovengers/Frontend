@@ -1,11 +1,25 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 
-export default function AutoModal({ contents, handleAiTextClick }) {
+export default function AutoModal({ contents, setContents}) {
     const [isOpen, setIsOpen] = useState(true);
 
     const closeModal = () => {
         setIsOpen(false);
+    };
+
+    // ai 텍스트 생성 버튼 클릭 시 실행되는 함수
+    const handleAiTextClick = () => {
+        const text = contents.join(' ');
+        console.log('text', text);
+        PostGenerateText(text)
+        .then((res) => {
+            console.log('res', res.data);
+            setContents([...contents, res.data]);
+        })
+        .catch((err) => {
+            console.log('err', err);
+        });
     };
 
     return (
