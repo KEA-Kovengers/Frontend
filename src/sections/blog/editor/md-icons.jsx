@@ -18,8 +18,6 @@ export const createIconElement = (iconSrc, iconWidth, onClick) => {
   const iconImg = document.createElement('img');
   iconImg.setAttribute('src', iconSrc);
   iconImg.setAttribute('width', iconWidth);
-  iconImg.setAttribute('height', 'auto');
-  iconImg.style = 'margin: 0px;';
   iconElement.appendChild(iconImg);
   iconElement.addEventListener('click', onClick);
   return iconElement;
