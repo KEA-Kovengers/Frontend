@@ -12,6 +12,7 @@ export const toolbar = [
       name: 'video',
       tooltip: 'Insert video',
       el: videoIcon,
+      state: 'strong',
     },
     {
       name: 'music',

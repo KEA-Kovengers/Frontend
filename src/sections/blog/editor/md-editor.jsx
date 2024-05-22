@@ -22,11 +22,16 @@ export default function MdEditorWithHeader() {
 
   const [contents, setContents] = useState([]);
   const [editingIndex, setEditingIndex] = useState(null); // 수정 중인 문장의 인덱스
+  const [editorVisible, setEditorVisible] = useState(true);
 
   const tagRef = useRef(null);
 
   const editorRef1 = useRef(null);
   const editorRef2 = useRef(null);
+
+  // 에디터가 하나만 뜨도록 해보쟙
+  // 저장 버튼을 눌렀을 때는 커스텀된 에디터가 뜸
+  // handleCompleteButtonClick을 누르면 커스텀된 에디터가 안 뜸
 
   /*----------------------------------------------------------*/
 
@@ -283,18 +288,6 @@ export default function MdEditorWithHeader() {
         >
           {editingIndex === index ? (
             <Stack>
-              {/*{editingIndex !== null && (
-                <Editor
-                  previewStyle="vertical"
-                  initialValue={content}
-                  placeholder="글을 작성해 주세요"
-                  toolbarItems={toolbar}
-                  height="300px"
-                  plugins={[colorSyntax, [codeSyntaxHighlight, { highlighter: Prism }]]}
-                  ref={editorRef2}
-                />
-              )}
-              */}
               <Editor
                 previewStyle="vertical"
                 initialValue={content}
@@ -303,6 +296,31 @@ export default function MdEditorWithHeader() {
                 height="300px"
                 plugins={[colorSyntax, [codeSyntaxHighlight, { highlighter: Prism }]]}
                 ref={editorRef2}
+                hooks={{
+                  addImageBlobHook: async(blob, callback) => {
+                    console.log(blob);
+      
+                    const formData = new FormData();
+                    formData.append('file', blob);
+      
+                    console.log(callback);
+      
+                    try{
+                      const response = await axios.post('http://172.16.211.42/user/image', formData, {
+                        headers: {
+                          'Content-Type': 'multipart/form-data',
+                        },
+                      });
+
+                      const imageUrl = response.data;
+                      console.log(imageUrl);
+                      callback(imageUrl, 'Uploaded image');
+      
+                    }catch (error) {
+                      console.error('Failed to upload image', error);
+                    }
+                  }
+                }}
               />
               <Box sx={{ display: 'flex', justifyContent: 'center' }}>
                 <Button
@@ -348,62 +366,63 @@ export default function MdEditorWithHeader() {
       ))}
 
       {/* 기존에 뜨는 에디터 컴포넌트 (저장 버튼 있는) */}
-      <Editor
-        previewStyle="vertical"
-        initialEditType="markdown"
-        placeholder="글을 작성해 주세요"
-        toolbarItems={toolbar}
-        height="300px"
-        plugins={[colorSyntax, [codeSyntaxHighlight, { highlighter: Prism }]]}
-        ref={editorRef1}
-      
-        // 이미지 업로드 기능 수정하는 부분
-        hooks={{
-          addImageBlobHook: async(blob, callback) => {
-            console.log(blob);
+      {editingIndex === null && (
+        <>
+        <Editor
+          previewStyle="vertical"
+          initialEditType="markdown"
+          placeholder="글을 작성해 주세요"
+          toolbarItems={toolbar}
+          height="300px"
+          plugins={[colorSyntax, [codeSyntaxHighlight, { highlighter: Prism }]]}
+          ref={editorRef1}
+          hooks={{
+            addImageBlobHook: async(blob, callback) => {
+              console.log(blob);
 
-            const formData = new FormData();
-            formData.append('image', blob);
-            try {
-              // 서버가 이미지를 업로드하고 이미지 URL을 반환하는 엔드포인트
-              const response = await axios.post('http://localhost:3000/create-article', formData, {
-                headers: {
-                  'Content-Type': 'multipart/form-data'
-                }
-              });
-          
-              // Assuming the server responds with the URL of the uploaded image
-              const imageUrl = response.data.url;
-              callback(imageUrl, 'Uploaded image');
-            } catch (error) {
-              console.error('Failed to upload image', error);
+              const formData = new FormData();
+              formData.append('file', blob);
+
+              console.log(callback);
+
+              try{
+                const response = await axios.post('http://172.16.211.42/user/image', formData, {
+                  headers: {
+                    'Content-Type': 'multipart/form-data',
+                  },
+                });
+
+                const imageUrl = response.data;
+                console.log(imageUrl);
+                // 에디터 화면에 이미지 url 추가하는 부분
+                callback(imageUrl, 'Uploaded image');
+
+              }catch (error) {
+                console.error('Failed to upload image', error);
+              }
             }
-            
-            // // 1. 첨부한 이미지 파일을 서버로 전송 후, 이미지 경로를 받아옴
-            // const formData = new FormData();
-            // formData.append('image', blob);
-            // // 2. 첨부된 이미지를 화면에 표시
-            // callback('http://localhost:3000/create-article');
-          },
-        }}
-      />
-      <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-        <Button
-          onClick={handleCompleteButtonClick}
-          sx={{
-            width: 20,
-            height: 25,
-            bgcolor: '#1A2CDD',
-            borderRadius: 3,
-            color: 'white',
-            margin: '8px',
           }}
-        >
-          <Typography variant="body1" sx={{ fontSize: '12px' }}>
-            저장
-          </Typography>
-        </Button>
-      </Box>
-    </div>
+        />
+        <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+          <Button
+            onClick={handleCompleteButtonClick}
+            sx={{
+              width: 20,
+              height: 25,
+              bgcolor: '#1A2CDD',
+              borderRadius: 3,
+              color: 'white',
+              margin: '8px',
+            }}
+          >
+            <Typography variant="body1" sx={{ fontSize: '12px' }}>
+              저장
+            </Typography>
+          </Button>
+        </Box>
+      </>
+
+      )}
+      </div>
   );
 }

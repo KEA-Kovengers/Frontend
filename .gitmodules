@@ -1,3 +1,6 @@
 [submodule "config"]
 	path = config
+	url = https://github.com/KEA-Kovengers/Frontend.git
+[submodule "config_test"]
+	path = config_test
 	url = https://github.com/KEA-Kovengers/Submodules.git

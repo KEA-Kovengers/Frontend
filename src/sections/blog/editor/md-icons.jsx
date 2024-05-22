@@ -12,12 +12,13 @@ import MapModal from '../modal/MapModal';
 import GrammarModal from '../modal/GrammarModal';
 import AutoModal from '../modal/AutoModal';
 
-export const createIconElement = (iconSrc, iconWidth, onClick) => {
+export const createIconElement = (iconSrc, iconWidth,iconHeight, onClick) => {
   const iconElement = document.createElement('span');
   iconElement.style = 'cursor: pointer; vertical-align: top; ';
   const iconImg = document.createElement('img');
   iconImg.setAttribute('src', iconSrc);
   iconImg.setAttribute('width', iconWidth);
+  iconImg.setAttribute('height', iconHeight);
   iconElement.appendChild(iconImg);
   iconElement.addEventListener('click', onClick);
   return iconElement;
@@ -42,8 +43,8 @@ export const RenderModal = (ModalComponent) => {
   createRoot(modalDiv).render(<ModalComponent />);
 };
 
-export const videoIcon = createIconElement(VideoIcon, '26', () => RenderModal(VideoModal));
-export const musicIcon = createIconElement(MusicIcon, '24', () => RenderModal(MusicModal));
-export const mapIcon = createIconElement(MapIcon, '23', () => RenderModal(MapModal));
-export const grammarIcon = createIconElement(GrammarIcon, '25', () => RenderModal(GrammarModal));
-export const autoIcon = createIconElement(AutoIcon, '23', () => RenderModal(AutoModal));
+export const videoIcon = createIconElement(VideoIcon, '26','26', () => RenderModal(VideoModal));
+export const musicIcon = createIconElement(MusicIcon, '24','24', () => RenderModal(MusicModal));
+export const mapIcon = createIconElement(MapIcon, '23','23', () => RenderModal(MapModal));
+export const grammarIcon = createIconElement(GrammarIcon, '25','25', () => RenderModal(GrammarModal));
+export const autoIcon = createIconElement(AutoIcon, '23','23', () => RenderModal(AutoModal));

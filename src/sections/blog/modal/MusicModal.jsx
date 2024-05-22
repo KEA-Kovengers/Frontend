@@ -30,6 +30,7 @@ export default function MusicModal(){
     const [acessToken, setAccessToken] = useState(''); // API Access Token
     const [albums, setAlbums] = useState([]); // 검색 결과로 나온 앨범들을 저장할 배열
     const [tracks, setTracks] = useState([]); // 앨범에 포함된 트랙들을 저장할 배열
+    const [selectedAlbums, setSelectedAlbums] = useState([]); // 선택한 앨범들을 저장할 배열
 
 
     const handleEditClick = (index) => {
@@ -88,7 +89,6 @@ export default function MusicModal(){
             })
         // Display those albums to the user
     }
-    console.log(albums);
 
     // async function searchTrack() {
     //     var searchParams = {
@@ -140,6 +140,14 @@ export default function MusicModal(){
     //     }
     // }  
     // console.log(tracks);
+
+    const handleAlbumSelect = (album) => {
+        setSelectedAlbums(album);
+      };
+    
+      const handleButtonClick = () => {
+        console.log('선택된 앨범: ' + selectedAlbums);
+      };
 
     return (
         isOpen && (
@@ -239,7 +247,11 @@ export default function MusicModal(){
                                     </CardContent>
                                     
                                     <Button 
-                                        onClick={() => handleEditClick(index)}
+                                        onClick={() => {
+                                                handleEditClick(index); 
+                                                handleButtonClick();
+                                        }}
+
                                         sx={{...modal_style.complete_button, 
                                             marginTop: '5px',                       
                                             marginLeft: 'auto',                                    
