@@ -2,29 +2,30 @@ import axios from 'axios';
 import { useEffect } from 'react';
 
 export default function LoginKakaoAuth() {
+  // useEffect(() => {
+  //   const client_id = import.meta.env.VITE_APP_K_REST_API_KEY;
+  //   const redirect_uri = 'http://localhost:3000/api/auth/login';
+  //   const grant_type = 'authorization_code';
+  //   // 인가코드 받기
+  //   const code = new URLSearchParams(window.location.search).get('code');
 
-{/*  
-  useEffect(() => {
+  //   console.log('인가코드:', code);
+  //   axios
+  //     .post(
+  //       `https://kauth.kakao.com/oauth/token?grant_type=${grant_type}&client_id=${client_id}&redirect_uri=${redirect_uri}&code=${code}`,
+  //       {
+  //         headers: {
+  //           'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
+  //         },
+  //       }
+  //     )
+  //     .then((res) => {
+  //       console.log(res);
+  //     });
+  // }, []);
 
-    const client_id =import.meta.env.VITE_APP_K_REST_API_KEY; 
-    const redirect_uri = 'http://localhost:3000/api/auth/login';
-    const grant_type = 'authorization_code';
-    // 인가코드 받기
-    const code = new URLSearchParams(window.location.search).get('code');
-    
-    console.log('인가코드:', code);
-    axios.post(`https://kauth.kakao.com/oauth/token?grant_type=${grant_type}&client_id=${client_id}&redirect_uri=${redirect_uri}&code=${code}`, 
-      { 
-        headers: {
-        'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
-        } 
-      }).then((res) => {
-        console.log(res);
-      })
-    }, [])
-        */}
-
-
+  {
+    /*
     // 백엔드 서버로 인가코드 전달
     // 인가코드 받기
     const url = new URLSearchParams(window.location.search)
@@ -48,6 +49,8 @@ export default function LoginKakaoAuth() {
          getAccessToken(authorizationCode)
       }
     }, [])
+     */
+  }
 
   return (
     <div>
