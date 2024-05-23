@@ -1,25 +1,11 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 
-export default function AutoModal({ contents, setContents}) {
+export default function AutoModal({ editorHtml1, editorHtml2 }) {
     const [isOpen, setIsOpen] = useState(true);
 
     const closeModal = () => {
         setIsOpen(false);
-    };
-
-    // ai 텍스트 생성 버튼 클릭 시 실행되는 함수
-    const handleAiTextClick = () => {
-        const text = contents.join(' ');
-        console.log('text', text);
-        PostGenerateText(text)
-        .then((res) => {
-            console.log('res', res.data);
-            setContents([...contents, res.data]);
-        })
-        .catch((err) => {
-            console.log('err', err);
-        });
     };
 
     return (
@@ -47,6 +33,6 @@ export default function AutoModal({ contents, setContents}) {
 };
 
 AutoModal.propTypes = {
-    contents : PropTypes.string,
-    handleAiTextClick: PropTypes.func,
+    editorHtml1: PropTypes.array.isRequired,
+    editorHtml2: PropTypes.array.isRequired,
 };

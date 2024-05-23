@@ -1,10 +1,12 @@
 import { createRoot } from 'react-dom/client';
+import PropTypes from 'prop-types';
 
 import VideoIcon from '/assets/icons/video.svg';
 import MusicIcon from '/assets/icons/music.svg';
 import MapIcon from '/assets/icons/map.svg';
 import GrammarIcon from '/assets/icons/grammar.svg';
 import AutoIcon from '/assets/icons/auto.svg';
+// import AutoIconSVG from '/assets/icons/auto.svg';
 
 import MusicModal from '../modal/MusicModal';
 import VideoModal from '../modal/VideoModal';
@@ -47,3 +49,37 @@ export const musicIcon = createIconElement(MusicIcon, '24', () => RenderModal(Mu
 export const mapIcon = createIconElement(MapIcon, '23', () => RenderModal(MapModal));
 export const grammarIcon = createIconElement(GrammarIcon, '25', () => RenderModal(GrammarModal));
 export const autoIcon = createIconElement(AutoIcon, '23', () => RenderModal(AutoModal));
+// export const AutoIcon = ({ editorHtml1, editorHtml2, handleAiTextClick }) => {
+//   return createIconElement(AutoIconSVG, '23', {
+//     onClick: () => {
+//       if (editorHtml1.length > 0 || editorHtml2.length > 0) {
+//         handleAiTextClick();
+//       }
+//     },
+//   });
+// };
+
+// AutoIcon.propTypes = {
+//   editorHtml1: PropTypes.array.isRequired,
+//   editorHtml2: PropTypes.array.isRequired,
+//   handleAiTextClick: PropTypes.func.isRequired,
+// };
+
+// {/* <Button
+// onClick={editorHtml1.length > 0 || editorHtml2.length > 0 ? handleAiTextClick : null}
+// sx={{
+//   // width: 54,
+//   height: 40,
+//   bgcolor: 'grey',
+//   borderRadius: 3,
+//   // border: '2px solid #8A94EF',
+//   color: 'white',
+//   fontSize: '18px',
+//   marginBottom: '10px',
+// }}
+// >
+// <Typography variant="body1" sx={{ fontSize: '16px' }}>
+//   ai 텍스트 생성
+// </Typography>
+// </Button> */}
+
