@@ -15,7 +15,7 @@ import { RouterLink } from 'src/routes/components';
 
 import { useResponsive } from 'src/hooks/use-responsive';
 
-import { account } from 'src/_mock/account';
+import { useAccountStore } from 'src/store/useAccountStore';
 
 import Logo from 'src/components/logo';
 import Scrollbar from 'src/components/scrollbar';
@@ -27,6 +27,7 @@ import { colors } from 'src/theme/variableColors';
 // ----------------------------------------------------------------------
 
 export default function Nav({ openNav, onCloseNav }) {
+  const { accountInfo } = useAccountStore();
   const pathname = usePathname();
 
   const upLg = useResponsive('up', 'lg');
@@ -40,8 +41,8 @@ export default function Nav({ openNav, onCloseNav }) {
 
   const renderAccount = (
     <Box
-    component={Link}
-    to='/user'
+      component={Link}
+      to="/user"
       sx={{
         my: 3,
         mx: 2.5,
@@ -54,17 +55,19 @@ export default function Nav({ openNav, onCloseNav }) {
         textDecoration: 'none',
       }}
     >
-      <Avatar src={account.photoURL} alt="photoURL" />
+      <Avatar src={accountInfo.profileImg} alt="photoURL" />
 
       <Box sx={{ ml: 2 }}>
-        <Typography variant="subtitle2" color={colors.blueBlack}>{account.displayName}</Typography>
+        <Typography variant="subtitle2" color={colors.blueBlack}>
+          {accountInfo.nickName}
+        </Typography>
       </Box>
     </Box>
   );
 
   const renderMenu = (
     <Stack component="nav" spacing={0.5} sx={{ px: 2 }}>
-      {navConfig.map((item) => (
+      {navConfig().map((item) => (
         <NavItem key={item.title} item={item} />
       ))}
     </Stack>
@@ -86,7 +89,6 @@ export default function Nav({ openNav, onCloseNav }) {
       {renderAccount}
 
       {renderMenu}
-
     </Scrollbar>
   );
 

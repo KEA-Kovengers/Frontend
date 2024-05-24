@@ -1,31 +1,24 @@
+import React from 'react';
+import AppCardData3 from './data/app-card-data3';
+
 import AppCardImage from "./app-card-image";
 import AppCardInfo from "./app-card-info";
 
 // ----------------------------------------------------------------------
 
-export default function AppCard3(){
+export default function AppCard3() {
 
-  const images = [
-    {
-      id:0,
-      src:'http://172.16.211.100:32001/test/sample.png',
-    },
-    {
-      id:1,
-      src:'/assets/images/meeting.png',
-    },
-    {
-      id:2,
-      src:'/assets/images/santamonica.jpg',
-    }
-  ];
-  
-    return (
+  const [data, setData] = AppCardData3();
 
-      <div>
-          <AppCardImage images={images}/>
-          <AppCardInfo/>
+  return (
+
+    <div>
+    {data.map(item => (
+      <div key={item.id}>
+        <AppCardImage images={[item.image]} />
+        <AppCardInfo info={[item.info]} />
       </div>
-
-    );
+    ))}
+  </div>
+  );
 }

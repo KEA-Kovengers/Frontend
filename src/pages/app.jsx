@@ -1,17 +1,20 @@
 import { Helmet } from 'react-helmet-async';
+import ManagerMain from 'src/sections/managerMain/ManagerMain';
+import { useAccountStore } from 'src/store/useAccountStore';
 
 import { AppView } from 'src/sections/overview/view';
 
 // ----------------------------------------------------------------------
 
 export default function AppPage() {
+  const { accountInfo } = useAccountStore();
   return (
     <>
       <Helmet>
-        <title> Dashboard | Minimal UI </title>
+        <title> Newcord </title>
       </Helmet>
 
-      <AppView />
+      {accountInfo.role !== 'admin' ? <AppView /> : <ManagerMain />}
     </>
   );
 }

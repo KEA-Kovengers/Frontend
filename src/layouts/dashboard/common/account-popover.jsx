@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import {Link} from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 import Box from '@mui/material/Box';
 import Avatar from '@mui/material/Avatar';
@@ -10,17 +10,29 @@ import MenuItem from '@mui/material/MenuItem';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 
-import { account } from 'src/_mock/account';
 import AccountModal from './account-modal';
+import { useAccountStore } from 'src/store/useAccountStore';
 
 // ----------------------------------------------------------------------
 
 export default function AccountPopover() {
+  const { accountInfo } = useAccountStore();
+
   const [open, setOpen] = useState(null);
-  const [IsModalOpen,setIsModalOpen] = useState(false);
-  const [modalRightButton,setModalRightButton] = useState('');
+  const [IsModalOpen, setIsModalOpen] = useState(false);
+  const [modalRightButton, setModalRightButton] = useState('');
   const [modalContents, setModalContents] = useState('');
-  const [modalSubContents,setModalSubContents] = useState('');
+  const [modalSubContents, setModalSubContents] = useState('');
+
+  const navigate = useNavigate();
+  const [openMore, setOpenMore] = useState(null);
+  const handleOpenMore = (event) => {
+    setOpenMore(event.currentTarget);
+  };
+
+  const handleCloseMore = () => {
+    setOpenMore(null);
+  };
 
   // 메뉴 옵션 핸들러
   const handleOpen = (event) => {
@@ -32,18 +44,23 @@ export default function AccountPopover() {
   };
 
   // 모달 열기 핸들러
-  const handleModalOpen = (rightButton,contents,subcontents) => {
+  const handleModalOpen = (rightButton, contents, subcontents) => {
     setIsModalOpen(true);
     setModalRightButton(rightButton);
     setModalContents(contents);
     setModalSubContents(subcontents);
     handleClose(); // 팝오버 닫기
-  }
+  };
 
   const handleModalClose = () => {
     setIsModalOpen(false);
-}
+  };
 
+  const clickManager = () => {
+    handleCloseMore();
+    handleClose();
+    navigate('/user');
+  };
   return (
     <>
       <IconButton
@@ -59,15 +76,15 @@ export default function AccountPopover() {
         }}
       >
         <Avatar
-          src={account.photoURL}
-          alt={account.displayName}
+          src={accountInfo.profileImg}
+          alt={accountInfo.nickName}
           sx={{
             width: 36,
             height: 36,
             border: (colors) => `solid 2px ${colors.first}`,
           }}
         >
-          {account.displayName.charAt(0).toUpperCase()}
+          {accountInfo.nickName.charAt(0).toUpperCase()}
         </Avatar>
       </IconButton>
 
@@ -86,20 +103,9 @@ export default function AccountPopover() {
           },
         }}
       >
-        <Box sx={{ my: 1.5, px: 2 }}>
-          <Typography variant="subtitle2" noWrap>
-            {account.displayName}
-          </Typography>
-          <Typography variant="body2" sx={{ color: 'text.secondary' }} noWrap>
-            {account.email}
-          </Typography>
-        </Box>
-
-        <Divider sx={{ borderStyle: 'dashed' }} />
-
         <MenuItem
           component={Link}
-          to='/user'
+          to="/user"
           disableRipple
           disableTouchRipple
           onClick={handleClose}
@@ -111,10 +117,16 @@ export default function AccountPopover() {
         <MenuItem
           disableRipple
           disableTouchRipple
-          onClick={()=>handleModalOpen('탈퇴','정말로 탈퇴하시겠습니까?','탈퇴시 계정은 삭제되며\n복구되지 없습니다.')}
+          onClick={() =>
+            handleModalOpen(
+              '탈퇴',
+              '정말로 탈퇴하시겠습니까?',
+              '탈퇴시 계정은 삭제되며\n복구되지 없습니다.'
+            )
+          }
           sx={{ typography: 'body2', color: 'text.secondary', py: 1.5 }}
         >
-          Withdraw  
+          Withdraw
         </MenuItem>
 
         <Divider sx={{ borderStyle: 'dashed', m: 0 }} />
@@ -122,11 +134,39 @@ export default function AccountPopover() {
         <MenuItem
           disableRipple
           disableTouchRipple
-          onClick={()=>handleModalOpen('로그아웃','로그아웃 하시겠습니까?')}
+          onClick={() => handleModalOpen('로그아웃', '로그아웃 하시겠습니까?')}
           sx={{ typography: 'body2', color: 'error.main', py: 1.5 }}
         >
           Logout
         </MenuItem>
+        <Divider sx={{ borderStyle: 'dashed', m: 0 }} />
+
+        <MenuItem
+          disableRipple
+          disableTouchRipple
+          onClick={handleOpenMore}
+          sx={{ typography: 'body2', color: 'text.secondary', py: 1.5 }}
+        >
+          more
+        </MenuItem>
+        <Popover
+          open={!!openMore}
+          anchorEl={openMore}
+          onClose={handleCloseMore}
+          anchorOrigin={{ vertical: 'top', horizontal: 'left' }}
+          transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+          PaperProps={{
+            sx: { width: 'auto', p: '6px 0' },
+          }}
+        >
+          <MenuItem onClick={clickManager}>공지사항</MenuItem>
+          <Divider sx={{ borderStyle: 'dashed', margin: 0 }} />
+          <div style={{ lineHeight: 2, padding: '6px 16px', fontSize: 14 }}>
+            문의
+            <br />
+            Kovengers@gmail.com
+          </div>
+        </Popover>
       </Popover>
 
       <AccountModal

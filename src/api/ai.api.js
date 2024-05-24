@@ -1,35 +1,35 @@
-// import axios from 'axios';
+import axios from 'axios';
 
-// const PostSummary = (text) => {
-//     return axios.post('https://af5e-203-249-126-181.ngrok-free.app/generate/summary',
-//         {
-//             text: text
-//         }
-//     )
-// }
+const url = import.meta.env.VITE_FASTAPI_URL;
 
-// const PostSpellCheck = (text) => {
-//     return axios.post('http://localhost:8000/modify/spell',
-//         {
-//             text: text
-//         }
-//     )
-// }
+const PostSummary = (text) => {
+  return axios.post(`${url}/generate/summary`, {
+    text: text,
+  });
+};
 
-// const PostGenerateText = (text) => {
-//     return axios.post('http://localhost:8000/generate/text',
-//         {
-//             text: text
-//         }
-//     )
-// }
+const PostSpellCheck = (text) => {
+  return axios.post(`${url}/modify/spell`, {
+    text: text,
+  });
+};
 
-// const PostGenerateHashtag = (text) => {
-//     return axios.post('http://localhost:8000/generate/hashtag',
-//         {
-//             text: text
-//         }
-//     )
-// }
+const PostGenerateText = (text) => {
+  return axios.post(`${url}/generate/text`, {
+    text: text,
+  });
+};
 
-// export { PostSummary, PostSpellCheck, PostGenerateText, PostGenerateHashtag }
+const PostGenerateHashtag = (text) => {
+  return axios.post(`${url}/generate/hashtag`, {
+    text: text,
+  });
+};
+
+const PostGenerateImage = (text) => {
+  return axios.post(`${url}/generate/image`, {
+    text: text,
+  });
+};
+
+export { PostSummary, PostSpellCheck, PostGenerateText, PostGenerateHashtag, PostGenerateImage };

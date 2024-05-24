@@ -1,3 +1,5 @@
+import React, { useState } from "react";
+
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
@@ -9,16 +11,17 @@ import Logo from 'src/components/logo';
 import Iconify from 'src/components/iconify';
 
 import { colors } from 'src/theme/variableColors';
-import { useState } from 'react';
 import CustomModalBig from 'src/components/CustomModalBig/CustomModalBig';
-import CustomModal from 'src/components/CustomModal/CustomModal';
+import { useNavigate } from 'react-router-dom';
 
 import { useToggle } from 'src/hooks/useToggle';
 
-import { useCounter } from 'src/commons/store/aiCreateCount';
+import { useCounter } from 'src/hooks/useCount';
 
 export default function SelectOptionView() {
   const [isSelected, setIsSelected] = useState(null);
+  const [imageUrl, setImageUrl] = useState(null); // State to store the image URL
+  const [imgFile, setImgFile] = useState(null); // State to store the image file
 
   const count = useCounter((state) => state.count);
   const decrement = useCounter((state) => state.decrement);
@@ -28,6 +31,10 @@ export default function SelectOptionView() {
   const aiModalToggle = useToggle();
   const aiSelectModalToggle = useToggle();
   const aiCreatingModalToggle = useToggle();
+  const imageConfirmModalToggle = useToggle();
+  const videoConfirmModalToggle = useToggle();
+
+  const navigate = useNavigate();
 
   const handleOpenModalClick = (option) => {
     if (option === 'image') {
@@ -36,31 +43,51 @@ export default function SelectOptionView() {
       input.accept = 'image/*';
       input.onchange = function (event) {
         const file = event.target.files[0];
-        console.log(file);
+        console.log('file', file);
+        const imgUrl = URL.createObjectURL(file);
+        setImageUrl(imgUrl);
+        console.log('imgUrl', imgUrl);
+        if (file) {
+          imageConfirmModalToggle.toggle();
+        }
+      };
+      input.click();
+    }
+    if (option === 'video') {
+      const input = document.createElement('input');
+      input.type = 'file';
+      input.accept = 'video/*';
+      input.onchange = function (event) {
+        const file = event.target.files[0];
+        const video = URL.createObjectURL(file);
+        console.log('video', video);
+        setImageUrl(video);
+        if (file) {
+          videoConfirmModalToggle.toggle();
+        }
       };
       input.click();
     }
     setIsSelected(option);
-    // {
-    //   option === 'image' && toggle();
-    // }
-    {
-      option === 'video' && toggle();
-    }
+
     if (option === 'ai') {
       aiModalToggle.toggle();
-    } else if (option === 'ai_select') {
-      aiSelectModalToggle.toggle();
     }
   };
   //rightAction 함수
   const CreateAiImage = () => {
     console.log('CreateAiImage');
-    aiCreatingModalToggle.toggle();
+    // aiCreatingModalToggle.toggle();
+
+    aiSelectModalToggle.toggle();
   };
   const ConfirmAiImage = () => {
     console.log('ConfirmAiImage');
     reset();
+    navigate('/confirm-upload');
+  };
+  const ConfirmFile = () => {
+    navigate('/confirm-upload');
   };
 
   const renderHeader = (
@@ -78,31 +105,50 @@ export default function SelectOptionView() {
       <Logo />
 
       <CustomModalBig
+        rightButton={'예'}
+        mode={'img'}
+        onClose={imageConfirmModalToggle.toggle}
+        title={'사진'}
+        contents={'해당 사진으로 결정하시겠습니까?'}
+        open={imageConfirmModalToggle.isOpen}
+        rightAction={ConfirmFile}
+        image={{ imgFile: imgFile, imgUrl: imageUrl }}
+      />
+      <CustomModalBig
+        rightButton={'예'}
+        mode={'video'}
+        onClose={videoConfirmModalToggle.toggle}
+        title={'영상'}
+        contents={'해당 영상으로 결정하시겠습니까?'}
+        open={videoConfirmModalToggle.isOpen}
+        rightAction={ConfirmFile}
+        image={{ imgFile: imgFile, imgUrl: imageUrl }}
+      />
+      <CustomModalBig
         rightButton={'생성'}
         mode={'ai'}
         onClose={aiModalToggle.toggle}
         title={'AI 생성 이미지'}
         open={aiModalToggle.isOpen}
-        leftButton={'취소'}
         rightAction={CreateAiImage}
       />
-      <CustomModalBig
+      {/* <CustomModalBig
         mode={'ai_creating'}
         onClose={aiCreatingModalToggle.toggle}
         title={'AI 생성 이미지'}
         contents={'이미지를 생성 중입니다...'}
         open={aiCreatingModalToggle.isOpen}
         rightAction={aiSelectModalToggle.toggle}
-      />
+      /> */}
       <CustomModalBig
         rightButton={'예'}
         mode={'ai_select'}
         onClose={aiSelectModalToggle.toggle}
         title={'AI 생성 이미지'}
-        contents={'해당 사진으로 결정하시겠습니까?'}
+        contents={'해당 ai 이미지로 결정하시겠습니까?'}
         open={aiSelectModalToggle.isOpen}
         rightAction={ConfirmAiImage}
-        // leftButton={`재설정 ${count}/5`}
+        leftButton={`재설정 ${count}/5`}
       />
     </Box>
   );

@@ -14,7 +14,8 @@ const Logo = forwardRef(({ disabledLink = false, sx, ...other }, ref) => {
   const logo = (
     <Box
       component="img"
-      src="src\components\logo\newcord_logo.jpg"
+      // src="src\components\logo\newcord_logo.jpg"
+      src="/assets/newcord_logo.jpg"
       sx={{
         width: 151,
         height: 44.89,
