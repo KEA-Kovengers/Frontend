@@ -157,7 +157,17 @@ export default function MapModal() {
             behavior: 'smooth',
             block: 'center'
         });
+
+        console.log(place);
+        console.log(
+            '장소명: ',place.place_name, 
+            '\n주소: ',place.address_name, 
+            '\n도로명 주소: ',place.road_address_name, 
+            '\n링크: ',place.place_url);
     };
+
+
+
 
     return (
         isOpen && (
@@ -283,7 +293,8 @@ export default function MapModal() {
                     sx={{
                         ...modal_style.complete_button,
                         marginLeft: 'auto',
-                    }}>
+                    }}
+                    >
                         추가
                 </Button>
             </Box>

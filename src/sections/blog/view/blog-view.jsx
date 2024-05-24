@@ -11,7 +11,7 @@ import CollabProfile from '../header/collab-profile';
 import ModifyPopover from '../header/modify-popover';
 import InvitePopover from '../header/invite-popover';
 
-import MdEditor from '../editor/md-editor';
+import MdEditorWithHeader from '../editor/md-editor';
 
 export default function BlogView() {
   const navigate = useNavigate();
@@ -85,7 +85,7 @@ export default function BlogView() {
         <Grid container spacing={3}>
           <Grid item xs={12}>
             <Box mt={9.5}>
-              <MdEditor />
+              <MdEditorWithHeader />
             </Box>
           </Grid>
         </Grid>

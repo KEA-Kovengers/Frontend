@@ -30,13 +30,6 @@ export default function MusicModal(){
     const [acessToken, setAccessToken] = useState(''); // API Access Token
     const [albums, setAlbums] = useState([]); // 검색 결과로 나온 앨범들을 저장할 배열
     const [tracks, setTracks] = useState([]); // 앨범에 포함된 트랙들을 저장할 배열
-
-
-    const handleEditClick = (index) => {
-        const newIsEditing = [...isEditing];
-        newIsEditing[index] = !newIsEditing[index];
-        setIsEditing(newIsEditing);
-    };
     
     const closeModal = () => {
         setIsOpen(false);
@@ -83,12 +76,31 @@ export default function MusicModal(){
         var returnedAlbums = await fetch('https://api.spotify.com/v1/artists/' + artistID + '/albums' + '?include_groups=album&market=KR&limit=50', searchParams)
             .then(response => response.json())
             .then(data => {
-                console.log(data);
+                // console.log(data);
                 setAlbums(data.items);
             })
-        // Display those albums to the user
     }
+    // Display those albums to the user
     console.log(albums);
+
+    
+    const handleEditClick = (index) => {
+        const newIsEditing = [...isEditing];
+        newIsEditing[index] = !newIsEditing[index];
+        setIsEditing(newIsEditing);
+
+        // 선택된 앨범을 콘솔에 출력
+        if (newIsEditing[index]) { 
+            console.log('선택된 앨범: ',albums[index]);
+            console.log(
+                '링크:',albums[index].external_urls.spotify,
+                '\n앨범명',albums[index].name,
+                '\n가수:',albums[index].artists[0].name,
+                '\n사진 링크:',albums[index].images[2].url,
+                '\nrelease date:',albums[index].release_date
+            );
+        }
+    };
 
     // async function searchTrack() {
     //     var searchParams = {
@@ -217,7 +229,8 @@ export default function MusicModal(){
 
                     <div style={{ maxHeight: '300px', overflowY: 'auto' }}>
                     {albums.map((album,index) => {
-                        console.log(album);
+                        // console.log('선택된 앨범'+album);
+                        // console.log('선택된 앨범: '+albums[index]);
                         return (
                             <Card key={index} >
                                 <Stack direction="row">
