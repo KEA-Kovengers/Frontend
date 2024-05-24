@@ -7,9 +7,17 @@ pipeline {
         VERSION = "${env.BUILD_NUMBER}" // Jenkins 빌드 번호를 버전으로 사용합니다.
     }
     stages {
-        stage('Pull Git Submodules') {
+        stage('Copy YAML File') {
             steps {
-                sh 'git submodule update --init --recursive'
+                script{
+                    // 파일명 폴더 아이디 수정
+                    withCredentials([file(credentialsId: 'frontend', variable: 'FE_API_KEY_FILE')]) {
+                        // 파일 복사 명령 실행
+                        // sh('sudo mkdir -p ' + WORKSPACE + '/config/frontend-api-key/')
+                        // sh('sudo cp ' + FE_API_KEY_FILE + ' ' + WORKSPACE + '/config/frontend-api-key/')
+                        sh('sudo cp ' + FE_API_KEY_FILE + ' ' + WORKSPACE)
+                    }
+                }
             }
         }
         stage('Build Docker images') {
