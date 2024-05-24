@@ -1,28 +1,78 @@
 import axios from 'axios';
 import { useEffect } from 'react';
+import { GetAuthValidate, GetLogin } from 'src/api/auth.api';
+import { useCookies } from 'react-cookie';
+import { useAccountStore } from 'src/store/useAccountStore';
+import { PostUserInfo } from 'src/api/user.api';
+import { update } from 'lodash';
 
 export default function LoginKakaoAuth() {
-  // useEffect(() => {
-  //   const client_id = import.meta.env.VITE_APP_K_REST_API_KEY;
-  //   const redirect_uri = 'http://localhost:3000/api/auth/login';
-  //   const grant_type = 'authorization_code';
-  //   // 인가코드 받기
-  //   const code = new URLSearchParams(window.location.search).get('code');
+  const { accountInfo, updateAccoutInfo } = useAccountStore();
+  const [cookies, setCookie] = useCookies(['token']);
 
-  //   console.log('인가코드:', code);
-  //   axios
-  //     .post(
-  //       `https://kauth.kakao.com/oauth/token?grant_type=${grant_type}&client_id=${client_id}&redirect_uri=${redirect_uri}&code=${code}`,
-  //       {
-  //         headers: {
-  //           'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
-  //         },
-  //       }
-  //     )
-  //     .then((res) => {
-  //       console.log(res);
-  //     });
-  // }, []);
+  useEffect(() => {
+    // 인가코드 받기
+    const code = new URLSearchParams(window.location.search).get('code');
+
+    console.log('인가코드:', code);
+
+    // PostUserInfo({
+    //   id: 123456789,
+    //   nickName: 'miso',
+    //   blogName: 'miso',
+    //   profileImage: 'miso',
+    //   bio: 'miso',
+    // })
+    //   .then((res) => {
+    //     console.log(res);
+    //   })
+    //   .catch((err) => {
+    //     console.log(err);
+    //   });
+
+    setCookie(
+      'token',
+      {
+        token:
+          'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIzNDI2NjEyOTM3IiwiaXNzIjoia292ZW5nZXJzIiwiaWF0IjoxNzE2NDUzNjUwLCJleHAiOjE3MTgyNTM2NTB9.nUtA_AQqcV_5445OWdM89pt9eCLpBNIlJvWAz2XmTYY',
+        refreshToken:
+          'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIzNDI2NjEyOTM3IiwiaXNzIjoia292ZW5nZXJzIiwiaWF0IjoxNzE2NDUzNjUwLCJleHAiOjIzMjEyNTM2NTB9.VDq2WO07l4_sTlUBZ-YxAWIsyh-dC6cbJ72XKO2gH4M',
+      },
+      { path: '/' }
+    );
+    console.log(cookies.token);
+
+    // updateAccoutInfo('id', 3426612937);
+    // updateAccoutInfo('nickName', '남소미');
+    // updateAccoutInfo('blogName', '남소미의 블로그');
+    // updateAccoutInfo(
+    //   'profileImg',
+    //   'http://k.kakaocdn.net/dn/rC03r/btsFEhBZ0pR/oO0YzcELWzk5pOOiVxR6Sk/img_640x640.jpg'
+    // );
+    // updateAccoutInfo('role', 'ADMIN');
+
+    // GetLogin(code)
+    //   .then((res) => {
+    //     console.log(res);
+    //     setCookie(
+    //       'token',
+    //       { token: res.result.token, refreshToken: res.result.refreshToken },
+    //       { path: '/' }
+    //     ); // 쿠키에 토큰 저장
+    //     // updateAccoutInfo('id', res.result.id);
+    //   })
+    //   .catch((err) => {
+    //     console.log(err);
+    //   });
+
+    // GetAuthValidate()
+    //   .then((res) => {
+    //     console.log(res);
+    //   })
+    //   .catch((err) => {
+    //     console.log(err);
+    //   });
+  }, []);
 
   {
     /*

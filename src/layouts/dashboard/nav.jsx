@@ -15,7 +15,7 @@ import { RouterLink } from 'src/routes/components';
 
 import { useResponsive } from 'src/hooks/use-responsive';
 
-import { account } from 'src/_mock/account';
+import { useAccountStore } from 'src/store/useAccountStore';
 
 import Logo from 'src/components/logo';
 import Scrollbar from 'src/components/scrollbar';
@@ -27,6 +27,7 @@ import { colors } from 'src/theme/variableColors';
 // ----------------------------------------------------------------------
 
 export default function Nav({ openNav, onCloseNav }) {
+  const { accountInfo } = useAccountStore();
   const pathname = usePathname();
 
   const upLg = useResponsive('up', 'lg');
@@ -54,11 +55,11 @@ export default function Nav({ openNav, onCloseNav }) {
         textDecoration: 'none',
       }}
     >
-      <Avatar src={account.photoURL} alt="photoURL" />
+      <Avatar src={accountInfo.profileImg} alt="photoURL" />
 
       <Box sx={{ ml: 2 }}>
         <Typography variant="subtitle2" color={colors.blueBlack}>
-          {account.displayName}
+          {accountInfo.nickName}
         </Typography>
       </Box>
     </Box>
