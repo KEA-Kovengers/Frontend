@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, createRef  } from 'react';
 import { Stack, Box, Button, Typography, colors, IconButton } from '@mui/material';
 import Iconify from 'src/components/iconify';
   
@@ -31,49 +31,30 @@ export default function MdEditorWithHeader() {
 
   const tagRef = useRef(null);
 
-  const editorRef1 = useRef(null);
-  const editorRef2 = useRef(null);
-  const { editorHtml1, editorHtml2, updateEditorHtml1, updateEditorHtml2 } = 
+  const editorRef1 = useRef (null);
+  const editorRef2 = useRef (null);
+
+  const {
+          editorHtml1, editorHtml2, 
+          updateEditorHtml1, updateEditorHtml2,
+        } = 
           useEditStore((state) => ({
             editorHtml1: state.editInfo.editorHtml1,
             editorHtml2: state.editInfo.editorHtml2,
 
             updateEditorHtml1: state.updateEditInfo.bind(null, 'editorHtml1'),
             updateEditorHtml2: state.updateEditInfo.bind(null, 'editorHtml2'),
-            aiGeneratedText: state.editInfo.aiGeneratedText,
-            handleAiText: state.handleAiText,
           }));
 
-  // const [accessToken, setAccessToken] = useState(''); // [임시] accessToken 상태값
+    const { setEditorRef1, setEditorRef2 } = useEditStore();
 
-  // useEffect(() => {
-  //   var authParams = {
-  //     method: 'POST',
-  //     headers: {
-  //         'Content-Type': 'application/x-www-form-urlencoded',
-  //     },
-  //    };
-  //    fetch('https://172.16.211.21/articles/object/upload', authParams)
-  //     .then(result => result.json())
-  //     .then(accessToken => setAccessToken(accessToken))
-  // }, []);
+    const accessToken = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIzNDI2NjEyOTM3IiwiaXNzIjoia292ZW5nZXJzIiwiaWF0IjoxNzE2NDUzNjUwLCJleHAiOjE3MTgyNTM2NTB9.nUtA_AQqcV_5445OWdM89pt9eCLpBNIlJvWAz2XmTYY"
 
-  // console.log('accessToken', accessToken);
-  // console.log('accessToken', data);
-
-  // useEffect(() => {
-  //   // API Aceess Token 받아오기
-  //   var authParams = {
-  //       method: 'POST',
-  //       headers: {
-  //           'Content-Type': 'application/x-www-form-urlencoded',
-  //       },
-  //       body: 'grant_type=client_credentials&client_id=' + client_id + '&client_secret=' + client_secret
-  //   };
-  //   fetch('https://accounts.spotify.com/api/token', authParams)
-  //       .then(result => result.json())
-  //       .then(data => setAccessToken(data.access_token))
-  // }, [])
+   // 컴포넌트가 마운트될 때 ref를 업데이트합니다.
+   useEffect(() => {
+    setEditorRef1(editorRef1.current);
+    setEditorRef2(editorRef2.current);
+  }, [setEditorRef1, setEditorRef2]);
 
   /*----------------------------------------------------------*/
 
@@ -211,17 +192,17 @@ export default function MdEditorWithHeader() {
   // 에디터에 작성하면 한 글자씩 마크다운이 적용되어 콘솔에 출력
   const onChange = () => {
     if (editorRef1.current) {
-      const editorHtml1 = editorRef1.current.getInstance().getMarkdown();
-      updateEditorHtml1(editorHtml1);
-      console.log(editorHtml1);
+      // editorHtml1 = editorRef1.current.getInstance().getMarkdown();
+      updateEditorHtml1(editorRef1.current.getInstance().getMarkdown());
+      console.log('editorHtml1:', editorHtml1);
     }
-
-    if (editorRef2.current) {
-      const editorHtml2 = editorRef2.current.getInstance().getMarkdown();
-      updateEditorHtml2(editorHtml2);
-      console.log(editorHtml2);
+    else if (editorRef2.current) {
+      // const editorHtml2 = editorRef2.current.getInstance().getMarkdown();
+      updateEditorHtml2(editorRef2.current.getInstance().getMarkdown());
+      console.log('editorHtml2: ',editorHtml2);
     }
   }
+  
 
   // // ai 텍스트 생성 버튼 클릭 시 실행되는 함수
   
@@ -335,28 +316,6 @@ export default function MdEditorWithHeader() {
         </Button>
       </div>
 
-      {/* <Button
-        onClick={editorHtml1.length > 0 || editorHtml2.length > 0 ? handleAiTextClick : null}
-        // onClick={editorHtml1.length > 0 || editorHtml2.length > 0 ? handleAiTextClickInternal : null}
-        // onClick={handleAiTextClickInternal}
-        sx={{
-          // width: 54,
-          height: 40,
-          bgcolor: 'grey',
-          borderRadius: 3,
-          // border: '2px solid #8A94EF',
-          color: 'white',
-          fontSize: '18px',
-          marginBottom: '10px',
-        }}
-      >
-        <Typography variant="body1" sx={{ fontSize: '16px' }}>
-          ai 텍스트 생성
-        </Typography>
-      </Button> */}
-
-      {/* <AutoIcon editorHtml1={editorHtml1} editorHtml2={editorHtml2} handleAiTextClick={handleAiTextClick} /> */}
-
       {/* 편집할 때, 에디터 컴포넌트 (취소,완료 버튼 있는) */}
       {contents.map((content, index) => (
         <Box
@@ -380,12 +339,12 @@ export default function MdEditorWithHeader() {
                     console.log(blob);
         
                     const formData = new FormData();
-                    formData.append('file', blob);
+                    formData.append('files', blob);
         
                     console.log(callback);
         
                     try{
-                      const response = await axios.post('http://172.16.211.42/articles/object/upload', formData, {
+                      const response = await axios.post('http://newcord.kro.kr/articles/object/upload', formData, {
                         headers: {
                           'Content-Type': 'multipart/form-data',
                         },
@@ -463,12 +422,12 @@ export default function MdEditorWithHeader() {
             console.log(blob);
 
             const formData = new FormData();
-            formData.append('file', blob);
+            formData.append('files', blob);
 
             console.log(callback);
 
             try{
-              const response = await axios.post('http://172.16.211.21/articles/object/upload', formData, {
+              const response = await axios.post('http://newcord.kro.kr/articles/object/upload', formData, {
                 headers: {
                   'Content-Type': 'multipart/form-data',
                   'Authorization': `Bearer ${accessToken}`,

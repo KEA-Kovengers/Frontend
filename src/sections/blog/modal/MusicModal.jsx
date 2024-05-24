@@ -17,25 +17,30 @@ import {
 import Iconify from 'src/components/iconify';
 import { colors } from 'src/theme/variableColors';
 
+import { useEditStore } from 'src/store/useEditStore';
+import { useEditMusicStore } from 'src/store/useEditMusicStore';
 // ----------------------------------------------------------------------
 
 const client_id = import.meta.env.VITE_SPOTIFY_CLIENT_ID;
 const client_secret = import.meta.env.VITE_SPOTIFY_CLIENT_SECRET;
 
+// selectedIndex list로 저장 --> 여러개 선택해도 추가 가능
+// album의 id를 저장해서 선택된 앨범을 찾을 수 있도록 함
+// 추가할 때도 list index와 id를 함께 저장
+
 export default function MusicModal(){
 
     const [isOpen, setIsOpen] = useState(true);
-    const [isEditing, setIsEditing] = useState([]);
+    // const [isEditing, setIsEditing] = useState([]);
+    // const [albums, setAlbums] = useState([]); // 검색 결과로 받아온 앨범들을 저장할 배열
     const [searchInput, setSearchInput] = useState(''); // 검색창에 입력한 값
     const [acessToken, setAccessToken] = useState(''); // API Access Token
-    const [albums, setAlbums] = useState([]); // 검색 결과로 나온 앨범들을 저장할 배열
     const [tracks, setTracks] = useState([]); // 앨범에 포함된 트랙들을 저장할 배열
-    
-    const closeModal = () => {
-        setIsOpen(false);
-    };
+    const [index, setIndex] = useState(0); // 선택된 앨범의 인덱스를 저장할 상태
+    const [selectedIndex, setSelectedIndex] = useState(null); // Initialize selectedIndex to null
+    const { isEditing, setIsEditing, albums, setAlbums } = useEditMusicStore();
 
-    const buttonClick = () => {
+    const closeModal = () => {
         setIsOpen(false);
     };
 
@@ -81,26 +86,122 @@ export default function MusicModal(){
             })
     }
     // Display those albums to the user
-    console.log(albums);
+    console.log('albums',albums);
 
     
+    // const handleEditClick = (index) => {
+    //     const newIsEditing = [...isEditing];
+    //     newIsEditing[index] = !newIsEditing[index];
+    //     setIsEditing(newIsEditing);
+
+    //     // 선택된 앨범을 콘솔에 출력
+    //     if (newIsEditing[index]) { 
+    //         console.log('선택된 앨범: ',albums[index]);
+    //         console.log(
+    //             '링크:',albums[index].external_urls.spotify,
+    //             '\n앨범명',albums[index].name,
+    //             '\n가수:',albums[index].artists[0].name,
+    //             '\n사진 링크:',albums[index].images[2].url,
+    //             '\nrelease date:',albums[index].release_date
+    //         );
+    //     }
+    // };
+
+    const { 
+        editorHtml1, editorHtml2,    
+        editorRef1, editorRef2, 
+        updateEditorHtml1, updateEditorHtml2 ,
+    } = useEditStore((state) => ({
+      editorHtml1: state.editInfo.editorHtml1,
+      editorHtml2: state.editInfo.editorHtml2,
+      
+      updateEditorHtml1: state.updateEditInfo.bind(null, 'editorHtml1'),
+      updateEditorHtml2: state.updateEditInfo.bind(null, 'editorHtml2'),
+
+      editorRef1: state.editInfo.editorRef1,
+      editorRef2: state.editInfo.editorRef2,
+    }));
+
+
+    const selectAlbum = (index) => {
+        setSelectedIndex(index); // Update selectedIndex when an album is selected
+    };
+
     const handleEditClick = (index) => {
         const newIsEditing = [...isEditing];
         newIsEditing[index] = !newIsEditing[index];
         setIsEditing(newIsEditing);
-
+        setSelectedIndex(index);  // Update the selectedIndex here
+        
         // 선택된 앨범을 콘솔에 출력
         if (newIsEditing[index]) { 
             console.log('선택된 앨범: ',albums[index]);
             console.log(
-                '링크:',albums[index].external_urls.spotify,
-                '\n앨범명',albums[index].name,
-                '\n가수:',albums[index].artists[0].name,
-                '\n사진 링크:',albums[index].images[2].url,
-                '\nrelease date:',albums[index].release_date
+            'id:' ,albums[index].id,
+            '\n링크:',albums[index].external_urls.spotify,
+            '\n앨범명',albums[index].name,
+            '\n가수:',albums[index].artists[0].name,
+            '\n사진 링크:',albums[index].images[2].url,
+            '\nrelease date:',albums[index].release_date
             );
         }
     };
+
+    const buttonClick = () => {
+        // setIsOpen(false);
+        if (selectedIndex !== null && albums[selectedIndex]) {
+            const selectedAlbum = albums[selectedIndex];
+
+            // albumInfoHtml 변수는 선택된 앨범의 정보를 포함하는 HTML 문자열을 생성합니다. 
+            // 이 문자열에는 앨범명, 가수, 발매 날짜, 앨범 이미지가 포함되어 있습니다. 
+            const albumInfoHtml = `
+            <div style="border: 1px solid #ccc; padding: 10px; border-radius: 10px; max-width: 300px; margin-bottom: 20px;">
+            <img src="${selectedAlbum.images[2].url}" alt="${selectedAlbum.name} 앨범 커버" style="max-width: 100%; border-radius: 10px;">
+            <h3 style="margin: 10px 0;">${selectedAlbum.name}</h3>
+            <p>가수: ${selectedAlbum.artists[0].name}</p>
+            <p>발매 날짜: ${selectedAlbum.release_date}</p>
+            </div>
+            `;
+            console.log(`[${selectedAlbum}] ${albumInfoHtml}:`);    
+            
+            // 현재 텍스트에 새 HTML 콘텐츠를 추가
+            const editorInstance = editorRef1.getInstance();
+            const currentText = editorInstance.getMarkdown();
+            editorInstance.setMarkdown(`${currentText}\n${albumInfoHtml}`);
+            // 상태를 업데이트하여 에디터에 새 HTML 콘텐츠를 표시
+            updateEditorHtml1(`${editorHtml1}\n${albumInfoHtml}`);
+            // editorInstance.setMarkdown(`${currentText}\n${selectedAlbum.name}`);
+            // updateEditorHtml1(`${editorHtml1}\n${selectedAlbum.name}`);
+        } else {
+            console.log(`No album found at selectedIndex ${selectedIndex}`);
+        }
+    };
+
+
+    // const buttonClick = (index) => {
+    //     // setIsOpen(false);
+    //     if (albums[index]) {
+    //         const selectedAlbum = albums[index];
+    //         const albumInfoHtml = `
+    //           앨범명: ${selectedAlbum.name}
+    //           가수: ${selectedAlbum.artists[0].name}
+    //           사진 링크: ${selectedAlbum.images[2].url}
+    //           release date: ${selectedAlbum.release_date}
+    //         `;
+    //         console.log('selectedAlbum:', selectedAlbum);
+    //         console.log('albumInfoHtml:', albumInfoHtml);
+    //         // updateEditorHtml1(albumInfoHtml);
+
+    //         console.log('index: ', index);
+
+    //         const editorInstance = editorRef1.getInstance();
+    //         const currentText = editorInstance.getMarkdown();
+    //         editorInstance.setMarkdown(`${currentText}\n${selectedAlbum.name}`);
+    //         updateEditorHtml1(`${editorHtml1}\n${selectedAlbum.name}`);
+    //     } else {
+    //         console.log(`No album found at index ${index}`);
+    //     }
+    // };
 
     // async function searchTrack() {
     //     var searchParams = {
@@ -153,6 +254,7 @@ export default function MusicModal(){
     // }  
     // console.log(tracks);
 
+
     return (
         isOpen && (
         <Modal
@@ -182,9 +284,10 @@ export default function MusicModal(){
                             mt: '18px', ml: '395px',
                         }}
                         onClick={buttonClick}
-                    >
+                        >
                         완료
                     </Button>
+
                 </Stack>
 
                 <div style={{ display: 'flex', justifyContent: 'end', zIndex: 2 }}>

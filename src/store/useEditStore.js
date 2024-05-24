@@ -1,29 +1,16 @@
-// import { create } from 'zustand';
-
-// export const useEditStore = create((set) => ({
-//     editInfo: {
-//         editorHtml1: '',
-//         editorHtml2: '',
-//         updateEditorHtml1: (value) => set({ editorHtml1: value }),
-//         updateEditorHtml2: (value) => set({ editorHtml2: value }),
-//     },
-//     updateEditInfo: (field, value) =>
-//         set((state) => ({ editInfo: { ...state.editInfo, [field]: value } })),
-
-// }));
 import { create } from 'zustand';
 import { PostGenerateText } from '../api/ai.api';
 
 export const useEditStore = create((set) => ({
   editInfo: {
-    editorRef1: '',
-    editorRef2: '', 
     editorHtml1: '',
     editorHtml2: '',
     updateEditorHtml1: (value) => set({ editorHtml1: value }),
     updateEditorHtml2: (value) => set({ editorHtml2: value }),
-    updateEditorRef1: (value) => set({ editorRef1: value }),
-    updateEditorRef2: (value) => set({ editorRef2: value }),
+
+    editorRef1: null,
+    editorRef2: null,
+
     aiGeneratedText: '',
   },
     updateEditInfo: (field, value) => 
@@ -47,4 +34,16 @@ export const useEditStore = create((set) => ({
         console.error('AI text generation error:', error);
         }
     },
+    setEditorRef1: (ref) => set((state) => ({
+      editInfo: {
+        ...state.editInfo,
+        editorRef1: ref,
+      },
+    })),
+    setEditorRef2: (ref) => set((state) => ({
+      editInfo: {
+        ...state.editInfo,
+        editorRef2: ref,
+      },
+    })),
 }));
