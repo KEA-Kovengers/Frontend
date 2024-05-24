@@ -12,9 +12,12 @@ import { styled } from 'styled-components';
 import CustomModal from 'src/components/CustomModal/CustomModal';
 import FriendModal from './FriendModal';
 import { remove } from 'lodash';
+import { GetFriendList } from 'src/api/friend.api';
+import { useAccountStore } from 'src/store/useAccountStore';
 
 export default function UserInfo() {
-  const [isMine, setIsMine] = useState(false); //내 프로필인지 아닌지
+  const { accountInfo } = useAccountStore();
+  const [isMine, setIsMine] = useState(true); //내 프로필인지 아닌지
   const [isFriend, setIsFriend] = useState(true); //친구인지 아닌지
 
   let friendToggle, requestFriendToggle, removeFriendToggle, requestAlertTotgle, removeAlertToggle;
@@ -35,6 +38,19 @@ export default function UserInfo() {
   const [modify, setModify] = useState(false);
 
   const [imageUrl, setImageUrl] = useState(null);
+
+  const showFriend = () => {
+    // friendToggle.toggle();
+    console.log('친구 목록');
+
+    GetFriendList(accountInfo.id)
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
 
   const imageSelect = () => {
     const input = document.createElement('input');
@@ -104,7 +120,7 @@ export default function UserInfo() {
                       backgroundColor: colors.third,
                       borderRadius: '15px',
                     }}
-                    onClick={() => friendToggle.toggle()}
+                    onClick={() => showFriend()}
                   >
                     <Iconify
                       icon="fa-solid:user-friends"
