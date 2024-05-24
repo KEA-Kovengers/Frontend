@@ -5,9 +5,10 @@ import { useCookies } from 'react-cookie';
 import { useAccountStore } from 'src/store/useAccountStore';
 import { PostUserInfo } from 'src/api/user.api';
 import { update } from 'lodash';
+import { GetUserInfo } from 'src/api/user.api';
 
 export default function LoginKakaoAuth() {
-  const { accountInfo, updateAccoutInfo } = useAccountStore();
+  const { accountInfo, updateAccountInfo } = useAccountStore();
   const [cookies, setCookie] = useCookies(['token']);
 
   useEffect(() => {
@@ -16,40 +17,17 @@ export default function LoginKakaoAuth() {
 
     console.log('인가코드:', code);
 
-    // PostUserInfo({
-    //   id: 123456789,
-    //   nickName: 'miso',
-    //   blogName: 'miso',
-    //   profileImage: 'miso',
-    //   bio: 'miso',
-    // })
-    //   .then((res) => {
-    //     console.log(res);
-    //   })
-    //   .catch((err) => {
-    //     console.log(err);
-    //   });
-
-    setCookie(
-      'token',
-      {
-        token:
-          'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIzNDI2NjEyOTM3IiwiaXNzIjoia292ZW5nZXJzIiwiaWF0IjoxNzE2NDUzNjUwLCJleHAiOjE3MTgyNTM2NTB9.nUtA_AQqcV_5445OWdM89pt9eCLpBNIlJvWAz2XmTYY',
-        refreshToken:
-          'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIzNDI2NjEyOTM3IiwiaXNzIjoia292ZW5nZXJzIiwiaWF0IjoxNzE2NDUzNjUwLCJleHAiOjIzMjEyNTM2NTB9.VDq2WO07l4_sTlUBZ-YxAWIsyh-dC6cbJ72XKO2gH4M',
-      },
-      { path: '/' }
-    );
-    console.log(cookies.token);
-
-    // updateAccoutInfo('id', 3426612937);
-    // updateAccoutInfo('nickName', '남소미');
-    // updateAccoutInfo('blogName', '남소미의 블로그');
-    // updateAccoutInfo(
-    //   'profileImg',
-    //   'http://k.kakaocdn.net/dn/rC03r/btsFEhBZ0pR/oO0YzcELWzk5pOOiVxR6Sk/img_640x640.jpg'
+    // setCookie(
+    //   'token',
+    //   {
+    //     token:
+    //       'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIzNDI2NjEyOTM3IiwiaXNzIjoia292ZW5nZXJzIiwiaWF0IjoxNzE2NDUzNjUwLCJleHAiOjE3MTgyNTM2NTB9.nUtA_AQqcV_5445OWdM89pt9eCLpBNIlJvWAz2XmTYY',
+    //     refreshToken:
+    //       'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIzNDI2NjEyOTM3IiwiaXNzIjoia292ZW5nZXJzIiwiaWF0IjoxNzE2NDUzNjUwLCJleHAiOjIzMjEyNTM2NTB9.VDq2WO07l4_sTlUBZ-YxAWIsyh-dC6cbJ72XKO2gH4M',
+    //   },
+    //   { path: '/' }
     // );
-    // updateAccoutInfo('role', 'ADMIN');
+    // console.log(cookies.token);
 
     // GetLogin(code)
     //   .then((res) => {
@@ -59,19 +37,25 @@ export default function LoginKakaoAuth() {
     //       { token: res.result.token, refreshToken: res.result.refreshToken },
     //       { path: '/' }
     //     ); // 쿠키에 토큰 저장
-    //     // updateAccoutInfo('id', res.result.id);
+    //     // updateAccountInfo('id', res.result.id);
     //   })
     //   .catch((err) => {
     //     console.log(err);
     //   });
 
-    // GetAuthValidate()
-    //   .then((res) => {
-    //     console.log(res);
-    //   })
-    //   .catch((err) => {
-    //     console.log(err);
-    //   });
+    GetUserInfo(accountInfo.id)
+      .then((res) => {
+        console.log(res);
+        console.log(res.data.result);
+        updateAccountInfo('nickName', res.data.result.nickName);
+        updateAccountInfo('blogName', res.data.result.blogName);
+        updateAccountInfo('profileImg', res.data.result.profileImg);
+        updateAccountInfo('bio', res.data.result.bio);
+        updateAccountInfo('role', res.data.result.role);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   }, []);
 
   {

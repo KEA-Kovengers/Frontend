@@ -21,7 +21,7 @@ const navConfig = () => {
     },
     {
       title: '프로필',
-      path: '/user',
+      path: `/user/${accountInfo.id}`,
       icon: icon('ic_user'),
     },
     {

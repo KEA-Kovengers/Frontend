@@ -59,7 +59,7 @@ export default function AccountPopover() {
   const clickManager = () => {
     handleCloseMore();
     handleClose();
-    navigate('/user');
+    navigate(`/user/3426612937`); // 공식 계정
   };
   return (
     <>
@@ -76,7 +76,7 @@ export default function AccountPopover() {
         }}
       >
         <Avatar
-          src={accountInfo.profileImg}
+          src={accountInfo.profileImg === '' ? 'favicon/nc_logo.png' : accountInfo.profileImg}
           alt={accountInfo.nickName}
           sx={{
             width: 36,
@@ -105,7 +105,7 @@ export default function AccountPopover() {
       >
         <MenuItem
           component={Link}
-          to="/user"
+          to={`/user/${accountInfo.id}`}
           disableRipple
           disableTouchRipple
           onClick={handleClose}
