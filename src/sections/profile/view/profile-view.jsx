@@ -19,9 +19,14 @@ import { useAccountStore } from 'src/store/useAccountStore';
 import { GetUserInfo, PostUserInfo } from 'src/api/user.api';
 import { account } from 'src/_mock/account';
 import { GetPostsList } from 'src/api/posts.api';
+import { useParams } from 'react-router-dom';
+import { useUserInfo } from '../UserInfo';
 
 export default function ProfileView() {
   const { accountInfo } = useAccountStore();
+  const params = useParams();
+  const userId = params.id;
+  const { userInfo, setUserInfo } = useUserInfo();
   const { isFolder } = useFolder();
 
   const [value, setValue] = useState(0);
@@ -39,35 +44,6 @@ export default function ProfileView() {
   }
   function CustomTabPanel(props) {
     const { children, value, index, ...other } = props;
-
-    useEffect(() => {
-      // GetUserInfo(accountInfo.id)
-      //   .then((res) => {
-      //     console.log(res);
-      //   })
-      //   .catch((err) => {
-      //     console.log(err);
-      //   });
-      // PostUserInfo({
-      //   nickName: 'miso',
-      //   blogName: 'miso',
-      //   profileImage: accountInfo.profileImg,
-      //   bio: 'miso',
-      // })
-      //   .then((res) => {
-      //     console.log(res);
-      //   })
-      //   .catch((err) => {
-      //     console.log(err);
-      //   });
-      GetPostsList(accountInfo.id)
-        .then((res) => {
-          console.log(res);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    }, []);
 
     return (
       <div
@@ -149,6 +125,36 @@ export default function ProfileView() {
       commentcnt: 6,
     },
   ];
+
+  useEffect(() => {
+    // if (userId !== accountInfo.id) {
+    // GetUserInfo(userId)
+    //   .then((res) => {
+    //     console.log(res);
+    //     console.log(res.data.result);
+    //     setUserInfo({
+    //       id: userId,
+    //       nickName: res.data.result.nickName,
+    //       blogName: res.data.result.blogName,
+    //       profileImg: res.data.result.profileImg,
+    //       bio: res.data.result.bio,
+    //       role: 'USER',
+    //       friendCount: 0,
+    //     });
+    //   })
+    //   .catch((err) => {
+    //     console.log(err);
+    //   });
+    // }
+    GetPostsList(accountInfo.id)
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, [userId]);
+
   return !isFolder ? (
     <div style={{ width: '80%', alignItems: 'center', justifyItems: 'center' }}>
       <UserInfo />

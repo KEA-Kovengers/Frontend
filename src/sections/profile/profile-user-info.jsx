@@ -6,18 +6,24 @@ import { colors } from '../../theme/variableColors';
 import MenuItem from '@mui/material/MenuItem';
 import Popover from '@mui/material/Popover';
 import { useToggle } from 'src/hooks/useToggle';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Tooltip, TextField, Button, Box } from '@mui/material';
 import { styled } from 'styled-components';
 import CustomModal from 'src/components/CustomModal/CustomModal';
 import FriendModal from './FriendModal';
-import { remove } from 'lodash';
 import { GetFriendList } from 'src/api/friend.api';
 import { useAccountStore } from 'src/store/useAccountStore';
+import { useUserInfo } from './UserInfo';
+import { GetUserInfo, PostImage, PostProfileImage, PostUserInfo } from 'src/api/user.api';
+import { useParams } from 'react-router-dom';
 
 export default function UserInfo() {
-  const { accountInfo } = useAccountStore();
-  const [isMine, setIsMine] = useState(true); //내 프로필인지 아닌지
+  const { accountInfo, updateAccountInfo } = useAccountStore();
+  const { userInfo, setUserInfo } = useUserInfo();
+  const params = useParams();
+  const userId = Number(params.id);
+  const isMine = userId === accountInfo.id;
+
   const [isFriend, setIsFriend] = useState(true); //친구인지 아닌지
 
   let friendToggle, requestFriendToggle, removeFriendToggle, requestAlertTotgle, removeAlertToggle;
@@ -40,10 +46,10 @@ export default function UserInfo() {
   const [imageUrl, setImageUrl] = useState(null);
 
   const showFriend = () => {
-    // friendToggle.toggle();
+    friendToggle.toggle();
     console.log('친구 목록');
-
-    GetFriendList(accountInfo.id)
+    const id = isMine ? accountInfo.id : userId;
+    GetFriendList(id)
       .then((res) => {
         console.log(res);
       })
@@ -52,20 +58,65 @@ export default function UserInfo() {
       });
   };
 
+  useEffect(() => {
+    if (!isMine) {
+      GetUserInfo(userId)
+        .then((res) => {
+          console.log(res);
+          console.log(res.data.result);
+          setUserInfo({
+            id: userId,
+            nickName: res.data.result.nickName,
+            blogName: res.data.result.blogName,
+            profileImg: res.data.result.profileImg,
+            bio: res.data.result.bio,
+            role: 'USER',
+            friendCount: 0,
+          });
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
+  }, [userId]);
+
   const imageSelect = () => {
     const input = document.createElement('input');
     input.type = 'file';
     input.accept = 'image/*';
     input.onchange = function (event) {
       const file = event.target.files[0];
-      const imgUrl = URL.createObjectURL(file);
-      setImageUrl(imgUrl);
+      const formData = new FormData();
+      formData.append('file', file);
+      console.log(formData);
+      if (file) {
+        PostImage(formData)
+          .then((res) => {
+            console.log(res);
+            updateAccountInfo('profileImg', res.data);
+          })
+          .catch((err) => {
+            console.error(err);
+          });
+      }
     };
     input.click();
   };
 
   const completeModify = () => {
     setModify(!modify);
+    PostUserInfo({
+      nickName: accountInfo.nickName,
+      blogName: accountInfo.blogName,
+      profileImg: accountInfo.profileImg,
+      bio: accountInfo.bio,
+    })
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
   return (
@@ -73,24 +124,24 @@ export default function UserInfo() {
       {!modify ? (
         <>
           <div style={{ marginBottom: '50px', fontWeight: 'bold', fontSize: '28px' }}>
-            {isMine ? account.blogName : account.displayName}
+            {isMine ? accountInfo.blogName : userInfo.blogName}
           </div>
           <RowStyled>
             <div style={{ flexDirection: 'row', display: 'flex' }}>
               <Avatar
-                src={isMine ? account.photoURL : account.photoURL}
+                src={isMine ? accountInfo.profileImg : userInfo.profileImg}
                 alt="photoURL"
                 sx={{ width: 80, height: 80, marginLeft: '10px', marginBottom: '10px' }}
               />
               <div style={{ marginLeft: '20px', flexDirection: 'column', display: 'flex' }}>
                 <span style={{ fontSize: '24px' }}>
-                  {isMine ? account.displayName : account.displayName}
+                  {isMine ? accountInfo.nickName : userInfo.nickName}
                 </span>
                 <span style={{ fontSize: '13px' }}>
-                  친구 {isMine ? account.friendcnt : account.friendcnt}명
+                  친구 {isMine ? accountInfo.friendCount : userInfo.nickName}명
                 </span>
                 <span style={{ fontSize: '13px', marginTop: '15px' }}>
-                  {isMine ? account.bio : account.bio}
+                  {isMine ? accountInfo.bio : userInfo.bio}
                 </span>
               </div>
             </div>
@@ -203,7 +254,8 @@ export default function UserInfo() {
           <TextField
             variant="outlined"
             label="블로그 이름"
-            defaultValue={account.blogName}
+            defaultValue={accountInfo.blogName}
+            onChange={(e) => updateAccountInfo('blogName', e.target.value)}
             inputProps={{
               style: { textAlign: 'center', fontWeight: 'bold', fontSize: '28px' },
             }}
@@ -228,7 +280,7 @@ export default function UserInfo() {
                 onClick={imageSelect}
               >
                 <Avatar
-                  src={account.photoURL}
+                  src={accountInfo.profileImg}
                   alt="photoURL"
                   sx={{
                     width: 80,
@@ -263,16 +315,22 @@ export default function UserInfo() {
                   variant="outlined"
                   label="닉네임"
                   size="small"
-                  defaultValue={account.displayName}
+                  defaultValue={accountInfo.nickName}
+                  value={accountInfo.nickName}
+                  onChange={(e) => {
+                    updateAccountInfo('nickName', e.target.value);
+                    console.log(accountInfo.nickName);
+                  }}
                   sx={{ width: '80%' }}
                   inputProps={{
                     style: { fontSize: 18 },
                   }}
                 />
-                <span style={{ fontSize: '13px' }}>친구 {account.friendcnt}명</span>
+                <span style={{ fontSize: '13px' }}>친구 {accountInfo.friendCount}명</span>
                 <TextField
                   variant="outlined"
-                  defaultValue={account.bio}
+                  defaultValue={accountInfo.bio}
+                  onChange={(e) => updateAccountInfo('bio', e.target.value)}
                   size="small"
                   sx={{ width: '100%', mt: 1 }}
                   inputProps={{
