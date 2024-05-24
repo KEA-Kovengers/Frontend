@@ -10,12 +10,14 @@ import MenuItem from '@mui/material/MenuItem';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 
-import { account } from 'src/_mock/account';
 import AccountModal from './account-modal';
+import { useAccountStore } from 'src/store/useAccountStore';
 
 // ----------------------------------------------------------------------
 
 export default function AccountPopover() {
+  const { accountInfo } = useAccountStore();
+
   const [open, setOpen] = useState(null);
   const [IsModalOpen, setIsModalOpen] = useState(false);
   const [modalRightButton, setModalRightButton] = useState('');
@@ -74,15 +76,15 @@ export default function AccountPopover() {
         }}
       >
         <Avatar
-          src={account.photoURL}
-          alt={account.displayName}
+          src={accountInfo.profileImg}
+          alt={accountInfo.nickName}
           sx={{
             width: 36,
             height: 36,
             border: (colors) => `solid 2px ${colors.first}`,
           }}
         >
-          {account.displayName.charAt(0).toUpperCase()}
+          {accountInfo.nickName.charAt(0).toUpperCase()}
         </Avatar>
       </IconButton>
 
@@ -101,17 +103,6 @@ export default function AccountPopover() {
           },
         }}
       >
-        <Box sx={{ my: 1.5, px: 2 }}>
-          <Typography variant="subtitle2" noWrap>
-            {account.displayName}
-          </Typography>
-          <Typography variant="body2" sx={{ color: 'text.secondary' }} noWrap>
-            {account.email}
-          </Typography>
-        </Box>
-
-        <Divider sx={{ borderStyle: 'dashed' }} />
-
         <MenuItem
           component={Link}
           to="/user"
