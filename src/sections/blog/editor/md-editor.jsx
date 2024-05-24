@@ -13,10 +13,12 @@ import 'tui-color-picker/dist/tui-color-picker.css';
 import '@toast-ui/editor-plugin-color-syntax/dist/toastui-editor-plugin-color-syntax.css';
 import colorSyntax from '@toast-ui/editor-plugin-color-syntax';
 import { toolbar } from './md-toolbar';
-import { PostGenerateHashtag, PostGenerateText } from 'src/api/ai.api';
+import { PostGenerateHashtag } from 'src/api/ai.api';
 // import { set } from 'lodash';
 import axios from 'axios';
-// import { AutoIcon } from './md-icons';
+
+import { useEditStore } from 'src/store/useEditStore.js';
+
 
 export default function MdEditorWithHeader() {
   const [title, setTitle] = useState('');
@@ -31,9 +33,16 @@ export default function MdEditorWithHeader() {
 
   const editorRef1 = useRef(null);
   const editorRef2 = useRef(null);
+  const { editorHtml1, editorHtml2, updateEditorHtml1, updateEditorHtml2 } = 
+          useEditStore((state) => ({
+            editorHtml1: state.editInfo.editorHtml1,
+            editorHtml2: state.editInfo.editorHtml2,
 
-  const [editorHtml1, setEditorHtml1] = useState([]);
-  const [editorHtml2, setEditorHtml2] = useState([]);
+            updateEditorHtml1: state.updateEditInfo.bind(null, 'editorHtml1'),
+            updateEditorHtml2: state.updateEditInfo.bind(null, 'editorHtml2'),
+            aiGeneratedText: state.editInfo.aiGeneratedText,
+            handleAiText: state.handleAiText,
+          }));
 
   // const [accessToken, setAccessToken] = useState(''); // [임시] accessToken 상태값
 
@@ -203,53 +212,44 @@ export default function MdEditorWithHeader() {
   const onChange = () => {
     if (editorRef1.current) {
       const editorHtml1 = editorRef1.current.getInstance().getMarkdown();
-      setEditorHtml1(editorHtml1);
+      updateEditorHtml1(editorHtml1);
       console.log(editorHtml1);
     }
 
     if (editorRef2.current) {
       const editorHtml2 = editorRef2.current.getInstance().getMarkdown();
-      setEditorHtml2(editorHtml2);
+      updateEditorHtml2(editorHtml2);
       console.log(editorHtml2);
     }
   }
 
-  // ai 텍스트 생성 버튼 클릭 시 실행되는 함수
-  const handleAiTextClick = () => { 
-    const text = editorHtml1;
-    console.log('text', text);
-
-    const text2 = editorHtml2;
-    console.log('text2', text2);
-
-    PostGenerateText(text || text2)
-      .then((res) => {
-        console.log('res', res.data);
-
-        if (editorRef1.current) {
-          // 현재 에디터의 인스턴스를 가져옴
-          const editorInstance = editorRef1.current.getInstance();
-          if (text) {
-            // 새로운 텍스트를 기존 마크다운에 추가
-            setEditorHtml1(editorHtml1 => editorHtml1 + '\n' + res.data);
-            editorInstance.insertText(`\n${res.data}`);
-          }
-        }
+  // // ai 텍스트 생성 버튼 클릭 시 실행되는 함수
   
-        else if (editorRef2.current) {
-          // 현재 에디터의 인스턴스를 가져옴
-          const editorInstance2 = editorRef2.current.getInstance();
-          if (text2) {
-            // 새로운 텍스트를 기존 마크다운에 추가
-            setEditorHtml2(editorHtml2 => editorHtml2 + '\n' + res.data);
-            editorInstance2.insertText(`\n${res.data}`);
-          }
-        }
-      })
-      .catch((err) => {
-        console.log('err', err);
-      });
-  };
+  // // 최종 버전
+  // const handleAiTextClick = () => {
+  //   const textToUse = editorHtml1 || editorHtml2;
+  //   if (!textToUse) {
+  //     console.log('No text available for AI text generation');
+  //     return;
+  //   }
+  //   handleAiText(textToUse);
+  // };
+
+  // 최종 버전
+  // useEffect(() => {
+  //   if (aiGeneratedText) {
+  //     if (editorRef1.current) {
+  //       const editorInstance = editorRef1.current.getInstance();
+  //       editorInstance.insertText(`\n${aiGeneratedText}`);
+  //       updateEditInfo('editorHtml1', editorInstance.getMarkdown());
+  //     }
+  //     else if (editorRef2.current) {
+  //       const editorInstance2 = editorRef2.current.getInstance();
+  //       editorInstance2.insertText(`\n${aiGeneratedText}`);
+  //       updateEditInfo('editorHtml2', editorInstance2.getMarkdown());
+  //     }
+  //   }
+  // }, [aiGeneratedText, updateEditInfo]);
   
   /*----------------------------------------------------------*/
 
@@ -334,8 +334,10 @@ export default function MdEditorWithHeader() {
         </Button>
       </div>
 
-      <Button
+      {/* <Button
         onClick={editorHtml1.length > 0 || editorHtml2.length > 0 ? handleAiTextClick : null}
+        // onClick={editorHtml1.length > 0 || editorHtml2.length > 0 ? handleAiTextClickInternal : null}
+        // onClick={handleAiTextClickInternal}
         sx={{
           // width: 54,
           height: 40,
@@ -350,7 +352,7 @@ export default function MdEditorWithHeader() {
         <Typography variant="body1" sx={{ fontSize: '16px' }}>
           ai 텍스트 생성
         </Typography>
-      </Button>
+      </Button> */}
 
       {/* <AutoIcon editorHtml1={editorHtml1} editorHtml2={editorHtml2} handleAiTextClick={handleAiTextClick} /> */}
 
@@ -443,65 +445,65 @@ export default function MdEditorWithHeader() {
 
       {/* 편집할 때, 에디터 컴포넌트 (취소,완료 버튼 있는) */}
 
-          {editingIndex === null && (
-          <>
-          <Editor
-            previewStyle="vertical"
-            initialEditType="markdown"
-            placeholder="글을 작성해 주세요"
-            toolbarItems={toolbar}
-            height="300px"
-            plugins={[colorSyntax, [codeSyntaxHighlight, { highlighter: Prism }]]}
-            ref={editorRef1}
-            onChange={onChange}
+      {editingIndex === null && (
+      <>
+      <Editor
+        previewStyle="vertical"
+        initialEditType="markdown"
+        placeholder="글을 작성해 주세요"
+        toolbarItems={toolbar}
+        height="300px"
+        plugins={[colorSyntax, [codeSyntaxHighlight, { highlighter: Prism }]]}
+        ref={editorRef1}
+        onChange={onChange}
 
-            hooks={{
-              addImageBlobHook: async(blob, callback) => {
-                console.log(blob);
+        hooks={{
+          addImageBlobHook: async(blob, callback) => {
+            console.log(blob);
 
-                const formData = new FormData();
-                formData.append('file', blob);
+            const formData = new FormData();
+            formData.append('file', blob);
 
-                console.log(callback);
+            console.log(callback);
 
-                try{
-                  const response = await axios.post('http://172.16.211.21/articles/object/upload', formData, {
-                    headers: {
-                      'Content-Type': 'multipart/form-data',
-                      'Authorization': `Bearer ${accessToken}`,
-                    },
-                  });
+            try{
+              const response = await axios.post('http://172.16.211.21/articles/object/upload', formData, {
+                headers: {
+                  'Content-Type': 'multipart/form-data',
+                  'Authorization': `Bearer ${accessToken}`,
+                },
+              });
 
-                  const imageUrl = response.data;
-                  console.log(imageUrl);
-                  callback(imageUrl, 'Uploaded image');
+              const imageUrl = response.data;
+              console.log(imageUrl);
+              callback(imageUrl, 'Uploaded image');
 
-                }catch (error) {
-                  console.error('Failed to upload image', error);
-                }
-              }
-            }}
-          />
-          <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-            <Button
-              onClick={handleCompleteButtonClick}
-              sx={{
-                width: 20,
-                height: 25,
-                bgcolor: '#1A2CDD',
-                borderRadius: 3,
-                color: 'white',
-                margin: '8px',
-              }}
-            >
-              <Typography variant="body1" sx={{ fontSize: '12px' }}>
-                저장
-              </Typography>
-            </Button>
-          </Box>
-          </>
-          )}
+            }catch (error) {
+              console.error('Failed to upload image', error);
+            }
+          }
+        }}
+      />
+      <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+        <Button
+          onClick={handleCompleteButtonClick}
+          sx={{
+            width: 20,
+            height: 25,
+            bgcolor: '#1A2CDD',
+            borderRadius: 3,
+            color: 'white',
+            margin: '8px',
+          }}
+        >
+          <Typography variant="body1" sx={{ fontSize: '12px' }}>
+            저장
+          </Typography>
+        </Button>
+      </Box>
+      </>
+      )}
       
-      </div>
+    </div>
   );
 }

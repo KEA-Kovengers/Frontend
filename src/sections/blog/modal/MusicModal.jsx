@@ -91,7 +91,7 @@ export default function MusicModal(){
 
         // 선택된 앨범을 콘솔에 출력
         if (newIsEditing[index]) { 
-            // console.log('선택된 앨범: ',albums[index]);
+            console.log('선택된 앨범: ',albums[index]);
             console.log(
                 '링크:',albums[index].external_urls.spotify,
                 '\n앨범명',albums[index].name,
