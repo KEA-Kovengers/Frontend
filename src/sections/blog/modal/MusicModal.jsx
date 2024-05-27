@@ -24,24 +24,42 @@ import { useEditMusicStore } from 'src/store/useEditMusicStore';
 const client_id = import.meta.env.VITE_SPOTIFY_CLIENT_ID;
 const client_secret = import.meta.env.VITE_SPOTIFY_CLIENT_SECRET;
 
-// selectedIndex list로 저장 --> 여러개 선택해도 추가 가능
-// album의 id를 저장해서 선택된 앨범을 찾을 수 있도록 함
-// 추가할 때도 list index와 id를 함께 저장
-
 export default function MusicModal(){
 
     const [isOpen, setIsOpen] = useState(true);
-    // const [isEditing, setIsEditing] = useState([]);
-    // const [albums, setAlbums] = useState([]); // 검색 결과로 받아온 앨범들을 저장할 배열
     const [searchInput, setSearchInput] = useState(''); // 검색창에 입력한 값
     const [acessToken, setAccessToken] = useState(''); // API Access Token
-    const [tracks, setTracks] = useState([]); // 앨범에 포함된 트랙들을 저장할 배열
     const [index, setIndex] = useState(0); // 선택된 앨범의 인덱스를 저장할 상태
-    const [selectedIndex, setSelectedIndex] = useState(null); // Initialize selectedIndex to null
+    const [selectedIndices, setSelectedIndices] = useState([]); // Initialize selectedIndices as an empty array
+
     const { isEditing, setIsEditing, albums, setAlbums } = useEditMusicStore();
+    
+    const { 
+        editorHtml1, editorHtml2,    
+        editorRef1, editorRef2, 
+        updateEditorHtml1, updateEditorHtml2 ,
+    } = useEditStore((state) => ({
+      editorHtml1: state.editInfo.editorHtml1,
+      editorHtml2: state.editInfo.editorHtml2,
+      
+      updateEditorHtml1: state.updateEditInfo.bind(null, 'editorHtml1'),
+      updateEditorHtml2: state.updateEditInfo.bind(null, 'editorHtml2'),
+
+      editorRef1: state.editInfo.editorRef1,
+      editorRef2: state.editInfo.editorRef2,
+    }));
+
+
+    const resetState = () => {
+        setIsOpen(false); // 모달 닫기
+        setIsEditing([]); // 버튼 상태 초기화
+        setAlbums([]); // 앨범 리스트 초기화
+        setSelectedIndices([]); // 선택된 인덱스 초기화
+        setSearchInput(''); // 검색 입력값 초기화
+    };
 
     const closeModal = () => {
-        setIsOpen(false);
+        resetState(); // 상태 초기화 함수 호출
     };
 
     useEffect(() => {
@@ -85,42 +103,6 @@ export default function MusicModal(){
                 setAlbums(data.items);
             })
     }
-    // Display those albums to the user
-    console.log('albums',albums);
-
-    
-    // const handleEditClick = (index) => {
-    //     const newIsEditing = [...isEditing];
-    //     newIsEditing[index] = !newIsEditing[index];
-    //     setIsEditing(newIsEditing);
-
-    //     // 선택된 앨범을 콘솔에 출력
-    //     if (newIsEditing[index]) { 
-    //         console.log('선택된 앨범: ',albums[index]);
-    //         console.log(
-    //             '링크:',albums[index].external_urls.spotify,
-    //             '\n앨범명',albums[index].name,
-    //             '\n가수:',albums[index].artists[0].name,
-    //             '\n사진 링크:',albums[index].images[2].url,
-    //             '\nrelease date:',albums[index].release_date
-    //         );
-    //     }
-    // };
-
-    const { 
-        editorHtml1, editorHtml2,    
-        editorRef1, editorRef2, 
-        updateEditorHtml1, updateEditorHtml2 ,
-    } = useEditStore((state) => ({
-      editorHtml1: state.editInfo.editorHtml1,
-      editorHtml2: state.editInfo.editorHtml2,
-      
-      updateEditorHtml1: state.updateEditInfo.bind(null, 'editorHtml1'),
-      updateEditorHtml2: state.updateEditInfo.bind(null, 'editorHtml2'),
-
-      editorRef1: state.editInfo.editorRef1,
-      editorRef2: state.editInfo.editorRef2,
-    }));
 
 
     const selectAlbum = (index) => {
@@ -131,8 +113,14 @@ export default function MusicModal(){
         const newIsEditing = [...isEditing];
         newIsEditing[index] = !newIsEditing[index];
         setIsEditing(newIsEditing);
-        setSelectedIndex(index);  // Update the selectedIndex here
         
+        // 여러개 선택 가능하도록 수정
+        if (newIsEditing[index]) {
+            setSelectedIndices([...selectedIndices, index]); // Add index to selectedIndices
+        } else {
+            setSelectedIndices(selectedIndices.filter(i => i !== index)); // Remove index from selectedIndices
+        }
+
         // 선택된 앨범을 콘솔에 출력
         if (newIsEditing[index]) { 
             console.log('선택된 앨범: ',albums[index]);
@@ -148,14 +136,14 @@ export default function MusicModal(){
     };
 
     const buttonClick = () => {
-        // setIsOpen(false);
-        if (selectedIndex !== null && albums[selectedIndex]) {
-            const selectedAlbum = albums[selectedIndex];
+        if (selectedIndices.length > 0) {
+            selectedIndices.forEach((index) => {
+            const selectedAlbum = albums[index];
 
             // albumInfoHtml 변수는 선택된 앨범의 정보를 포함하는 HTML 문자열을 생성합니다. 
             // 이 문자열에는 앨범명, 가수, 발매 날짜, 앨범 이미지가 포함되어 있습니다. 
             const albumInfoHtml = `
-            <div style="border: 1px solid #ccc; padding: 10px; border-radius: 10px; max-width: 300px; margin-bottom: 20px;">
+            <div style=" padding: 10px; max-width: 300px; margin-bottom: 20px;">
             <img src="${selectedAlbum.images[2].url}" alt="${selectedAlbum.name} 앨범 커버" style="max-width: 100%; border-radius: 10px;">
             <h3 style="margin: 10px 0;">${selectedAlbum.name}</h3>
             <p>가수: ${selectedAlbum.artists[0].name}</p>
@@ -163,97 +151,25 @@ export default function MusicModal(){
             </div>
             `;
             console.log(`[${selectedAlbum}] ${albumInfoHtml}:`);    
-            
-            // 현재 텍스트에 새 HTML 콘텐츠를 추가
-            const editorInstance = editorRef1.getInstance();
-            const currentText = editorInstance.getMarkdown();
-            editorInstance.setMarkdown(`${currentText}\n${albumInfoHtml}`);
-            // 상태를 업데이트하여 에디터에 새 HTML 콘텐츠를 표시
-            updateEditorHtml1(`${editorHtml1}\n${albumInfoHtml}`);
-            // editorInstance.setMarkdown(`${currentText}\n${selectedAlbum.name}`);
-            // updateEditorHtml1(`${editorHtml1}\n${selectedAlbum.name}`);
-        } else {
+
+            if (editorRef1 && editorRef1.getInstance()) {
+                const editorInstance1 = editorRef1.getInstance();
+                const currentText1 = editorInstance1.getHTML();
+                editorInstance1.setHTML(`${currentText1}\n${albumInfoHtml}`);
+                updateEditorHtml1(`${editorHtml1}\n${albumInfoHtml}`);
+            }
+            else if (editorRef2 && editorRef2.current && editorRef2.current.getInstance()) {
+                const editorInstance2 = editorRef2.current.getInstance();
+                const currentText2 = editorInstance2.getHTML();
+                editorInstance2.setHTML(`${currentText2}\n${albumInfoHtml}`);
+                updateEditorHtml2(`${editorHtml2}\n${albumInfoHtml}`);
+            }
+        })}
+        else {
             console.log(`No album found at selectedIndex ${selectedIndex}`);
         }
+        resetState(); // 상태 초기화 함수 호출
     };
-
-
-    // const buttonClick = (index) => {
-    //     // setIsOpen(false);
-    //     if (albums[index]) {
-    //         const selectedAlbum = albums[index];
-    //         const albumInfoHtml = `
-    //           앨범명: ${selectedAlbum.name}
-    //           가수: ${selectedAlbum.artists[0].name}
-    //           사진 링크: ${selectedAlbum.images[2].url}
-    //           release date: ${selectedAlbum.release_date}
-    //         `;
-    //         console.log('selectedAlbum:', selectedAlbum);
-    //         console.log('albumInfoHtml:', albumInfoHtml);
-    //         // updateEditorHtml1(albumInfoHtml);
-
-    //         console.log('index: ', index);
-
-    //         const editorInstance = editorRef1.getInstance();
-    //         const currentText = editorInstance.getMarkdown();
-    //         editorInstance.setMarkdown(`${currentText}\n${selectedAlbum.name}`);
-    //         updateEditorHtml1(`${editorHtml1}\n${selectedAlbum.name}`);
-    //     } else {
-    //         console.log(`No album found at index ${index}`);
-    //     }
-    // };
-
-    // async function searchTrack() {
-    //     var searchParams = {
-    //         method: 'GET',
-    //         headers: {
-    //             'Content-Type': 'application/json',
-    //             'Authorization': 'Bearer ' + acessToken,
-    //         }
-    //     };
-    
-    //     var trackData = await fetch('https://api.spotify.com/v1/search?q=' + searchInput + '&type=track', searchParams)
-    //         .then(response => response.json())
-    //         .then(data => {
-    //             console.log(data);
-    //                 return data.tracks.items.map(item => ({
-    //                     trackId: item.id,
-    //                     albumId: item.album.id,
-    //                     trackName: item.name,
-    //                     albumName: item.album.name,
-    //                     images: item.album.images // 추가: 트랙의 앨범 이미지
-    //                 }))
-    //         });
-
-    //     // 중복 제거를 위해 트랙 ID로 필터링
-    //     const uniqueTracks = trackData.filter((track, index, self) =>
-    //         index === self.findIndex((t) => (
-    //             t.trackId === track.trackId
-    //         ))
-    //     );
-
-    //     uniqueTracks.forEach(track => {
-    //         console.log('Track ID: ' + track.trackId);
-    //         console.log('Album ID: ' + track.albumId);
-    //     });
-    
-    //     // Get request with Album ID grab all the tracks from that album
-    //     for (const track of uniqueTracks) {
-    //         var returnedTracks = await fetch('https://api.spotify.com/v1/albums/' + track.albumId + '/tracks' + '?market=KR&limit=50', searchParams)
-    //             .then(response => response.json())
-    //             .then(data => {
-    //                 console.log(data);
-    //                 setTracks(prevTracks => [...prevTracks, ...data.items.map(item => ({
-    //                     ...item,
-    //                     albumImages: track.images, // 추가: 트랙에 앨범 이미지 포함
-    //                     trackName: track.trackName, // 추가: 트랙 이름
-    //                     albumName: track.albumName // 추가: 앨범 이름
-    //                 }))]);
-    //             });
-    //     }
-    // }  
-    // console.log(tracks);
-
 
     return (
         isOpen && (
@@ -370,31 +286,7 @@ export default function MusicModal(){
                                 </Stack>
                             </Card>
                         )
-                    })}   
-{/* 
-                    {tracks.map((track, index) => {
-                        console.log(track);
-                        return (
-                            <Card key={index}>
-                                <Stack direction="row">
-                                    <Box sx={{ maxWidth: 80, maxHeight: 80, overflow: 'hidden' }}>
-                                        <CardMedia
-                                            component="img"
-                                            sx={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                                            image={track.albumImages[0].url}
-                                            alt="Card image"
-                                        />
-                                    </Box>
-                                    <CardContent>
-                                        <Typography variant="body2" component="div">
-                                            {track.trackName}
-                                        </Typography>
-                                    </CardContent>
-                                </Stack>
-                            </Card>
-                        )
-                    })} */}
-                    
+                    })}              
                     </div>
                     
                 </Stack>

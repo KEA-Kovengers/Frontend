@@ -33,11 +33,11 @@ export default function AutoModal() {
       updateEditorHtml1: state.updateEditInfo.bind(null, 'editorHtml1'),
       updateEditorHtml2: state.updateEditInfo.bind(null, 'editorHtml2'),
 
-      aiGeneratedText: state.editInfo.aiGeneratedText,
-      handleAiText: state.handleAiText,
-
       editorRef1: state.editInfo.editorRef1,
       editorRef2: state.editInfo.editorRef2,
+
+      aiGeneratedText: state.editInfo.aiGeneratedText,
+      handleAiText: state.handleAiText,
     }));
 
     
@@ -54,7 +54,7 @@ export default function AutoModal() {
         }
         else{
             handleAiText(textToUse);
-            console.log('editorHtml2:', editorHtml);
+            console.log('editorHtml1:', editorHtml1);
         }
       };
     // ------------------- 버튼 클릭시 에디터에 텍스트 추가 -------------------

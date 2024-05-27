@@ -17,17 +17,17 @@ export default function LoginKakaoAuth() {
 
     console.log('인가코드:', code);
 
-    // setCookie(
-    //   'token',
-    //   {
-    //     token:
-    //       'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIzNDI2NjEyOTM3IiwiaXNzIjoia292ZW5nZXJzIiwiaWF0IjoxNzE2NDUzNjUwLCJleHAiOjE3MTgyNTM2NTB9.nUtA_AQqcV_5445OWdM89pt9eCLpBNIlJvWAz2XmTYY',
-    //     refreshToken:
-    //       'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIzNDI2NjEyOTM3IiwiaXNzIjoia292ZW5nZXJzIiwiaWF0IjoxNzE2NDUzNjUwLCJleHAiOjIzMjEyNTM2NTB9.VDq2WO07l4_sTlUBZ-YxAWIsyh-dC6cbJ72XKO2gH4M',
-    //   },
-    //   { path: '/' }
-    // );
-    // console.log(cookies.token);
+    setCookie(
+      'token',
+      {
+        token:
+          'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIzNDI2NjEyOTM3IiwiaXNzIjoia292ZW5nZXJzIiwiaWF0IjoxNzE2NDUzNjUwLCJleHAiOjE3MTgyNTM2NTB9.nUtA_AQqcV_5445OWdM89pt9eCLpBNIlJvWAz2XmTYY',
+        refreshToken:
+          'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIzNDI2NjEyOTM3IiwiaXNzIjoia292ZW5nZXJzIiwiaWF0IjoxNzE2NDUzNjUwLCJleHAiOjIzMjEyNTM2NTB9.VDq2WO07l4_sTlUBZ-YxAWIsyh-dC6cbJ72XKO2gH4M',
+      },
+      { path: '/' }
+    );
+    console.log(cookies.token);
 
     // GetLogin(code)
     //   .then((res) => {

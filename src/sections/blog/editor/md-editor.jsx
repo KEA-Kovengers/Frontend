@@ -202,7 +202,7 @@ export default function MdEditorWithHeader() {
       console.log('editorHtml2: ',editorHtml2);
     }
   }
-  
+      
 
   // // ai 텍스트 생성 버튼 클릭 시 실행되는 함수
   
