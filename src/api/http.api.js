@@ -29,7 +29,7 @@ api.interceptors.request.use((config) => {
         console.error('Error parsing token from cookie:', e);
       }
     }
-    console.log('accessToken:', accessToken);
+    // console.log('accessToken:', accessToken);
     if (accessToken) {
       config.headers['Authorization'] = `Bearer ${accessToken}`;
     }
