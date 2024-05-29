@@ -4,12 +4,14 @@ import MenuItem from '@mui/material/MenuItem';
 import IconButton from '@mui/material/IconButton';
 import Iconify from 'src/components/iconify';
 import { styled } from 'styled-components';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import ProfileArticle from '../profile-article';
 import CustomModal from 'src/components/CustomModal/CustomModal';
 import { useToggle } from 'src/hooks/useToggle';
 import { useFolder } from '../hooks/useFolder';
 import AddArticleModal from '../AddArticleModal';
+import { GetFolderArticleList, DeleteFolder } from 'src/api/folder.api';
+import { useParams } from 'react-router-dom';
 
 const articleList = [
   {
@@ -74,8 +76,11 @@ const articleList = [
   },
 ];
 
-export default function FolderPageView(folderName) {
+export default function FolderPageView({ id, setId }) {
   const [open, setOpen] = useState(null);
+  const [postList, setPostList] = useState([]);
+  const params = useParams();
+  const userId = Number(params.id);
   const handleOpenMenu = (event) => {
     setOpen(event.currentTarget);
   };
@@ -89,6 +94,29 @@ export default function FolderPageView(folderName) {
   const deleteFolderToggle = useToggle();
 
   const { initIsFolder } = useFolder();
+
+  useEffect(() => {
+    GetFolderArticleList(id.folderId)
+      .then((res) => {
+        console.log('폴더 아티클 리스트', res);
+        setPostList(res.data.result);
+      })
+      .catch((err) => {
+        console.log('폴더 아티클 리스트 에러', err);
+      });
+  }, [id]);
+
+  const CallDeleteFolder = () => {
+    console.log('폴더 삭제');
+    DeleteFolder(id.folderName)
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+    initIsFolder();
+  };
 
   return (
     <Wrapper>
@@ -124,6 +152,8 @@ export default function FolderPageView(folderName) {
             open={editFolderToggle.isOpen}
             onClose={editFolderToggle.toggle}
             buttonAction={editAlertToggle.toggle}
+            id={id}
+            setId={setId}
           />
           <CustomModal
             open={editAlertToggle.isOpen}
@@ -145,15 +175,21 @@ export default function FolderPageView(folderName) {
             title={'폴더 삭제'}
             contents={'해당 폴더를 삭제하시겠습니까?'}
             buttonAction={{
-              rightAction: initIsFolder,
+              rightAction: () => CallDeleteFolder(),
             }}
           />
         </Popover>
       </div>
       <Typography variant="h3" style={{ marginBottom: 20 }}>
-        폴더 이름
+        {id.folderName}
       </Typography>
-      {articleList.map((article) => (
+      {postList.length === 0 && (
+        <Typography variant="h5" style={{ color: 'grey', marginTop: 50, textAlign: 'center' }}>
+          해당 폴더에 게시글이 없습니다.
+          <br /> 게시글을 추가해보세요!
+        </Typography>
+      )}
+      {postList.map((article) => (
         <ProfileArticle
           key={article.id}
           imgurl={article.imgurl}
