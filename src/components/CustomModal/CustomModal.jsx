@@ -65,7 +65,11 @@ export default function CustomModal({
   };
   //right button
   const handleRightButtonClick = () => {
-    buttonAction.rightAction(); // Open 'ai_select' modal
+    if (mode === 'textfield') {
+      buttonAction.rightAction(textField); // Create folder
+    } else {
+      buttonAction.rightAction(); // Open 'ai_select' modal
+    }
     console.log('handleRightButtonClick');
     onClose(); // Close the modal
   };

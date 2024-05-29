@@ -32,8 +32,9 @@ import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import Iconify from 'src/components/iconify';
 import { useFolder } from './hooks/useFolder';
+import { GetFolderArticleList } from 'src/api/folder.api';
 
-export default function ProfileFolder({ foldername, articlecnt }) {
+export default function ProfileFolder({ id, setId, foldername, articlecnt }) {
   const { toggleFolder } = useFolder();
 
   return (
@@ -51,7 +52,7 @@ export default function ProfileFolder({ foldername, articlecnt }) {
       }}
       onClick={() => {
         toggleFolder();
-        // setId(id);
+        setId({ folderId: id, folderName: foldername });
         //get API 호출
       }}
     >

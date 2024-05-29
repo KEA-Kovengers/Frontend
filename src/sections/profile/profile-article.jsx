@@ -7,6 +7,8 @@ import IconButton from '@mui/material/IconButton';
 import Iconify from 'src/components/iconify';
 import { Typography } from '@mui/material';
 import { Link } from 'react-router-dom';
+import { format } from 'date-fns';
+import { ko } from 'date-fns/locale';
 
 export default function ProfileArticle({
   imgurl,
@@ -18,6 +20,11 @@ export default function ProfileArticle({
   isComment,
   commentcnt,
 }) {
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    return format(date, 'yyyy-MM-dd hh:mm', { locale: ko });
+  };
+
   return (
     <RowStyled>
       <ImageStyled
@@ -32,6 +39,7 @@ export default function ProfileArticle({
           display: 'flex',
           width: '48%',
           height: 'auto',
+          // border: '1px solid blue',
         }}
       >
         <TitleStyled component={Link} to="/article" variant="subtitle">
@@ -48,7 +56,7 @@ export default function ProfileArticle({
             marginTop: '10px',
           }}
         >
-          <div style={{ fontSize: '15px', color: colors.textGrey }}>{date}</div>
+          <div style={{ fontSize: '15px', color: colors.textGrey }}>{formatDate(date)}</div>
           <div style={{ flexDirection: 'row', display: 'flex', alignItems: 'center' }}>
             <Iconify
               icon={isLike ? 'gridicons:heart' : 'ph:heart'}
@@ -93,7 +101,7 @@ export const RowStyled = styled.div`
   margin-bottom: 30px;
   justify-content: space-between;
   align-items: center;
-  height: 240px;
+  height: 250px;
 `;
 
 export const ImageStyled = styled(Box)`
@@ -127,6 +135,8 @@ export const TitleStyled = styled(Typography)`
 export const ContentStyled = styled.div`
   font-size: 15px;
   height: 110px;
+  /* width: 100%; */
+  /* border: 1px solid red; */
   margin: 5px 0;
   color: ${colors.textGrey};
   text-overflow: ellipsis;

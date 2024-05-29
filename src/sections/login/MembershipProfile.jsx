@@ -1,18 +1,27 @@
-import Box from '@mui/material/Box';
-import Card from '@mui/material/Card';
-import Stack from '@mui/material/Stack';
-import Typography from '@mui/material/Typography';
+import { useState } from 'react';
+
+import { 
+  TextField,
+  Box,
+  Card,
+  Stack,
+  Typography, 
+  Button,
+} from '@mui/material';
+
 import { alpha, useTheme } from '@mui/material/styles';
 
 import { bgGradient } from 'src/theme/css';
 
 import Logo from 'src/components/logo';
 
-export default function Memembership(){
+// ----------------------------------------------------------------------
+
+export default function MembershipProfile(){
     const theme = useTheme();
 
     return (
-        <Box
+    <Box
         sx={{
           ...bgGradient({
             color: alpha(theme.palette.background.default, 0.9),
@@ -51,10 +60,22 @@ export default function Memembership(){
                 paddingLeft: "52px"
               }}>
               <Typography variant="h4">Join the membership</Typography>
-              <Typography variant="body2" sx={{ paddingTop:'31px' }}>정보를 입력하세요</Typography>
-            </Box>
+              <Typography variant="body2" sx={{ paddingTop:'31px' }}>프로필 사진을 선택하세요</Typography>
+              
+                <Button sx={{...button, marginTop: '30px'}}>
+                  Start NewCord
+                </Button>
+                </Box>
           </Card>
         </Stack>
       </Box>
-    );
+    )
+};
+
+const button = {
+  width: '90%',
+  height: 60,
+  bgcolor: '#1A2CDD',
+  color: 'white',
+  fontSize: '18px',
 }

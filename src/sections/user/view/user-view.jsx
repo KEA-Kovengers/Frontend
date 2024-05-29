@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from "react";
 
 import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
@@ -15,7 +15,7 @@ import { users } from 'src/_mock/user';
 import Iconify from 'src/components/iconify';
 import Scrollbar from 'src/components/scrollbar';
 
-import TableNoData from '../table-no-data';
+import TableNoData from '../TableNoData';
 import UserTableRow from '../user-table-row';
 import UserTableHead from '../user-table-head';
 import TableEmptyRows from '../table-empty-rows';
