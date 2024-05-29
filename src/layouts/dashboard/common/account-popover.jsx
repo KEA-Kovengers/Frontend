@@ -76,7 +76,7 @@ export default function AccountPopover() {
         }}
       >
         <Avatar
-          src={accountInfo.profileImg === '' ? 'favicon/nc_logo.png' : accountInfo.profileImg}
+          src={accountInfo.id === null ? 'favicon/nc_logo.png' : accountInfo.profileImg}
           alt={accountInfo.nickName}
           sx={{
             width: 36,

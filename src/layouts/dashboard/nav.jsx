@@ -42,7 +42,7 @@ export default function Nav({ openNav, onCloseNav }) {
   const renderAccount = (
     <Box
       component={Link}
-      to={accountInfo.nickName === '' ? '/login' : '/user'}
+      to={accountInfo.nickName === '' ? '/login' : `/user/${accountInfo.id}`}
       sx={{
         my: 3,
         mx: 2.5,
@@ -56,13 +56,13 @@ export default function Nav({ openNav, onCloseNav }) {
       }}
     >
       <Avatar
-        src={accountInfo.profileImg === '' ? 'favicon/nc_logo.png' : accountInfo.profileImg}
+        src={accountInfo.id === null ? 'favicon/nc_logo.png' : accountInfo.profileImg}
         alt="photoURL"
       />
 
       <Box sx={{ ml: 2 }}>
         <Typography variant="subtitle2" color={colors.blueBlack}>
-          {accountInfo.nickName === '' ? '로그인 하세요' : accountInfo.nickName}
+          {accountInfo.id === null ? '로그인 하세요' : accountInfo.nickName}
         </Typography>
       </Box>
     </Box>

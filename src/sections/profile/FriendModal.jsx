@@ -1,21 +1,104 @@
 import { Box, Button, Modal, Tab, Tabs, Typography } from '@mui/material';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { account } from 'src/_mock/account';
 import Avatar from '@mui/material/Avatar';
 import { colors } from 'src/theme/variableColors';
 import { styled } from 'styled-components';
 import CustomModal from 'src/components/CustomModal/CustomModal';
 import { useToggle } from 'src/hooks/useToggle';
+import {
+  DeleteFriendReject,
+  GetFriendList,
+  GetFriendRequestList,
+  PostFriendAccept,
+  DeleteFriend,
+} from 'src/api/friend.api';
+import { Link } from 'react-router-dom';
+import { useAccountStore } from 'src/store/useAccountStore';
+import { useFriendStore } from 'src/store/useFriendStore';
 
 export default function FriendModal({ open, onClose }) {
   const [index, setIndex] = useState(0);
-  const deleteFriendToggle = useToggle();
+  // const deleteFriendToggle = useToggle();
   const deleteAlertToggle = useToggle();
   const rejectFriendToggle = useToggle();
   const acceptFriendToggle = useToggle();
 
+  // const [friendsList, setFriendsList] = useState([]);
+  const [requestList, setRequestList] = useState([]);
+  const { accountInfo, updateAccountInfo } = useAccountStore();
+  const { friendsList, setFriendsList, addFriend, removeFriend } = useFriendStore();
+  const [friendName, setFriendName] = useState('');
+
+  useEffect(() => {
+    GetFriendList(accountInfo.id)
+      .then((res) => {
+        console.log(res);
+        console.log(res.data.result);
+        setFriendsList(res.data.result);
+        console.log(friendsList);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, []);
+
   const handleChange = (event, newValue) => {
+    if (newValue === 1) {
+      GetFriendRequestList(accountInfo.id)
+        .then((res) => {
+          console.log(res);
+          console.log(res.data.result);
+          setRequestList(res.data.result);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
     setIndex(newValue);
+  };
+
+  const ClickDeleteFriend = (id, nickName) => {
+    setFriendName(nickName);
+    DeleteFriend(id)
+      .then((res) => {
+        console.log(res);
+        removeFriend(id);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+    deleteAlertToggle.toggle();
+  };
+
+  const AccecptFriend = (id, nickName) => {
+    setFriendName(nickName);
+    console.log('수락');
+    PostFriendAccept(id)
+      .then((res) => {
+        console.log(res);
+        addFriend(id);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+    acceptFriendToggle.toggle();
+  };
+
+  const RejectFriend = (id, nickName) => {
+    setFriendName(nickName);
+    console.log('거절');
+    console.log(id);
+    DeleteFriendReject(id)
+      .then((res) => {
+        console.log(res);
+        removeFriend(id);
+      })
+      .catch((err) => {
+        console.log(err);
+        console.log(id);
+      });
+    rejectFriendToggle.toggle();
   };
 
   function a11yProps(index) {
@@ -88,48 +171,41 @@ export default function FriendModal({ open, onClose }) {
                 display: 'flex',
               }}
             >
-              <FriendRow>
-                <div style={{ flexDirection: 'row', display: 'flex', alignItems: 'center' }}>
-                  <Avatar
-                    src={account.photoURL}
-                    sx={{ width: 60, height: 60, marginRight: '10px' }}
-                  />
-                  <Typography variant="body1">{account.displayName}</Typography>
-                </div>
-                <Button
-                  sx={{ backgroundColor: colors.first, color: 'white' }}
-                  onClick={() => deleteFriendToggle.toggle()}
-                >
-                  삭제
-                </Button>
-              </FriendRow>
-              <FriendRow>
-                <div style={{ flexDirection: 'row', display: 'flex', alignItems: 'center' }}>
-                  <Avatar
-                    src={account.photoURL}
-                    sx={{ width: 60, height: 60, marginRight: '10px' }}
-                  />
-                  <Typography variant="body1">{account.displayName}</Typography>
-                </div>
-                <Button sx={{ backgroundColor: colors.first, color: 'white' }}>삭제</Button>
-              </FriendRow>
+              {friendsList.length === 0 && <Typography>친구가 없습니다.</Typography>}
+              {friendsList.map((user) => (
+                <FriendRow>
+                  <div style={{ flexDirection: 'row', display: 'flex', alignItems: 'center' }}>
+                    <Avatar
+                      src={user.profileImg}
+                      sx={{ width: 60, height: 60, marginRight: '10px' }}
+                    />
+                    <Typography variant="body1">{user.nickName}</Typography>
+                  </div>
+                  <Button
+                    sx={{ backgroundColor: colors.first, color: 'white' }}
+                    onClick={() => ClickDeleteFriend(user.friendshipID, user.nickName)}
+                  >
+                    삭제
+                  </Button>
+                </FriendRow>
+              ))}
             </div>
-            <CustomModal
+            {/* <CustomModal
               open={deleteFriendToggle.isOpen}
               onClose={deleteFriendToggle.toggle}
               title={'친구 삭제'}
               mode={'title'}
-              colorText={account.displayName}
+              colorText={friendName}
               contents={'님을 삭제하겠습니까?'}
               rightButton="삭제"
-              buttonAction={{ rightAction: deleteAlertToggle.toggle }}
-            />
+              buttonAction={{ rightAction: DeleteFriend }}
+            /> */}
             <CustomModal
               open={deleteAlertToggle.isOpen}
               onClose={deleteAlertToggle.toggle}
               title={'친구 삭제'}
               mode={'alert'}
-              colorText={account.displayName}
+              colorText={friendName}
               contents={'삭제했습니다.'}
             />
           </CustomTabPanel>
@@ -142,35 +218,38 @@ export default function FriendModal({ open, onClose }) {
                 display: 'flex',
               }}
             >
-              <FriendRow>
-                <div style={{ flexDirection: 'row', display: 'flex', alignItems: 'center' }}>
-                  <Avatar
-                    src={account.photoURL}
-                    sx={{ width: 60, height: 60, marginRight: '10px' }}
-                  />
-                  <Typography variant="body1">{account.displayName}</Typography>
-                </div>
-                <div style={{ flexDirection: 'row', display: 'flex', alignItems: 'center' }}>
-                  <Button
-                    sx={{ border: 2, borderColor: colors.third, marginRight: 2 }}
-                    onClick={() => rejectFriendToggle.toggle()}
-                  >
-                    거절
-                  </Button>
-                  <Button
-                    sx={{ backgroundColor: colors.first, color: 'white' }}
-                    onClick={() => acceptFriendToggle.toggle()}
-                  >
-                    수락
-                  </Button>
-                </div>
-              </FriendRow>
+              {requestList.length === 0 && <Typography>요청이 없습니다.</Typography>}
+              {requestList.map((user) => (
+                <FriendRow>
+                  <div style={{ flexDirection: 'row', display: 'flex', alignItems: 'center' }}>
+                    <Avatar
+                      src={user.profileImg}
+                      sx={{ width: 60, height: 60, marginRight: '10px' }}
+                    />
+                    <Typography variant="body1">{user.nickName}</Typography>
+                  </div>
+                  <div style={{ flexDirection: 'row', display: 'flex', alignItems: 'center' }}>
+                    <Button
+                      sx={{ border: 2, borderColor: colors.third, marginRight: 2 }}
+                      onClick={() => RejectFriend(user.friendshipID, user.nickName)}
+                    >
+                      거절
+                    </Button>
+                    <Button
+                      sx={{ backgroundColor: colors.first, color: 'white' }}
+                      onClick={() => AccecptFriend(user.friendshipID, user.nickName)}
+                    >
+                      수락
+                    </Button>
+                  </div>
+                </FriendRow>
+              ))}
               <CustomModal
                 open={rejectFriendToggle.isOpen}
                 onClose={rejectFriendToggle.toggle}
                 title={'친구 거절'}
                 mode={'alert'}
-                colorText={account.displayName}
+                colorText={friendName}
                 contents="님의 요청을 거절했습니다."
               />
               <CustomModal
@@ -178,7 +257,7 @@ export default function FriendModal({ open, onClose }) {
                 onClose={acceptFriendToggle.toggle}
                 title={'친구 수락'}
                 mode={'alert'}
-                colorText={account.displayName}
+                colorText={friendName}
                 contents="님의 요청을 수락했습니다."
               />
             </div>
