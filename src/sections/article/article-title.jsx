@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from 'react';
 import Iconify from 'src/components/iconify';
 import IconButton from '@mui/material/IconButton';
 
@@ -6,6 +6,7 @@ import MenuItem from '@mui/material/MenuItem';
 import Popover from '@mui/material/Popover';
 
 import { useToggle } from 'src/hooks/useToggle';
+import { useParams } from 'react-router-dom';
 
 import CustomModal from 'src/components/CustomModal/CustomModal';
 
@@ -14,49 +15,19 @@ import { Avatar, AvatarGroup, Icon, Tooltip } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import ReportModal from 'src/sections/article/ReportModal';
 import DashboardModal from 'src/sections/article/DashboardModal';
+import { GetPostDetail } from 'src/api/posts.api';
 
-const userList = [
-  {
-    name: '이소정',
-    avatarUrl: `/assets/images/avatars/avatar_1.jpg`,
-    company: '소정이의 블로그',
-    isFriend: true,
-  },
-  {
-    name: '김미소',
-    avatarUrl: `/assets/images/avatars/avatar_2.jpg`,
-    company: '미소의 블로그',
-    isFriend: false,
-  },
-  {
-    name: '남소미',
-    avatarUrl: `/assets/images/avatars/avatar_3.jpg`,
-    company: '솜2의 블로그',
-    isFriend: true,
-  },
-  {
-    name: '윤혜원',
-    avatarUrl: `/assets/images/avatars/avatar_4.jpg`,
-    company: '혜원이의 블로그',
-    isFriend: false,
-  },
-  {
-    name: '정성훈',
-    avatarUrl: `/assets/images/avatars/avatar_5.jpg`,
-    company: '성훈이의 블로그',
-    isFriend: true,
-  },
-  {
-    name: '김미소',
-    avatarUrl: `/assets/images/avatars/avatar_2.jpg`,
-    company: '미소의 블로그',
-    isFriend: true,
-  },
-];
+export default function ArticleTitle({ editorList }) {
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    return format(date, 'yyyy-MM-dd hh:mm', { locale: ko });
+  };
 
-export default function ArticleTitle() {
+  const params = useParams();
+  const postId = Number(params.id);
   const navigate = useNavigate();
   const { toggle, isOpen } = useToggle();
+  const [post, setPost] = useState({});
 
   // let deleteArticleToggle, reportArticleToggle, reportToggle, alertToggle;
   const deleteArticleToggle = useToggle();
@@ -83,6 +54,19 @@ export default function ArticleTitle() {
     }
   };
 
+  useEffect(() => {
+    console.log('게시글 아이디', postId);
+    console.log('에디터 리스트', editorList);
+    GetPostDetail(postId)
+      .then((res) => {
+        console.log('게시글 상세', res);
+        setPost(res.data.result);
+      })
+      .catch((err) => {
+        console.log('게시글 상세 에러', err);
+      });
+  }, []);
+
   return (
     <div
       style={{
@@ -96,7 +80,7 @@ export default function ArticleTitle() {
       }}
     >
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
-        <span style={{ fontSize: '24px', marginTop: '15px' }}>고양이 감기 : 허피스 바이러스</span>
+        <span style={{ fontSize: '24px', marginTop: '15px' }}>{post.title}</span>
         <div
           style={{
             flexDirection: 'row',
@@ -109,18 +93,18 @@ export default function ArticleTitle() {
         >
           <div style={{ fontSize: '13px', color: '#637381' }}>2024. 03. 15 17:16 </div>
           <div style={{ flexDirection: 'row', display: 'flex' }}>
-            <AvatarGroup max={userList.length} spacing={10}>
-              {userList.map((acc, index) => (
-                <Tooltip title={acc.name} key={index}>
+            <AvatarGroup max={editorList.length} spacing={10}>
+              {editorList.map((acc) => (
+                <Tooltip title={acc.nickName} key={acc.id}>
                   <Avatar
-                    src={acc.avatarUrl}
+                    src={acc.profileImg}
                     onClick={() => {
-                      handleSelectedUser(index);
+                      handleSelectedUser(acc.id);
                     }}
                     style={{
                       width: 30,
                       height: 30,
-                      borderColor: selectedUser === index && '#1A2CDD',
+                      borderColor: selectedUser === acc.id && '#1A2CDD',
                       '&:hover': { opacity: 0.72 },
                       cursor: 'pointer',
                     }}

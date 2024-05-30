@@ -6,11 +6,12 @@ import { styled } from 'styled-components';
 import IconButton from '@mui/material/IconButton';
 import Iconify from 'src/components/iconify';
 import { Typography } from '@mui/material';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { format } from 'date-fns';
 import { ko } from 'date-fns/locale';
 
 export default function ProfileArticle({
+  id,
   imgurl,
   title,
   content,
@@ -25,13 +26,11 @@ export default function ProfileArticle({
     return format(date, 'yyyy-MM-dd hh:mm', { locale: ko });
   };
 
+  const navigate = useNavigate();
+
   return (
     <RowStyled>
-      <ImageStyled
-        onClick={() => Navigation('/article', { articleId: articleId })}
-        component="img"
-        src={imgurl}
-      />
+      <ImageStyled onClick={() => navigate(`article/${id}`)} component="img" src={imgurl} />
       <div
         style={{
           alignContent: 'start',
@@ -42,7 +41,7 @@ export default function ProfileArticle({
           // border: '1px solid blue',
         }}
       >
-        <TitleStyled component={Link} to="/article" variant="subtitle">
+        <TitleStyled component={Link} to={`/article/${id}`} variant="subtitle">
           {title}
         </TitleStyled>
         <ContentStyled>{content}</ContentStyled>

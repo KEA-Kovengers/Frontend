@@ -20,8 +20,10 @@ import { GetFolderList } from 'src/api/folder.api';
 import { GetLikeArticle } from 'src/api/like.api';
 import { useLikedPostStore } from 'src/store/useLikedPostStore';
 import { useParams } from 'react-router-dom';
+import { useAccountStore } from 'src/store/useAccountStore';
 
 export default function ProfileView() {
+  const { accountInfo } = useAccountStore();
   const params = useParams();
   const userId = Number(params.id);
 
@@ -97,34 +99,6 @@ export default function ProfileView() {
     );
   }
 
-  // const activityList = [
-  //   {
-  //     imgurl:
-  //       'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTz27r0Cso3AdGfnuGyAKWZdQEgUHNkyfhR6Z3O-Sqsgg&s',
-  //     title: '2024 국내 벚꽃 명소 추천 5곳!',
-  //     content:
-  //       '매년 많은 분들에게 사랑받고 있는 벚꽃, 올해는 평년보다 빠르게 찾아온다고 합니다. 곧 봄 내음을 물씬 맡을 수 있게 될 거 같아요. 겨우내 움츠러들었던 몸을 기지개 켜며 아름다...    ',
-  //     date: '2024.3.20',
-  //     isLike: true,
-  //     likecnt: 12,
-  //     isComment: true,
-  //     commentcnt: 5,
-  //   },
-  //   {
-  //     imgurl:
-  //       'https://i.namu.wiki/i/TFjZQucX9NgQSuxUAttUqBFIXmRDFpvSW6iNmmBE1R6retRIYcIH1MQj4hPTkqaAePagFTc1Kg023mNWvGfpDw.webp',
-  //     title:
-  //       '영화 듄 2 개봉일 조조 후기 (쿠키없음/ 스포있음/ 출연진/ 평점/ 티모시 샬라메/ 듄3는 2027년개봉)',
-  //     content:
-  //       '듄: 파트2 정보 관람평 평점 출연진 예고편 상영일정 개봉일에 관람한 듄2 용산 아이맥스 영화 리뷰 후기 아트레이데스 가문의 몰락으로 폴 아트레이데스의 새로운 운명을 예고했...',
-  //     date: '2024.3.20',
-  //     isLike: true,
-  //     likecnt: 12,
-  //     isComment: false,
-  //     commentcnt: 6,
-  //   },
-  // ];
-
   useEffect(() => {
     // console.log('내 정보', accountInfo);
     // console.log(userId);
@@ -178,12 +152,12 @@ export default function ProfileView() {
             >
               {postList.map((article) => (
                 <ProfileArticle
-                  key={article.id}
+                  id={article.post.id}
                   imgurl={article.post.thumbnail}
                   title={article.post.title}
                   content={article.post.body}
                   date={article.updated_at}
-                  isLike={likedPosts.contains(article.id)}
+                  // isLike={likedPosts.contains(article.id)}
                   // likecnt={article.likecnt}
                   // commentcnt={article.commentcnt}
                   likecnt={0}
@@ -212,43 +186,47 @@ export default function ProfileView() {
                   // articlecnt={folder.articlecnt}
                 />
               ))}
-              <div
-                style={{
-                  flexDirection: 'column',
-                  display: 'flex',
-                  width: '100%',
-                  height: '100%',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}
-              >
-                <IconButton
+              {accountInfo.id === userId && (
+                <div
                   style={{
-                    border: '1.5px solid rgb(99, 115, 129)',
-                    borderRadius: '10px',
-                    padding: '5px',
-                    width: '67%',
-                    height: '60%',
-                    borderBlockColor: colors.textGrey,
+                    flexDirection: 'column',
+                    display: 'flex',
+                    width: '100%',
+                    height: '100%',
+                    alignItems: 'center',
+                    justifyContent: 'center',
                   }}
-                  onClick={() => createFolderToggle.toggle()}
                 >
-                  <Iconify
-                    icon="gg:add"
-                    style={{ width: '30%', height: '20%', color: colors.textGrey }}
-                  />
-                </IconButton>
-                <CustomModal
-                  open={createFolderToggle.isOpen}
-                  onClose={createFolderToggle.toggle}
-                  title={'폴더 생성'}
-                  mode={'textfield'}
-                  contents="폴더 이름을 입력해주세요."
-                  label={'폴더 이름'}
-                  rightButton={'생성'}
-                  buttonAction={{ rightAction: (value) => CreateFolder(value) }}
-                />
-              </div>
+                  <IconButton
+                    style={{
+                      border: '1.5px solid rgb(99, 115, 129)',
+                      borderRadius: '10px',
+                      padding: '5px',
+                      width: '67%',
+                      height: '60%',
+                      borderBlockColor: colors.textGrey,
+                    }}
+                    onClick={() => createFolderToggle.toggle()}
+                  >
+                    <Iconify
+                      icon="gg:add"
+                      style={{ width: '30%', height: '20%', color: colors.textGrey }}
+                    />
+                  </IconButton>
+                  {createFolderToggle.isOpen && (
+                    <CustomModal
+                      open={createFolderToggle.isOpen}
+                      onClose={createFolderToggle.toggle}
+                      title={'폴더 생성'}
+                      mode={'textfield'}
+                      contents="폴더 이름을 입력해주세요."
+                      label={'폴더 이름'}
+                      rightButton={'생성'}
+                      buttonAction={{ rightAction: (value) => CreateFolder(value) }}
+                    />
+                  )}
+                </div>
+              )}
             </div>
           </CustomTabPanel>
           <CustomTabPanel value={value} index={2}>

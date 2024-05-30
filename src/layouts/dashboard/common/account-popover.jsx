@@ -64,7 +64,7 @@ export default function AccountPopover() {
   return (
     <>
       <IconButton
-        onClick={handleOpen}
+        onClick={accountInfo.id && handleOpen}
         sx={{
           width: 40,
           height: 40,
