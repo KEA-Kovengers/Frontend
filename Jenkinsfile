@@ -16,13 +16,6 @@ pipeline {
             steps {
                 script{
                     sh('sudo cp ' + WORKSPACE+'/config/frontend-api-key/.env' + ' ' + WORKSPACE)
-                    // // 파일명 폴더 아이디 수정
-                    // withCredentials([file(credentialsId: 'frontend', variable: 'FE_API_KEY_FILE')]) {
-                    //     // 파일 복사 명령 실행
-                    //     // sh('sudo mkdir -p ' + WORKSPACE + '/config/frontend-api-key/')
-                    //     // sh('sudo cp ' + FE_API_KEY_FILE + ' ' + WORKSPACE + '/config/frontend-api-key/')
-                    //     sh('sudo cp ' + WORKSPACE+'/config/frontend-api-key/.env' + ' ' + WORKSPACE)
-                    // }
                 }
             }
         }
@@ -52,6 +45,34 @@ pipeline {
                     sh 'docker rmi ${DOCKER_HUB_USERNAME}/${IMAGE_NAME}:${VERSION}'
                     sh 'docker rmi registry.hub.docker.com/${DOCKER_HUB_USERNAME}/${IMAGE_NAME}:latest'
                     sh 'docker rmi registry.hub.docker.com/${DOCKER_HUB_USERNAME}/${IMAGE_NAME}:${VERSION}'
+                }
+            }
+        }
+        stage('Update Kubernetes YAML') {
+            steps {
+                script {
+                    dir('config'){
+                        sshagent(['k8s_git']) {
+                            sh 'mkdir -p ~/.ssh'
+                            sh 'if [ ! -f ~/.ssh/known_hosts ]; then ssh-keyscan github.com >> ~/.ssh/known_hosts; fi'
+                            sh 'rm -rf kubernetes-yaml' // Add this line
+                            sh 'git clone git@github.com:KEA-Kovengers/kubernetes-yaml.git'
+                        }
+                        dir('kubernetes-yaml') {
+                            dir('frontend'){
+                                sh "sed -i 's|${DOCKER_HUB_USERNAME}/${IMAGE_NAME}:.*|${DOCKER_HUB_USERNAME}/${IMAGE_NAME}:${VERSION}|' frontend.yaml"
+                            }
+                            
+                            sh 'git config user.email "keakovengers@gmail.com"'
+                            sh 'git config user.name "kovengers"'
+                            sh 'git add -A'
+                            sh 'git status'
+                            sh 'git diff --cached --exit-code || git commit -m "Update frontend service image tag"'
+                            sshagent(['k8s_git']) {
+                                sh 'git push origin kakao-cloud'
+                            }
+                        }
+                    }
                 }
             }
         }
