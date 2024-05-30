@@ -33,7 +33,7 @@ export default function Router() {
         { element: <IndexPage />, index: true },
         { path: 'user/:id', element: <UserPage /> },
         { path: 'search', element: <ProductsPage /> },
-        { path: 'article', element: <ArticlePage /> },
+        { path: 'article/:id', element: <ArticlePage /> },
         { path: 'api/auth/login', element: <LoginAuthPage /> },
         { path: 'monitoring', element: <Monitoring /> },
       ],

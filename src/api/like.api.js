@@ -1,7 +1,8 @@
-import api from './http.api';
+import api from './api';
+import httpApi from './http.api';
 
 export const GetLikeArticle = (id) => {
-  return api.get('/articles/articles/like/likelist', id);
+  return httpApi.get(`/articles/articles/like/likelist/${id}`);
 };
 
 export const PostLike = (id) => {

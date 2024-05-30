@@ -1,4 +1,4 @@
-import api from './http.api';
+import api from './api';
 
 export const GetFriendList = (id) => {
   return api.get(`/users/users/friend/friend/${id}`);

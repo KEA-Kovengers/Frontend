@@ -8,11 +8,15 @@ import { update } from 'lodash';
 import { GetUserInfo } from 'src/api/user.api';
 import { useNavigate } from 'react-router-dom';
 import { GetFriendList } from 'src/api/friend.api';
+import { Box } from '@mui/material';
+import { bgGradient } from 'src/theme/css';
+import { alpha, useTheme } from '@mui/material/styles';
 
 export default function LoginKakaoAuth() {
   const { accountInfo, updateAccountInfo } = useAccountStore();
   const [cookies, setCookie] = useCookies(['token']);
   const navigate = useNavigate();
+  const theme = useTheme();
 
   useEffect(() => {
     const code = new URLSearchParams(window.location.search).get('code');
@@ -62,8 +66,19 @@ export default function LoginKakaoAuth() {
   }, []);
 
   return (
-    <div>
-      <h1>LoginAuth</h1>
-    </div>
+    <Box
+      sx={{
+        ...bgGradient({
+          color: alpha(theme.palette.background.default, 0.9),
+          imgUrl: '/assets/background/login_background.jpg',
+        }),
+        flex: 1,
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+      }}
+    >
+      <h1 style={{ color: 'blue' }}>로그인에 성공하셨습니다!</h1>
+    </Box>
   );
 }

@@ -23,6 +23,7 @@ export default function AddArticleModal({ open, onClose, buttonAction, id, setId
   const [postList, setPostList] = useState([]);
   const params = useParams();
   const userId = params.id;
+  const [name, setName] = useState('');
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
@@ -40,14 +41,15 @@ export default function AddArticleModal({ open, onClose, buttonAction, id, setId
   };
 
   const buttonClick = () => {
-    PostFolderUpdate({ folderId: id.folderId, folderName: id.folderName, postIds: selectedIndex })
+    PostFolderUpdate({ folder_id: id.folderId, folderName: name, postIds: selectedIndex })
       .then((res) => {
         console.log(res);
+        buttonAction();
+        setId({ folderId: id.folderId, folderName: name });
       })
       .catch((err) => {
         console.log(err);
       });
-    buttonAction();
     onClose();
   };
 
@@ -82,7 +84,7 @@ export default function AddArticleModal({ open, onClose, buttonAction, id, setId
               defaultValue={id.folderName}
               sx={{ mt: '18px', ml: '18px', height: 40 }}
               onChange={(e) => {
-                setId({ ...id, folderName: e.target.value });
+                setName(e.target.value);
               }}
               endAdornment={
                 <Iconify
