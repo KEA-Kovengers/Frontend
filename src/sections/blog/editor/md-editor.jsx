@@ -1,4 +1,5 @@
-import React, { useState, useRef, useEffect, createRef  } from 'react';
+import React, { useState, useRef, useEffect  } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Stack, Box, Button, Typography, colors, IconButton } from '@mui/material';
 import Iconify from 'src/components/iconify';
   
@@ -19,10 +20,18 @@ import axios from 'axios';
 
 import { useEditStore } from 'src/store/useEditStore.js';
 
+// websocket
+import { Client } from '@stomp/stompjs';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
-export default function MdEditorWithHeader() {
-  const [title, setTitle] = useState('');
-  const [tags, setTags] = useState([]);
+const accessToken = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIzNDI2NjEyOTM3IiwiaXNzIjoia292ZW5nZXJzIiwiaWF0IjoxNzE2NDUzNjUwLCJleHAiOjE3MTgyNTM2NTB9.nUtA_AQqcV_5445OWdM89pt9eCLpBNIlJvWAz2XmTYY";
+
+// 수정해야하는 부분: 블럭 삭제 버튼
+
+export default function MdEditorWithHeader({ title, setTitle, tags, setTags, onChangeContents }) {
+
+  // const [title, setTitle] = useState('');
+  // const [tags, setTags] = useState([]);
   const [tagInput, setTagInput] = useState('');
 
   const [contents, setContents] = useState([]);
@@ -48,7 +57,31 @@ export default function MdEditorWithHeader() {
 
     const { setEditorRef1, setEditorRef2 } = useEditStore();
 
-    const accessToken = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIzNDI2NjEyOTM3IiwiaXNzIjoia292ZW5nZXJzIiwiaWF0IjoxNzE2NDUzNjUwLCJleHAiOjE3MTgyNTM2NTB9.nUtA_AQqcV_5445OWdM89pt9eCLpBNIlJvWAz2XmTYY"
+    const [customToolbar, setCustomToolbar] = useState(toolbar);
+
+    const applyCustomToolbar = () => {
+      if (editorRef1.current && editorRef2.current) {
+        const instance1 = editorRef1.current.getInstance();
+        const instance2 = editorRef2.current.getInstance();
+        instance1.setToolbarItems(customToolbar);
+        instance2.setToolbarItems(customToolbar);
+      }
+    };
+
+    // 웹 소켓 연결 및 메세지 수신
+    const setupWebsocket = () => {
+      const client = new Client({
+        brokerURL: 'ws://newcord.kro.kr/ws',
+        connectHeaders: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+    });
+  }
+
+    // useEffect를 사용하여 customToolbar 상태가 변경될 때마다 applyCustomToolbar 함수를 호출합니다.
+    useEffect(() => {
+      applyCustomToolbar();
+    }, [customToolbar]);
 
    // 컴포넌트가 마운트될 때 ref를 업데이트합니다.
    useEffect(() => {
@@ -59,8 +92,13 @@ export default function MdEditorWithHeader() {
   /*----------------------------------------------------------*/
 
   // 제목 입력창의 너비를 동적으로 조절하는 함수
+  // const handleTitleChange = (event) => {
+  //   setTitle(event.target.value);
+  // };
   const handleTitleChange = (event) => {
-    setTitle(event.target.value);
+    const newTitle = event.target.value;
+    setTitle(newTitle);
+    onChangeContents({ title: newTitle, tags });
   };
 
   /*----------------------------------------------------------*/
@@ -86,10 +124,16 @@ export default function MdEditorWithHeader() {
     if (event.key === 'Enter') {
       event.preventDefault();
       const newTag = `#${tagInput.trim()}`;
-      if (newTag) {
-        setTags([...tags, newTag]);
+      if (newTag && !tags.includes(newTag)) {
+        const newTags = [...tags, newTag];
+        setTags(newTags);
+        onChangeContents({ title, tags: newTags });
         setTagInput('');
       }
+      // if (newTag) {
+      //   setTags([...tags, newTag]);
+      //   setTagInput('');
+      // }
     }
   };
 
@@ -98,8 +142,12 @@ export default function MdEditorWithHeader() {
     const updatedTags = [...tags];
     updatedTags.splice(index, 1);
     setTags(updatedTags);
+    onChangeContents({ title, tags: updatedTags });
+
     console.log('tags', tags);
   };
+
+  
 
   // ai 태그 생성 버튼 클릭 시 실행되는 함수
   const handleAiTagClick = () => {
@@ -171,16 +219,6 @@ export default function MdEditorWithHeader() {
     }
   };
 
-  // useEffect(() => {
-  //   console.log("useEffect triggered with editingIndex:", editingIndex);
-
-  //   if (editingIndex === null) {
-  //     const editorInstance = editorRef.current.getInstance();
-  //     editorInstance.setMarkdown('');
-  //     handleContentClick(null);
-  //   }
-  // }, [editingIndex]);
-
   // contents 배열이 업데이트될 때마다 실행되는 useEffect
   useEffect(() => {
     console.log(contents.length);
@@ -202,37 +240,14 @@ export default function MdEditorWithHeader() {
       console.log('editorHtml2: ',editorHtml2);
     }
   }
-      
-
-  // // ai 텍스트 생성 버튼 클릭 시 실행되는 함수
-  
-  // // 최종 버전
-  // const handleAiTextClick = () => {
-  //   const textToUse = editorHtml1 || editorHtml2;
-  //   if (!textToUse) {
-  //     console.log('No text available for AI text generation');
-  //     return;
-  //   }
-  //   handleAiText(textToUse);
-  // };
-
-  // 최종 버전
-  // useEffect(() => {
-  //   if (aiGeneratedText) {
-  //     if (editorRef1.current) {
-  //       const editorInstance = editorRef1.current.getInstance();
-  //       editorInstance.insertText(`\n${aiGeneratedText}`);
-  //       updateEditInfo('editorHtml1', editorInstance.getMarkdown());
-  //     }
-  //     else if (editorRef2.current) {
-  //       const editorInstance2 = editorRef2.current.getInstance();
-  //       editorInstance2.insertText(`\n${aiGeneratedText}`);
-  //       updateEditInfo('editorHtml2', editorInstance2.getMarkdown());
-  //     }
-  //   }
-  // }, [aiGeneratedText, updateEditInfo]);
   
   /*----------------------------------------------------------*/
+
+  console.log('title:', title);
+  console.log('tags:', tags);
+  console.log('contents:', contents);
+
+  // ----------------------------------------------------------
 
   return (
     <div style={{ backgroundColor: 'white', padding: '20px', borderRadius: '10px' }}>
@@ -251,9 +266,7 @@ export default function MdEditorWithHeader() {
           color: '#000',
         }}
       />
-      <hr
-        style={{ width: '5%', margin: '6px 0', borderTop: '3px solid black', marginLeft: '0.8%' }}
-      />
+      <hr style={{ width: '5%', margin: '6px 0', borderTop: '3px solid black', marginLeft: '0.8%' }}/>
       <div style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
         {tags.map((tag, index) => (
           <div
@@ -289,15 +302,12 @@ export default function MdEditorWithHeader() {
             border: 'none',
             outline: 'none',
             marginTop: '7px',
-            // width: '80%',
-            // backgroundColor: 'pink'
           }}
           ref={tagRef}
         /> 
         
         <Button
           onClick={contents.length > 0 ? handleAiTagClick : null}
-          // onClick={handleAiTextClick}
           sx={{
             bgcolor: '#8A94EF',
             borderRadius: 3,
@@ -329,7 +339,7 @@ export default function MdEditorWithHeader() {
                 previewStyle="vertical"
                 initialValue={content}
                 placeholder="글을 작성해 주세요"
-                toolbarItems={toolbar}
+                toolbarItems={customToolbar}
                 height="300px"
                 plugins={[colorSyntax, [codeSyntaxHighlight, { highlighter: Prism }]]}
                 ref={editorRef2}
@@ -411,7 +421,7 @@ export default function MdEditorWithHeader() {
         previewStyle="vertical"
         initialEditType="markdown"
         placeholder="글을 작성해 주세요"
-        toolbarItems={toolbar}
+        toolbarItems={customToolbar}
         height="300px"
         plugins={[colorSyntax, [codeSyntaxHighlight, { highlighter: Prism }]]}
         ref={editorRef1}

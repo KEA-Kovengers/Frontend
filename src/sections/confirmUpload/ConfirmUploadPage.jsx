@@ -1,3 +1,6 @@
+import { useEffect,useState } from 'react';
+import PropTypes from "prop-types";
+
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
@@ -10,19 +13,70 @@ import AppCardImage from 'src/sections/overview/app-card-image';
 import Logo from 'src/components/logo';
 import Iconify from 'src/components/iconify';
 
-import { useNavigate } from 'react-router-dom';
-import UploadCardInfo from './UploadCardInfo';
+import { useNavigate, useLocation } from 'react-router-dom';
 
-const item = {
-  image: { src: '/assets/images/covers/exercise.jpg' },
-  info: {
-    userImage: '/assets/images/avatars/avatar_25.jpg',
-    title: '운동을 하자!',
-    userName: '소정이의 블로그',
-    date: '2024-03-15',
-  },
-};
-export default function SelectOptionView() {
+import { useAccountStore } from 'src/store/useAccountStore';
+
+import UploadCardInfo from './UploadCardInfo';
+import { PostEdit } from "src/api/posts.api";
+
+// confirm/upload 페이지
+export default function ConfirmUploadPage() {
+
+  const navigate = useNavigate();
+
+  const location = useLocation();
+  const [title, setTitle] = useState(location.state.title);
+  const [tags, setTags] = useState(location.state.tags);
+  const [thumbnail, setThumbnail] = useState(location.state.thumbnail);
+  const [thumbnailUrl, setThumbnailUrl] = useState(location.state.thumbnailUrl);
+
+  console.log('confirm-upload title: ',title);
+  console.log('confirm-upload tags: ',tags);
+  console.log('confirm-upload thumbnail: ',thumbnail);
+
+  const { accountInfo } = useAccountStore();
+
+  const item = {
+    info: {
+      userImage: accountInfo.profileImg,
+      title: title,
+      userName: accountInfo.blogName,
+      // date: '2024-03-15',
+    }
+  }
+
+  // POST
+  // MdEditorWithHeader에서 받은 제목,내용,해시태그로 완료 버튼을 누르면 /posts/editPost API 요청
+  const editPost = async () => {
+    try{
+      const requestBody ={
+        thumbnail: thumbnailUrl,
+        title: title,
+        // body: "",
+        hashtags: tags,
+        status: 'POST',
+      };
+      const response = await PostEdit(requestBody);
+      console.log('POST response: ',response);
+
+      if(response.data && response.data.isSuccess) {
+        console.log('Post created successfully');
+      }else {
+        console.error('API response was not successful');
+      } 
+    }
+    catch (error) {
+      console.error("There has been a problem with your editPost fetch operation: ", error);
+    }
+  };
+  
+
+  const handleComplete = () => {
+    navigate('/');
+    editPost();
+  }
+
   const renderHeader = (
     <Box
       component="header"
@@ -38,7 +92,6 @@ export default function SelectOptionView() {
       <Logo />
     </Box>
   );
-  const navigate = useNavigate();
 
   return (
     <>
@@ -58,7 +111,8 @@ export default function SelectOptionView() {
           }}
         >
           <div style={{ width: '55%', marginBottom: 20 }}>
-            <AppCardImage images={[item.image]} />
+            {/* <img src={thumbnail} alt="Thumbnail" /> */}
+            <img src={URL.createObjectURL(thumbnail)} alt="Thumbnail" />
             <UploadCardInfo info={[item.info]} />
           </div>
           <Typography sx={{ color: 'text.secondary' }}>위 게시물로 업로드 하겠습니까?</Typography>
@@ -66,7 +120,7 @@ export default function SelectOptionView() {
             <Button sx={modal_style.left_button} onClick={() => navigate(-1)}>
               아니오
             </Button>
-            <Button sx={modal_style.right_button} onClick={() => navigate('/')}>
+            <Button sx={modal_style.right_button} onClick={handleComplete}>
               예
             </Button>
           </Stack>

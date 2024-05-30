@@ -1,4 +1,6 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+
+import PropTypes from "prop-types";
 
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
@@ -12,13 +14,27 @@ import Iconify from 'src/components/iconify';
 
 import { colors } from 'src/theme/variableColors';
 import CustomModalBig from 'src/components/CustomModalBig/CustomModalBig';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 import { useToggle } from 'src/hooks/useToggle';
 
 import { useCounter } from 'src/hooks/useCount';
+import { PostCreate } from "src/api/posts.api";
 
+// 어떤 형식의 썸네일을 첨부할건지 선택하는 페이지
+// /select-thumbnail
 export default function SelectOptionView() {
+
+  const location = useLocation();
+  const [title, setTitle] = useState(location.state.title);
+  const [tags, setTags] = useState(location.state.tags);
+
+  const [ thumbnail, setThumbnail ] = useState('');
+  const [ thumbnailUrl, setThumbnailUrl ] = useState('');
+
+  console.log('select-option title: ',title);
+  console.log('select-option tags: ',tags);
+
   const [isSelected, setIsSelected] = useState(null);
   const [imageUrl, setImageUrl] = useState(null); // State to store the image URL
   const [imgFile, setImgFile] = useState(null); // State to store the image file
@@ -27,14 +43,14 @@ export default function SelectOptionView() {
   const decrement = useCounter((state) => state.decrement);
   const reset = useCounter((state) => state.reset);
 
+  const navigate = useNavigate();
+
   // Define toggle hooks for modals
   const aiModalToggle = useToggle();
   const aiSelectModalToggle = useToggle();
   const aiCreatingModalToggle = useToggle();
   const imageConfirmModalToggle = useToggle();
   const videoConfirmModalToggle = useToggle();
-
-  const navigate = useNavigate();
 
   const handleOpenModalClick = (option) => {
     if (option === 'image') {
@@ -43,10 +59,19 @@ export default function SelectOptionView() {
       input.accept = 'image/*';
       input.onchange = function (event) {
         const file = event.target.files[0];
-        console.log('file', file);
         const imgUrl = URL.createObjectURL(file);
+        const thumbnail = file;
+        const thumbnailUrl = imgUrl;
+
+        setImgFile(file);
         setImageUrl(imgUrl);
-        console.log('imgUrl', imgUrl);
+        setThumbnail(thumbnail);
+        setThumbnailUrl(thumbnailUrl);
+
+        // console.log('imgUrl', imgUrl);
+        console.log('img file: ',file);
+        console.log('img thumbnail', thumbnail);
+
         if (file) {
           imageConfirmModalToggle.toggle();
         }
@@ -84,10 +109,28 @@ export default function SelectOptionView() {
   const ConfirmAiImage = () => {
     console.log('ConfirmAiImage');
     reset();
-    navigate('/confirm-upload');
+    navigate('/confirm-upload',
+      { 
+        state: { 
+          title,
+          tags,
+          thumbnail,
+          thumbnailUrl 
+        } 
+      }
+    );
   };
   const ConfirmFile = () => {
-    navigate('/confirm-upload');
+    navigate('/confirm-upload',
+      { 
+        state: { 
+          title,
+          tags,
+          thumbnail,
+          thumbnailUrl 
+        } 
+      }
+    );
   };
 
   const renderHeader = (

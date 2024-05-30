@@ -24,6 +24,8 @@ import { PostSummary, PostGenerateImage } from 'src/api/ai.api';
 
 import { styled } from 'styled-components';
 
+import { useEditStore } from 'src/store/useEditStore';
+
 export default function CustomModalBig({
   leftButton,
   rightButton,
@@ -35,6 +37,14 @@ export default function CustomModalBig({
   rightAction,
   image,
 }) {
+
+  // 수정 사항
+  // imgUrl -> updateThumbnail에 넣어서 썸네일 링크를 업데이트
+  const { thumbnail, updateThumbnail } = useEditStore((state) => ({
+    thumbnail: state.editInfo.thumbnail,
+    updateThumbnail: state.updateEditInfo.bind(null, 'thumbnail'),
+  }));
+
   const [textField, setTextField] = useState('');
 
   const [imgUrl, setImgUrl] = useState('');

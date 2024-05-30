@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { PostGenerateText } from '../api/ai.api';
+import { th } from 'date-fns/locale';
 
 export const useEditStore = create((set) => ({
   editInfo: {
@@ -12,19 +13,8 @@ export const useEditStore = create((set) => ({
     editorRef2: null,
 
     aiGeneratedText: '',
+    
   },
-  updateEditorHtml1: (newHtml) => set((state) => ({
-    editInfo: {
-        ...state.editInfo,
-        editorHtml1: newHtml,
-    },
-  })),
-  updateEditorHtml2: (newHtml) => set((state) => ({
-      editInfo: {
-          ...state.editInfo,
-          editorHtml2: newHtml,
-      },
-  })),
   updateEditInfo: (field, value) => 
       set((state) => ({
           editInfo: {
@@ -59,4 +49,5 @@ export const useEditStore = create((set) => ({
       editorRef2: ref,
     },
   })),
+
 }));
