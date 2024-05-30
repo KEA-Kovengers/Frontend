@@ -1,15 +1,16 @@
-import api from './http.api';
+import api from './api';
+import httpApi from './http.api';
 
 export const PostUserInfo = (data) => {
-  return api.post('/users/users/update', data);
+  return api.post('/users/update', data);
 };
 
 export const GetUserInfo = (id) => {
-  return api.get(`/users/users/${id}`);
+  return httpApi.get(`/users/view/${id}`);
 };
 
 export const PostImage = (data) => {
-  return api.post('/users/users/image', data, {
+  return api.post('/users/image', data, {
     headers: {
       'Content-Type': 'multipart/form-data',
     },
@@ -17,5 +18,5 @@ export const PostImage = (data) => {
 };
 
 export const PostProfileImage = () => {
-  return api.post('/users/users/updateImg');
+  return api.post('/users/updateImg');
 };

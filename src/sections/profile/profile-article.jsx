@@ -6,9 +6,12 @@ import { styled } from 'styled-components';
 import IconButton from '@mui/material/IconButton';
 import Iconify from 'src/components/iconify';
 import { Typography } from '@mui/material';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { format } from 'date-fns';
+import { ko } from 'date-fns/locale';
 
 export default function ProfileArticle({
+  id,
   imgurl,
   title,
   content,
@@ -18,13 +21,16 @@ export default function ProfileArticle({
   isComment,
   commentcnt,
 }) {
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    return format(date, 'yyyy-MM-dd hh:mm', { locale: ko });
+  };
+
+  const navigate = useNavigate();
+
   return (
     <RowStyled>
-      <ImageStyled
-        onClick={() => Navigation('/article', { articleId: articleId })}
-        component="img"
-        src={imgurl}
-      />
+      <ImageStyled onClick={() => navigate(`article/${id}`)} component="img" src={imgurl} />
       <div
         style={{
           alignContent: 'start',
@@ -32,9 +38,10 @@ export default function ProfileArticle({
           display: 'flex',
           width: '48%',
           height: 'auto',
+          // border: '1px solid blue',
         }}
       >
-        <TitleStyled component={Link} to="/article" variant="subtitle">
+        <TitleStyled component={Link} to={`/article/${id}`} variant="subtitle">
           {title}
         </TitleStyled>
         <ContentStyled>{content}</ContentStyled>
@@ -48,7 +55,7 @@ export default function ProfileArticle({
             marginTop: '10px',
           }}
         >
-          <div style={{ fontSize: '15px', color: colors.textGrey }}>{date}</div>
+          <div style={{ fontSize: '15px', color: colors.textGrey }}>{formatDate(date)}</div>
           <div style={{ flexDirection: 'row', display: 'flex', alignItems: 'center' }}>
             <Iconify
               icon={isLike ? 'gridicons:heart' : 'ph:heart'}
@@ -93,7 +100,7 @@ export const RowStyled = styled.div`
   margin-bottom: 30px;
   justify-content: space-between;
   align-items: center;
-  height: 240px;
+  height: 250px;
 `;
 
 export const ImageStyled = styled(Box)`
@@ -127,6 +134,8 @@ export const TitleStyled = styled(Typography)`
 export const ContentStyled = styled.div`
   font-size: 15px;
   height: 110px;
+  /* width: 100%; */
+  /* border: 1px solid red; */
   margin: 5px 0;
   color: ${colors.textGrey};
   text-overflow: ellipsis;

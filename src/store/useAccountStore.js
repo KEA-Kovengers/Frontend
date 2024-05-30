@@ -2,13 +2,14 @@ import { create } from 'zustand';
 
 export const useAccountStore = create((set) => ({
   accountInfo: {
-    id: 3426612937,
+    id: null,
     nickName: '',
     profileImg: '',
     blogName: '',
     bio: '',
     role: '',
     friendCount: 0,
+    status: '',
   },
   updateAccountInfo: (field, value) =>
     set((state) => ({ accountInfo: { ...state.accountInfo, [field]: value } })),
@@ -23,6 +24,7 @@ export const useAccountStore = create((set) => ({
         bio: '',
         role: '',
         friendCount: 0,
+        status: '',
       },
     })),
 }));

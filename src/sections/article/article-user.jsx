@@ -1,15 +1,17 @@
 import { account4 } from 'src/_mock/account';
 import Avatar from '@mui/material/Avatar';
-
+import { useParams } from 'react-router-dom';
 import { useNavigate, Link } from 'react-router-dom';
-import { Typography } from '@mui/material';
+import { Tooltip } from '@mui/material';
+import { Stack } from '@mui/material';
 
-export default function ArticleUser() {
+export default function ArticleUser({ editorList }) {
   const navigate = useNavigate();
-  const displayName = account4.displayName || '';
 
   return (
-    <div
+    <Stack
+      direction="row"
+      spacing={2}
       style={{
         borderBottom: '1px solid #C1C1C1',
         borderRadius: '0px 0px 1px 1px',
@@ -22,34 +24,20 @@ export default function ArticleUser() {
         paddingBottom: '25px',
       }}
     >
-      <Avatar
-        src={account4.photoURL}
-        onClick={() => navigate('/user')}
-        sx={{
-          width: 70,
-          height: 70,
-        }}
-      />
-
-      <Typography
-        component={Link}
-        to="/user"
-        sx={{
-          marginLeft: '20px',
-          color: '#000000',
-          fontSize: '18px',
-          maxWidth: '75%',
-          textOverflow: 'ellipsis',
-          overflow: 'hidden',
-          whiteSpace: 'nowrap',
-          textDecoration: 'none',
-          '&:hover': {
-            textDecoration: 'underline',
-          },
-        }}
-      >
-        {displayName}
-      </Typography>
-    </div>
+      {editorList.map((editor, index) => (
+        <Tooltip title={editor.nickName} key={index}>
+          <Avatar
+            src={editor.profileImg}
+            onClick={() => navigate(`/user/${editor.id}`)}
+            sx={{
+              width: 70,
+              height: 70,
+              '&:hover': { opacity: 0.72 },
+              cursor: 'pointer',
+            }}
+          />
+        </Tooltip>
+      ))}
+    </Stack>
   );
 }

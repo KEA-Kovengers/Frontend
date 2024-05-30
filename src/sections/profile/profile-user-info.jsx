@@ -11,22 +11,31 @@ import { Tooltip, TextField, Button, Box } from '@mui/material';
 import { styled } from 'styled-components';
 import CustomModal from 'src/components/CustomModal/CustomModal';
 import FriendModal from './FriendModal';
-import { GetFriendList } from 'src/api/friend.api';
+import { GetFriendList, PostFriendRequest } from 'src/api/friend.api';
 import { useAccountStore } from 'src/store/useAccountStore';
 import { useUserInfo } from './UserInfo';
 import { GetUserInfo, PostImage, PostProfileImage, PostUserInfo } from 'src/api/user.api';
 import { useParams } from 'react-router-dom';
+import { useFriendStore } from 'src/store/useFriendStore';
 
 export default function UserInfo() {
   const { accountInfo, updateAccountInfo } = useAccountStore();
+  const { friend, addFriend } = useFriendStore();
   const { userInfo, setUserInfo } = useUserInfo();
   const params = useParams();
   const userId = Number(params.id);
   const isMine = userId === accountInfo.id;
+  // console.log('paprams.id', userId);
+  // console.log('accountInfo.id', accountInfo.id);
+  console.log('isMine', isMine);
 
   const [isFriend, setIsFriend] = useState(true); //친구인지 아닌지
 
-  let friendToggle, requestFriendToggle, removeFriendToggle, requestAlertTotgle, removeAlertToggle;
+  let friendToggle;
+  let requestFriendToggle;
+  let removeFriendToggle;
+  let requestAlertTotgle;
+  let removeAlertToggle;
   if (isMine) {
     friendToggle = useToggle();
   } else {
@@ -48,14 +57,26 @@ export default function UserInfo() {
   const showFriend = () => {
     friendToggle.toggle();
     console.log('친구 목록');
-    const id = isMine ? accountInfo.id : userId;
-    GetFriendList(id)
+    // const id = isMine ? accountInfo.id : userId;
+    // GetFriendList(id)
+    //   .then((res) => {
+    //     console.log(res);
+    //   })
+    //   .catch((err) => {
+    //     console.log(err);
+    //   });
+  };
+
+  const RequestFriend = (id) => {
+    console.log('친구 신청');
+    PostFriendRequest(id)
       .then((res) => {
         console.log(res);
       })
       .catch((err) => {
         console.log(err);
       });
+    requestFriendToggle.toggle();
   };
 
   useEffect(() => {
@@ -73,6 +94,17 @@ export default function UserInfo() {
             role: 'USER',
             friendCount: 0,
           });
+          // console.log(userInfo);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    } else {
+      GetFriendList(userId)
+        .then((res) => {
+          console.log(res);
+          console.log(res.data.result);
+          setUserInfo({ friendCount: res.data.result.length });
         })
         .catch((err) => {
           console.log(err);
@@ -145,107 +177,116 @@ export default function UserInfo() {
                 </span>
               </div>
             </div>
-            {isMine ? (
-              <div style={{ flexDirection: 'row', display: 'flex' }}>
-                <Tooltip title="블로그 수정">
-                  <IconButton
-                    onClick={() => setModify(!modify)}
-                    sx={{
-                      mt: '5px',
-                      mr: '10px',
-                      backgroundColor: colors.third,
-                      borderRadius: '15px',
-                    }}
-                  >
-                    <Iconify
-                      icon="clarity:pencil-solid"
-                      sx={{ width: '23px', height: '23px', color: colors.textGrey }}
+            {accountInfo.id !== null && (
+              <>
+                {isMine ? (
+                  <div style={{ flexDirection: 'row', display: 'flex' }}>
+                    <Tooltip title="블로그 수정">
+                      <IconButton
+                        onClick={() => setModify(!modify)}
+                        sx={{
+                          mt: '5px',
+                          mr: '10px',
+                          backgroundColor: colors.third,
+                          borderRadius: '15px',
+                        }}
+                      >
+                        <Iconify
+                          icon="clarity:pencil-solid"
+                          sx={{ width: '23px', height: '23px', color: colors.textGrey }}
+                        />
+                      </IconButton>
+                    </Tooltip>
+                    <Tooltip title="친구">
+                      <IconButton
+                        sx={{
+                          mt: '5px',
+                          mr: '5px',
+                          backgroundColor: colors.third,
+                          borderRadius: '15px',
+                        }}
+                        onClick={() => showFriend()}
+                      >
+                        <Iconify
+                          icon="fa-solid:user-friends"
+                          sx={{ width: '25px', height: '25px', color: colors.textGrey }}
+                        />
+                      </IconButton>
+                    </Tooltip>
+                    {friendToggle.isOpen && (
+                      <FriendModal open={friendToggle.isOpen} onClose={friendToggle.toggle} />
+                    )}
+                  </div>
+                ) : (
+                  <Tooltip title={isFriend ? '친구 삭제' : '친구 신청'}>
+                    <IconButton
+                      onClick={
+                        isFriend
+                          ? () => removeFriendToggle.toggle()
+                          : () => requestFriendToggle.toggle()
+                      }
+                      sx={{
+                        width: '43px',
+                        height: '43px',
+                        backgroundColor: colors.third,
+                        borderRadius: '15px',
+                      }}
+                    >
+                      <Iconify
+                        icon={isFriend ? 'fa6-solid:user-check' : 'fa6-solid:user-plus'}
+                        sx={{ width: '25px', height: '25px', color: colors.textGrey }}
+                      />
+                    </IconButton>
+                    {requestFriendToggle.isOpen && (
+                      <CustomModal
+                        open={requestFriendToggle.isOpen}
+                        onClose={requestFriendToggle.toggle}
+                        title="친구 신청"
+                        colorText={account.displayName}
+                        contents="님에게 친구 신청을 보내시겠습니까?"
+                        rightButton="신청"
+                        mode="title"
+                        buttonAction={{
+                          rightAction: () => {
+                            RequestFriend(userId);
+                          },
+                        }}
+                      />
+                    )}
+
+                    <CustomModal
+                      open={removeFriendToggle.isOpen}
+                      onClose={removeFriendToggle.toggle}
+                      title="친구 삭제"
+                      colorText={account.displayName}
+                      contents="님을 친구에서 삭제하시겠습니까?"
+                      rightButton="삭제"
+                      mode="title"
+                      buttonAction={{
+                        rightAction: () => {
+                          removeAlertToggle.toggle();
+                        },
+                      }}
                     />
-                  </IconButton>
-                </Tooltip>
-                <Tooltip title="친구">
-                  <IconButton
-                    sx={{
-                      mt: '5px',
-                      mr: '5px',
-                      backgroundColor: colors.third,
-                      borderRadius: '15px',
-                    }}
-                    onClick={() => showFriend()}
-                  >
-                    <Iconify
-                      icon="fa-solid:user-friends"
-                      sx={{ width: '25px', height: '25px', color: colors.textGrey }}
+                    <CustomModal
+                      open={requestAlertTotgle.isOpen}
+                      onClose={requestAlertTotgle.toggle}
+                      title="친구 신청"
+                      colorText={account.displayName}
+                      contents="님에게 친구 신청을 보냈습니다."
+                      mode="alert"
                     />
-                  </IconButton>
-                </Tooltip>
-                <FriendModal open={friendToggle.isOpen} onClose={friendToggle.toggle} />
-              </div>
-            ) : (
-              <Tooltip title={isFriend ? '친구 삭제' : '친구 신청'}>
-                <IconButton
-                  onClick={
-                    isFriend
-                      ? () => removeFriendToggle.toggle()
-                      : () => requestFriendToggle.toggle()
-                  }
-                  sx={{
-                    width: '43px',
-                    height: '43px',
-                    backgroundColor: colors.third,
-                    borderRadius: '15px',
-                  }}
-                >
-                  <Iconify
-                    icon={isFriend ? 'fa6-solid:user-check' : 'fa6-solid:user-plus'}
-                    sx={{ width: '25px', height: '25px', color: colors.textGrey }}
-                  />
-                </IconButton>
-                <CustomModal
-                  open={requestFriendToggle.isOpen}
-                  onClose={requestFriendToggle.toggle}
-                  title="친구 신청"
-                  colorText={account.displayName}
-                  contents="님에게 친구 신청을 보내시겠습니까?"
-                  rightButton="신청"
-                  mode="title"
-                  buttonAction={{
-                    rightAction: () => {
-                      requestAlertTotgle.toggle();
-                    },
-                  }}
-                />
-                <CustomModal
-                  open={removeFriendToggle.isOpen}
-                  onClose={removeFriendToggle.toggle}
-                  title="친구 삭제"
-                  colorText={account.displayName}
-                  contents="님을 친구에서 삭제하시겠습니까?"
-                  rightButton="삭제"
-                  mode="title"
-                  buttonAction={{
-                    rightAction: () => {
-                      removeAlertToggle.toggle();
-                    },
-                  }}
-                />
-                <CustomModal
-                  open={requestAlertTotgle.isOpen}
-                  onClose={requestAlertTotgle.toggle}
-                  title="친구 신청"
-                  colorText={account.displayName}
-                  contents="님에게 친구 신청을 보냈습니다."
-                  mode="alert"
-                />
-                <CustomModal
-                  open={removeAlertToggle.isOpen}
-                  onClose={removeAlertToggle.toggle}
-                  title="친구 삭제"
-                  colorText={account.displayName}
-                  contents="님을 친구에서 삭제했습니다."
-                  mode="alert"
-                />
-              </Tooltip>
+                    <CustomModal
+                      open={removeAlertToggle.isOpen}
+                      onClose={removeAlertToggle.toggle}
+                      title="친구 삭제"
+                      colorText={account.displayName}
+                      contents="님을 친구에서 삭제했습니다."
+                      mode="alert"
+                    />
+                  </Tooltip>
+                )}
+              </>
             )}
           </RowStyled>
         </>

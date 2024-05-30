@@ -33,10 +33,8 @@ export default function Router() {
         { element: <IndexPage />, index: true },
         { path: 'user/:id', element: <UserPage /> },
         { path: 'search', element: <ProductsPage /> },
-        { path: 'article', element: <ArticlePage /> },
+        { path: 'article/:id', element: <ArticlePage /> },
         { path: 'api/auth/login', element: <LoginAuthPage /> },
-        { path: 'membership', element: <Membership /> },
-        { path: 'membership-profile', element: <MembershipProfile /> },
         { path: 'monitoring', element: <Monitoring /> },
       ],
     },
@@ -64,6 +62,8 @@ export default function Router() {
       path: 'confirm-upload',
       element: <ConfirmUpload />,
     },
+    { path: 'membership', element: <Membership /> },
+    { path: 'membership-profile', element: <MembershipProfile /> },
   ]);
 
   return routes;
