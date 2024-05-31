@@ -17,7 +17,7 @@ import ReportModal from 'src/sections/article/ReportModal';
 import DashboardModal from 'src/sections/article/DashboardModal';
 import { GetPostDetail } from 'src/api/posts.api';
 
-export default function ArticleTitle({ editorList }) {
+export default function ArticleTitle({ editorList, title, user, setUser }) {
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     return format(date, 'yyyy-MM-dd hh:mm', { locale: ko });
@@ -27,7 +27,6 @@ export default function ArticleTitle({ editorList }) {
   const postId = Number(params.id);
   const navigate = useNavigate();
   const { toggle, isOpen } = useToggle();
-  const [post, setPost] = useState({});
 
   // let deleteArticleToggle, reportArticleToggle, reportToggle, alertToggle;
   const deleteArticleToggle = useToggle();
@@ -45,27 +44,16 @@ export default function ArticleTitle({ editorList }) {
     setOpen(null);
   };
 
-  const [selectedUser, setSelectedUser] = useState(null);
-  const handleSelectedUser = (index) => {
-    if (selectedUser === index) {
-      setSelectedUser(null);
+  // const [selectedUser, setSelectedUser] = useState(null);
+  const handleSelectedUser = (id) => {
+    if (user === id) {
+      setUser(null);
     } else {
-      setSelectedUser(index);
+      setUser(id);
+      // console.log('선택된 유저 아이디', id);
+      // console.log('선택된 유저', user);
     }
   };
-
-  useEffect(() => {
-    console.log('게시글 아이디', postId);
-    console.log('에디터 리스트', editorList);
-    GetPostDetail(postId)
-      .then((res) => {
-        console.log('게시글 상세', res);
-        setPost(res.data.result);
-      })
-      .catch((err) => {
-        console.log('게시글 상세 에러', err);
-      });
-  }, []);
 
   return (
     <div
@@ -80,7 +68,7 @@ export default function ArticleTitle({ editorList }) {
       }}
     >
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
-        <span style={{ fontSize: '24px', marginTop: '15px' }}>{post.title}</span>
+        <span style={{ fontSize: '24px', marginTop: '15px' }}>{title}</span>
         <div
           style={{
             flexDirection: 'row',
@@ -104,7 +92,7 @@ export default function ArticleTitle({ editorList }) {
                     style={{
                       width: 30,
                       height: 30,
-                      borderColor: selectedUser === acc.id && '#1A2CDD',
+                      borderColor: user === acc.id && '#1A2CDD',
                       '&:hover': { opacity: 0.72 },
                       cursor: 'pointer',
                     }}
