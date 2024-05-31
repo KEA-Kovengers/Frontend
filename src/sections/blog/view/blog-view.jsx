@@ -40,18 +40,10 @@ export default function BlogView() {
     setTags(value.tags);
   }, []);
 
-  // function Contents(){
-  //   const changeContents = (value) => {
-  //     setTitle(value);
-  //     setTags(value.split(''));
-  //   };
-  // }
-
   // get postid로 articleVersion 가져오고
   // 웹소켓 연결
   // createPost API 요청 → 상태는 edit으로 변경
   // 근데 GetPostID로 가져오면 상태가 이미 edit임!
-
 
   // 사이드 바에서 글쓰기 버튼을 누르면 createPost API 요청
   // 상태는 edit으로 변경
@@ -131,6 +123,7 @@ export default function BlogView() {
                 state: {
                   title,
                   tags,
+                  postID,
                 },
               })
             }}

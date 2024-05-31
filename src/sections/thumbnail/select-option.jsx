@@ -19,7 +19,8 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { useToggle } from 'src/hooks/useToggle';
 
 import { useCounter } from 'src/hooks/useCount';
-import { PostCreate } from "src/api/posts.api";
+import { PostObjectUpload } from "src/api/posts.api";
+
 
 // 어떤 형식의 썸네일을 첨부할건지 선택하는 페이지
 // /select-thumbnail
@@ -32,8 +33,11 @@ export default function SelectOptionView() {
   const [ thumbnail, setThumbnail ] = useState('');
   const [ thumbnailUrl, setThumbnailUrl ] = useState('');
 
+  const [ postID, setPostID ] = useState(location.state.postID);
+
   console.log('select-option title: ',title);
   console.log('select-option tags: ',tags);
+  console.log('select-option postID: ',postID);
 
   const [isSelected, setIsSelected] = useState(null);
   const [imageUrl, setImageUrl] = useState(null); // State to store the image URL
@@ -58,10 +62,11 @@ export default function SelectOptionView() {
       input.type = 'file';
       input.accept = 'image/*';
       input.onchange = function (event) {
+
         const file = event.target.files[0];
         const imgUrl = URL.createObjectURL(file);
         const thumbnail = file;
-        const thumbnailUrl = imgUrl;
+        const thumbnailUrl = PostObjectUpload(file);;
 
         setImgFile(file);
         setImageUrl(imgUrl);
@@ -70,7 +75,7 @@ export default function SelectOptionView() {
 
         // console.log('imgUrl', imgUrl);
         console.log('img file: ',file);
-        console.log('img thumbnail', thumbnail);
+        console.log('img thumbnail Url: ', thumbnailUrl);
 
         if (file) {
           imageConfirmModalToggle.toggle();
@@ -115,7 +120,8 @@ export default function SelectOptionView() {
           title,
           tags,
           thumbnail,
-          thumbnailUrl 
+          thumbnailUrl,
+          postID 
         } 
       }
     );
@@ -127,7 +133,8 @@ export default function SelectOptionView() {
           title,
           tags,
           thumbnail,
-          thumbnailUrl 
+          thumbnailUrl,
+          postID 
         } 
       }
     );

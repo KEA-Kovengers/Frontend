@@ -60,6 +60,7 @@ export const PostDeletEditSession = (data) => {
   });
 }
 
+// 사진 업로드 
 export const PostObjectUpload = (data) => {
   return api.post('/articles/object/upload', data,{
     headers: {

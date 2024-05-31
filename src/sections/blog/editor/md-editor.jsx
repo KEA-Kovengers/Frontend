@@ -30,8 +30,6 @@ const accessToken = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIzNDI2NjEyOTM3IiwiaXNzIjoia2
 
 export default function MdEditorWithHeader({ title, setTitle, tags, setTags, onChangeContents }) {
 
-  // const [title, setTitle] = useState('');
-  // const [tags, setTags] = useState([]);
   const [tagInput, setTagInput] = useState('');
 
   const [contents, setContents] = useState([]);
@@ -130,10 +128,6 @@ export default function MdEditorWithHeader({ title, setTitle, tags, setTags, onC
         onChangeContents({ title, tags: newTags });
         setTagInput('');
       }
-      // if (newTag) {
-      //   setTags([...tags, newTag]);
-      //   setTagInput('');
-      // }
     }
   };
 

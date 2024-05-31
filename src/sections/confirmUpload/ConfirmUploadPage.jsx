@@ -30,10 +30,12 @@ export default function ConfirmUploadPage() {
   const [tags, setTags] = useState(location.state.tags);
   const [thumbnail, setThumbnail] = useState(location.state.thumbnail);
   const [thumbnailUrl, setThumbnailUrl] = useState(location.state.thumbnailUrl);
+  const [ postID, setPostID ] = useState(location.state.postID);
 
   console.log('confirm-upload title: ',title);
   console.log('confirm-upload tags: ',tags);
   console.log('confirm-upload thumbnail: ',thumbnail);
+  console.log('confirm-upload postID: ',postID);
 
   const { accountInfo } = useAccountStore();
 
@@ -42,6 +44,7 @@ export default function ConfirmUploadPage() {
       userImage: accountInfo.profileImg,
       title: title,
       userName: accountInfo.blogName,
+      hashtags: tags,
       // date: '2024-03-15',
     }
   }
@@ -51,10 +54,11 @@ export default function ConfirmUploadPage() {
   const editPost = async () => {
     try{
       const requestBody ={
+        id: postID,
         thumbnail: thumbnailUrl,
         title: title,
         // body: "",
-        hashtags: tags,
+        // hashtags: tags,
         status: 'POST',
       };
       const response = await PostEdit(requestBody);
@@ -111,8 +115,8 @@ export default function ConfirmUploadPage() {
           }}
         >
           <div style={{ width: '55%', marginBottom: 20 }}>
-            {/* <img src={thumbnail} alt="Thumbnail" /> */}
-            <img src={URL.createObjectURL(thumbnail)} alt="Thumbnail" />
+            {/* <img src={URL.createObjectURL(thumbnail)} alt="Thumbnail" /> */}
+            <img src={thumbnailUrl} alt="Thumbnail" />
             <UploadCardInfo info={[item.info]} />
           </div>
           <Typography sx={{ color: 'text.secondary' }}>위 게시물로 업로드 하겠습니까?</Typography>
