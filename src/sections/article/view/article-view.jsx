@@ -5,18 +5,30 @@ import AiWidget from '../article-ai-widget';
 import ArticleCommunity from '../article-community';
 import { useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import { useUserInfo } from 'src/sections/profile/UserInfo';
 import { GetEditorList } from 'src/api/editor.api';
 import { GetUserInfo } from 'src/api/user.api';
+import { GetPostDetail } from 'src/api/posts.api';
 
 export default function ArticleView() {
   const params = useParams();
   const postId = Number(params.id);
 
-  const { userInfo, setUserInfo } = useUserInfo();
+  // const { userInfo, setUserInfo } = useUserInfo();
   const [editorList, setEditorList] = useState([]);
+  const [post, setPost] = useState({});
+
+  const [selectedUser, setSelectedUser] = useState(null);
 
   useEffect(() => {
+    GetPostDetail(postId)
+      .then((res) => {
+        console.log('게시글 상세', res);
+        setPost(res.data.result);
+      })
+      .catch((err) => {
+        console.log('게시글 상세 에러', err);
+      });
+
     const fetchEditors = async () => {
       try {
         const res = await GetEditorList(postId);
@@ -61,7 +73,7 @@ export default function ArticleView() {
     };
 
     fetchEditors();
-  }, [postId]);
+  }, []);
 
   return (
     <div
@@ -83,8 +95,13 @@ export default function ArticleView() {
         }}
       >
         <ArticleUser editorList={editorList} />
-        <ArticleTitle editorList={editorList} />
-        <ArticleContent />
+        <ArticleTitle
+          editorList={editorList}
+          title={post.title}
+          user={selectedUser}
+          setUser={setSelectedUser}
+        />
+        <ArticleContent post={post} user={selectedUser} />
         <AiWidget />
         <ArticleCommunity />
       </div>
