@@ -152,6 +152,7 @@ export default function ProfileView() {
             >
               {postList.map((article) => (
                 <ProfileArticle
+                  key={article.post.id}
                   id={article.post.id}
                   imgurl={article.post.thumbnail}
                   title={article.post.title}
