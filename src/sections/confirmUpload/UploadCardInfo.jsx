@@ -70,18 +70,18 @@ export default function UploadCardInfo({ info }) {
     </Typography>
   );
 
-  const Date = (
-    <Typography
-      variant="caption"
-      sx={{
-        color: colors.textGrey,
-        fontSize: '13px',
-      }}
-      noWrap
-    >
-      {info[0].date}
-    </Typography>
-  );
+  // const Date = (
+  //   <Typography
+  //     variant="caption"
+  //     sx={{
+  //       color: colors.textGrey,
+  //       fontSize: '13px',
+  //     }}
+  //     noWrap
+  //   >
+  //     {info[0].date}
+  //   </Typography>
+  // );
 
   const CommunityInformation = (
     <Stack direction="row" spacing={1}>
@@ -138,7 +138,7 @@ export default function UploadCardInfo({ info }) {
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <Box sx={{ display: 'flex' }}>
                 {UserName}
-                {Date}
+                {/* {Date} */}
               </Box>
               <Box
                 sx={{ display: 'flex', justifyContent: 'flex-end', flexDirection: 'row-reverse' }}

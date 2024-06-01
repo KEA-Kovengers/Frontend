@@ -1,4 +1,6 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+
+import PropTypes from "prop-types";
 
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
@@ -12,13 +14,33 @@ import Iconify from 'src/components/iconify';
 
 import { colors } from 'src/theme/variableColors';
 import CustomModalBig from 'src/components/CustomModalBig/CustomModalBig';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 import { useToggle } from 'src/hooks/useToggle';
 
 import { useCounter } from 'src/hooks/useCount';
+import { PostObjectUpload } from "src/api/posts.api";
 
+
+// 어떤 형식의 썸네일을 첨부할건지 선택하는 페이지
+// /select-thumbnail
 export default function SelectOptionView() {
+
+  const location = useLocation();
+  const [title, setTitle] = useState(location.state.title);
+  const [tags, setTags] = useState(location.state.tags);
+  const [ postID, setPostID ] = useState(location.state.postID);
+
+  const [ thumbnail, setThumbnail ] = useState('');
+  const [ thumbnailUrl, setThumbnailUrl ] = useState('');
+  const [ id, setId ] = useState(''); // [id]
+
+  const articleID = '1';
+
+  console.log('select-option title: ',title);
+  console.log('select-option tags: ',tags);
+  console.log('select-option postID: ',postID);
+
   const [isSelected, setIsSelected] = useState(null);
   const [imageUrl, setImageUrl] = useState(null); // State to store the image URL
   const [imgFile, setImgFile] = useState(null); // State to store the image file
@@ -27,6 +49,8 @@ export default function SelectOptionView() {
   const decrement = useCounter((state) => state.decrement);
   const reset = useCounter((state) => state.reset);
 
+  const navigate = useNavigate();
+
   // Define toggle hooks for modals
   const aiModalToggle = useToggle();
   const aiSelectModalToggle = useToggle();
@@ -34,19 +58,43 @@ export default function SelectOptionView() {
   const imageConfirmModalToggle = useToggle();
   const videoConfirmModalToggle = useToggle();
 
-  const navigate = useNavigate();
-
   const handleOpenModalClick = (option) => {
     if (option === 'image') {
       const input = document.createElement('input');
       input.type = 'file';
       input.accept = 'image/*';
-      input.onchange = function (event) {
+      input.onchange = async function (event) {
+
         const file = event.target.files[0];
-        console.log('file', file);
         const imgUrl = URL.createObjectURL(file);
-        setImageUrl(imgUrl);
-        console.log('imgUrl', imgUrl);
+        const thumbnail = file;
+        // const thumbnailUrl = imgUrl;
+        // const thumbnailUrl = PostObjectUpload(file);
+        const formData = new FormData();
+        formData.append('files', file);
+        try{
+          const response = await PostObjectUpload(formData);
+          console.log('select-option: ',response);
+
+          const thumbnailUrl = response.data;
+          console.log('upload response: ',thumbnailUrl);
+                  
+          setImgFile(file);
+          setImageUrl(imgUrl);
+          setThumbnail(thumbnail);
+          setThumbnailUrl(thumbnailUrl);
+          // callback(imageUthumbnailUrlrl, 'Uploaded image');
+
+          const id = response.result.id;
+          setId(id);
+        } catch (error) {
+          console.error('Failed to upload image', error);
+        }
+
+        // console.log('imgUrl', imgUrl);
+        console.log('img file: ',file);
+        console.log('img thumbnail Url: ', thumbnailUrl);
+
         if (file) {
           imageConfirmModalToggle.toggle();
         }
@@ -84,10 +132,32 @@ export default function SelectOptionView() {
   const ConfirmAiImage = () => {
     console.log('ConfirmAiImage');
     reset();
-    navigate('/confirm-upload');
+    navigate('/confirm-upload',
+      { 
+        state: { 
+          title,
+          tags,
+          thumbnail,
+          thumbnailUrl,
+          postID
+          // articleID 
+        } 
+      }
+    );
   };
   const ConfirmFile = () => {
-    navigate('/confirm-upload');
+    navigate('/confirm-upload',
+      { 
+        state: { 
+          title,
+          tags,
+          thumbnail,
+          thumbnailUrl,
+          postID
+          // articleID 
+        } 
+      }
+    );
   };
 
   const renderHeader = (

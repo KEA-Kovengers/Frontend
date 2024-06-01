@@ -12,72 +12,38 @@ import {
 import { Map, MapMarker } from 'react-kakao-maps-sdk';
 import { colors } from 'src/theme/variableColors';
 import Iconify from 'src/components/iconify';
-
-const modal_style = {
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    width: 800, // 전체 너비를 적절히 조정
-    height: 600,
-    bgcolor: 'background.paper',
-    borderRadius: 2,
-    border: 'none',
-    padding: '20px',
-    display: 'flex', // Flex 레이아웃 적용
-    flexDirection: 'column',
-
-    complete_button: {
-        width: 70,
-        height: 30,
-        bgcolor: '#1A2CDD',
-        borderRadius: 7,
-        color: 'white',
-        fontSize: '15px',
-    },
-};
-
-// const listStyle = {
-//     flex: 1, // 왼쪽 부분이 오른쪽 부분과 동일한 너비를 차지하도록 설정
-//     maxHeight: '100%',
-//     overflowY: 'auto',
-// };
-
-const searchStyle = {
-    width: '100%',
-};
-
-const contentStyle = {
-    display: 'flex',
-    flex: 1,
-    marginBottom: '35px',
-    overflow: 'hidden',
-    border: '1px solid #eee',
-};
-
-const listStyle = {
-    flex: 1,
-    maxHeight: '100%',
-    overflowY: 'auto',
-};
-
-const mapStyle = {
-    flex: 1,
-    maxHeight: '100%',
-    overflowY: 'auto',
-};
+import { useEditStore } from 'src/store/useEditStore';
+import { useEditPlaceStore } from 'src/store/useEditPlaceStore';
 
 export default function MapModal() {
     const [isOpen, setIsOpen] = useState(true);
     const [keyword, setKeyword] = useState(''); // 검색 키워드 상태
-    const [places, setPlaces] = useState([]); // 검색 결과 상태
+    // const [places, setPlaces] = useState([]); // 검색 결과 상태
     const mapRef = useRef();
     const [loaded, setLoaded] = useState(false); // 카카오 맵 API 로드 여부
     const [selectedMarker, setSelectedMarker] = useState(null); // 선택된 마커 상태
     const [highlightedPlace, setHighlightedPlace] = useState(null); // 선택된 리스트 항목의 인덱스
     const listRefs = useRef({}); // 리스트 항목의 ref 객체
+    const [mapImageUrl, setMapImageUrl] = useState(null); // 선택된 지도의 이미지 URL
 
     const kakaoApiKey = import.meta.env.VITE_KAKAO_API_KEY;
+
+    const { places, setPlaces } = useEditPlaceStore();
+
+    const { 
+        editorHtml1, editorHtml2,    
+        editorRef1, editorRef2, 
+        updateEditorHtml1, updateEditorHtml2 ,
+    } = useEditStore((state) => ({
+      editorHtml1: state.editInfo.editorHtml1,
+      editorHtml2: state.editInfo.editorHtml2,
+      
+      updateEditorHtml1: state.updateEditInfo.bind(null, 'editorHtml1'),
+      updateEditorHtml2: state.updateEditInfo.bind(null, 'editorHtml2'),
+
+      editorRef1: state.editInfo.editorRef1,
+      editorRef2: state.editInfo.editorRef2,
+    }));
 
     const closeModal = () => {
         setIsOpen(false);
@@ -166,8 +132,44 @@ export default function MapModal() {
             '\n링크: ',place.place_url);
     };
 
-
-
+    const buttonClick = () => {
+        // 선택된 지도 리스트가 있을 때
+        if (highlightedPlace) {
+            const { place_name, address_name, road_address_name, place_url, x, y } = highlightedPlace;
+    
+            // 선택된 지도 리스트의 정보를 HTML 문자열로 만듭니다.
+            const placeInfoHtml = `
+                <div style="padding: 10px; max-width: 300px; margin-bottom: 20px;">
+                    // <img
+                    // alt="지도 이미지"
+                    // style="max-width: 100%; height: auto; margin-top: 10px; border-radius: 5px;"
+                    // />
+                    <h3 style="margin: 10px 0;">${place_name}</h3>
+                    <p>주소: ${road_address_name || address_name}</p>
+                    <p>링크: <a href="${place_url}" target="_blank">${place_url}</a></p>
+                </div>
+            `;
+    
+            // editorRef1을 사용하여 에디터에 HTML 콘텐츠 추가
+            if (editorRef1 && editorRef1.getInstance()) {
+                const editorInstance1 = editorRef1.getInstance();
+                const currentText1 = editorInstance1.getHTML();
+                editorInstance1.setHTML(`${currentText1}\n${placeInfoHtml}`);
+                updateEditorHtml1(`${editorHtml1}\n${placeInfoHtml}`);
+            }
+            else if (editorRef2 && editorRef2.getInstance()) {
+                const editorInstance2 = editorRef2.getInstance();
+                const currentText2 = editorInstance2.getHTML();
+                editorInstance2.setHTML(`${currentText2}\n${placeInfoHtml}`);
+                updateEditorHtml2(`${editorHtml2}\n${placeInfoHtml}`);
+            }
+            else {
+                console.log('No place selected.');
+            }
+        closeModal();
+        }
+    };
+    
 
     return (
         isOpen && (
@@ -202,6 +204,11 @@ export default function MapModal() {
                     onChange={(e) => setKeyword(e.target.value)}
                     placeholder="키워드를 입력하세요"
                     sx={searchStyle}
+                    onKeyPress={(e) => {
+                        if (e.key === 'Enter') {
+                            searchPlaces();
+                        }
+                    }}
                     InputProps={{
                         endAdornment: (
                         <InputAdornment position="end">
@@ -294,6 +301,7 @@ export default function MapModal() {
                         ...modal_style.complete_button,
                         marginLeft: 'auto',
                     }}
+                    onClick={buttonClick}
                     >
                         추가
                 </Button>
@@ -302,3 +310,57 @@ export default function MapModal() {
         )
     );
 }
+
+const modal_style = {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: 800, // 전체 너비를 적절히 조정
+    height: 600,
+    bgcolor: 'background.paper',
+    borderRadius: 2,
+    border: 'none',
+    padding: '20px',
+    display: 'flex', // Flex 레이아웃 적용
+    flexDirection: 'column',
+
+    complete_button: {
+        width: 70,
+        height: 30,
+        bgcolor: '#1A2CDD',
+        borderRadius: 7,
+        color: 'white',
+        fontSize: '15px',
+    },
+};
+
+// const listStyle = {
+//     flex: 1, // 왼쪽 부분이 오른쪽 부분과 동일한 너비를 차지하도록 설정
+//     maxHeight: '100%',
+//     overflowY: 'auto',
+// };
+
+const searchStyle = {
+    width: '100%',
+};
+
+const contentStyle = {
+    display: 'flex',
+    flex: 1,
+    marginBottom: '35px',
+    overflow: 'hidden',
+    border: '1px solid #eee',
+};
+
+const listStyle = {
+    flex: 1,
+    maxHeight: '100%',
+    overflowY: 'auto',
+};
+
+const mapStyle = {
+    flex: 1,
+    maxHeight: '100%',
+    overflowY: 'auto',
+};

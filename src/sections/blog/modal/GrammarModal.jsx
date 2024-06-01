@@ -10,51 +10,109 @@ import {
     TableBody,
     TableRow,
     TableCell,
-    Checkbox,
     Typography,
-    TextField,
     InputAdornment,
   } from '@mui/material';
 
 import Iconify from 'src/components/iconify';
-import { bool } from 'prop-types';
+// import { bool } from 'prop-types';
 import { colors } from 'src/theme/variableColors';
+import { useEditStore } from 'src/store/useEditStore';
+import { useEditSpellStore } from 'src/store/useEditSpellStore';
 
 // ----------------------------------------------------------------------
-
-const words = [
-    ['됬어 ','됐어 '],
-    ['나 는','나는'],
-    ['웬지','왠지'],
-];
 
 export default function GrammarModal(){
     // 모달 창
     const [isOpen, setIsOpen] = useState(true);
+    const [isEditing, setIsEditing] = useState([]);
 
-    const closeModal = () => {
-        setIsOpen(false);
-    };
+    const { 
+        editorRef1, editorRef2,
+        editorHtml1, editorHtml2,
+        updateEditorHtml1, updateEditorHtml2, 
+    } = useEditStore((state) => ({
+            editorRef1: state.editInfo.editorRef1,
+            editorRef2: state.editInfo.editorRef2,
 
-    const buttonClick = () => {
-        setIsOpen(false);
-    };
+            editorHtml1: state.editInfo.editorHtml1,
+            editorHtml2: state.editInfo.editorHtml2,
 
-    const [wordsCount, setWordsCount] = useState(0);
-    const [isEditing, setIsEditing] = useState(new Array(words.length).fill(false));
+            updateEditorHtml1: state.updateEditorHtml1,
+            updateEditorHtml2: state.updateEditorHtml2,
+    }));
 
+    const { spellCheckText, handleAiSpellCheck } = 
+        useEditSpellStore((state) => ({
+        spellCheckText: state.editInfo.spellCheckText,
+        handleAiSpellCheck: state.handleAiSpellCheck,
+    }));
+
+    // 맞춤법 검사 실행
+    useEffect(() => {
+        if(isOpen){
+            handleAiSpellCheck(editorHtml1);
+            // handleAiSpellCheck(editorHtml2);
+        }
+    }, [isOpen]);
+
+    const [count, setCount] = useState(0);
     // 단어 개수 세기
     useEffect(() => {
-        setWordsCount(words.length);
-    }, []);
+        setIsEditing(new Array(spellCheckText.length).fill(false));
+        setCount(spellCheckText.length);
+    }, [spellCheckText]);
 
     // 수정 버튼 클릭 시 단어의 개수 변화
     const handleEditClick = (index) => {
         const newIsEditing = [...isEditing];
         newIsEditing[index] = !newIsEditing[index];
         setIsEditing(newIsEditing);
-        setWordsCount((prevCount) => (newIsEditing[index] ? prevCount - 1 : prevCount + 1));
+
+        // 우하하! 개수 줄이기!
+        if (newIsEditing[index]) {
+            setCount(prevCount => prevCount - 1);
+        } else {
+            setCount(prevCount => prevCount + 1);
+        }
     };
+
+    const closeModal = () => {
+        setIsOpen(false); // 모달 닫기
+        setIsEditing([]);
+        setCount(0);
+    };
+
+    // 완료 버튼 클릭 시 수정된 문장 적용
+    const buttonClick = () => {
+        const selectedSentences = spellCheckText.filter((_, index) => isEditing[index]);
+
+        if (editorRef1 && editorRef1.getInstance) {
+            const editorInstance = editorRef1.getInstance();
+            let currentText = editorInstance.getMarkdown();
+
+            selectedSentences.forEach(({ original, corrected }) => {
+                currentText = currentText.replace(original, corrected);
+            });
+
+            editorInstance.setMarkdown(currentText);
+            updateEditorHtml1(currentText);
+        } else if (editorRef2 && editorRef2.getInstance) {
+            const editorInstance = editorRef2.getInstance();
+            let currentText = editorInstance.getMarkdown();
+
+            selectedSentences.forEach(({ original, corrected }) => {
+                currentText = currentText.replace(original, corrected);
+            });
+
+            editorInstance.setMarkdown(currentText);
+            updateEditorHtml2(currentText);
+        } else {
+            console.log('No editor instance found.');
+        }
+        closeModal();
+    };
+
 
     return (
         isOpen && (
@@ -66,7 +124,6 @@ export default function GrammarModal(){
             sx={{ display: 'flex' }}
         >
             <Box sx={modal_style}>
-
                 <Stack direction="row">
                     <Typography
                         id="modal-modal-title"
@@ -85,16 +142,15 @@ export default function GrammarModal(){
                 </div>
 
 
-                <div style={{ maxHeight: '300px', overflowY: 'auto' }}>
+                <Box style={{ maxHeight: '300px', overflowY: 'auto' }}>
                 <Table>
                     <TableBody>
-                  {words.map((words ,index) => (
+                    {spellCheckText.map((sentence, index) => (
                     <TableRow
                       hover
                       tabIndex={-1}
                       role="checkbox"
                       key={index}
-                      sx={{ display: 'flex', flexDirection: 'row' }}
                     >
                       <TableCell
                         padding="none"
@@ -108,23 +164,24 @@ export default function GrammarModal(){
                       >
                         <Stack 
                             direction='row'
-
-                            sx = {{
-                                display: 'flex',
-                                flexDirection: 'row',
-                            }}
+                            spacing={2} 
+                            alignItems="center" 
+                            sx={{ flex: 1 }}
                         >
-                            <Typography sx={{ color: 'red' , fontSize: '15px', maxWidth:'50px',mr: '50px'}}>
-                                {words[0]}
+                            <Typography sx={{ color: 'red' , fontSize: '15px',mr: '50px'}}>
+                                {sentence.original}
                             </Typography>
                             <Typography sx={{ color: 'green', fontSize: '15px', mr: '10px'}}>
-                                {words[1]}
+                                {sentence.corrected}
                             </Typography>
                         </Stack>
 
                         <Button 
                             onClick={() => handleEditClick(index)}
-                            sx={modal_style.complete_button}    
+                            sx={{
+                                ...modal_style.complete_button,
+                                ml: 2
+                            }}
                         >
                             {isEditing[index] ? (
                                 <Iconify icon="material-symbols:check" />
@@ -138,32 +195,33 @@ export default function GrammarModal(){
                     ))}
                     </TableBody>
                 </Table>
-
-                </div>
+                </Box>
 
         
-                <Box
-                    sx={{
-                        display: 'flex',
+                <Stack 
+                    direction="row" 
+                    justifyContent="space-between" 
+                    alignItems="center" 
+                    sx={{                           
+                        padding: '18px',
                         position: 'fixed',
-                        mt: '180px',
-                        ml: '18px',
                     }}
                 >
                     <Typography sx={{ color: colors.blueBlack, fontSize: '14px' }}>
-                        총 {wordsCount}개
+                        총 {count}개
                     </Typography>
 
                     <Button 
                         variant="contained"
                         sx={{
                             ...modal_style.complete_button,
+                            ml: '370px'
                         }}
                         onClick={buttonClick}
                     >
                         완료
                     </Button>
-                </Box>
+                </Stack>
             </Box>
         </Modal>
         )
@@ -188,7 +246,8 @@ const modal_style = {
         borderRadius: 7,
         color: 'white',
         fontSize: '13px',
-        position: 'fixed',
-        right: '18px',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
     },
 };

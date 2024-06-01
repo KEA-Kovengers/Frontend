@@ -2,8 +2,6 @@ import React, { useState,useEffect,useRef  } from 'react';
 import { useEditStore } from 'src/store/useEditStore';
 import propTypes from 'prop-types';
 
-//  test 
-
 import {
     Modal,
     Box,
@@ -17,58 +15,74 @@ import {
 import { colors } from 'src/theme/variableColors';
 
 import Iconify from 'src/components/iconify';
-import { be } from 'date-fns/locale';
+// import { be } from 'date-fns/locale';
 
 export default function AutoModal() {
     const [isOpen, setIsOpen] = useState(true);
+    const [textField, setTextField] = useState('');
 
-    const closeModal = () => {
-        setIsOpen(false);
-    };
-    
-
-    const editorRef1 = useRef(null);
-    const editorRef2 = useRef(null);
-
-    const { editorHtml1, editorHtml2, updateEditInfo, updateEditorHtml1, updateEditorHtml2 ,aiGeneratedText, handleAiText } = 
-    useEditStore((state) => ({
+    const { 
+        editorHtml1, editorHtml2,    
+        editorRef1, editorRef2, 
+        updateEditorHtml1, updateEditorHtml2 ,
+        aiGeneratedText, handleAiText
+    } = useEditStore((state) => ({
       editorHtml1: state.editInfo.editorHtml1,
       editorHtml2: state.editInfo.editorHtml2,
-      updateEditInfo: state.updateEditInfo,
-
+      
       updateEditorHtml1: state.updateEditInfo.bind(null, 'editorHtml1'),
       updateEditorHtml2: state.updateEditInfo.bind(null, 'editorHtml2'),
+
+      editorRef1: state.editInfo.editorRef1,
+      editorRef2: state.editInfo.editorRef2,
+
       aiGeneratedText: state.editInfo.aiGeneratedText,
       handleAiText: state.handleAiText,
     }));
 
     
+    const closeModal = () => {
+        setIsOpen(false);
+    };
+
+    // ------------------- AI 텍스트 생성 -------------------
     const handleAiTextClick = () => {
         const textToUse = editorHtml1 || editorHtml2;
         if (!textToUse) {
           console.log('No text available for AI text generation');
           return;
         }
-        handleAiText(textToUse);
-      };
-    
-      useEffect(() => {
-        if (aiGeneratedText) {
-          if (editorRef1.current) {
-            const editorInstance = editorRef1.current.getInstance();
-            editorInstance.insertText(`\n${aiGeneratedText}`);
-            updateEditInfo('editorHtml1', editorInstance.getMarkdown());
-          }
-          else if (editorRef2.current) {
-            const editorInstance2 = editorRef2.current.getInstance();
-            editorInstance2.insertText(`\n${aiGeneratedText}`);
-            updateEditInfo('editorHtml2', editorInstance2.getMarkdown());
-          }
+        else{
+            handleAiText(textToUse);
+            console.log('editorHtml1:', editorHtml1);
         }
-      }, [aiGeneratedText, updateEditInfo]);
+      };
+    // ------------------- 버튼 클릭시 에디터에 텍스트 추가 -------------------
+    const handleAddTextClick = () => {
+    console.log('aiGeneratedText: ',aiGeneratedText);
 
+    if (editorRef1 && editorRef1.getInstance) {
+        const editorInstance = editorRef1.getInstance();
+        const currentText = editorInstance.getMarkdown();
+        editorInstance.setMarkdown(`${currentText}\n${aiGeneratedText}`);
+        updateEditorHtml1(`${editorHtml1}\n${aiGeneratedText}`);
+        console.log('updateEditorHtml1:', editorHtml1);
 
-    const [textField, setTextField] = useState('');
+    } else if (editorRef2 && editorRef2.getInstance) {
+        console.log('2')
+        const editorInstance = editorRef2.getInstance();
+        const currentText = editorInstance.getMarkdown();
+        editorInstance.setMarkdown(`${currentText}\n${aiGeneratedText}`);
+        updateEditorHtml2(`${editorHtml2}\n${aiGeneratedText}`);
+        console.log('updateEditorHtml2:', editorHtml2);
+
+    } else {
+        console.log('No editor instance found.');
+    }
+    closeModal(); // 모달 닫기
+    };
+
+    /*----------------------------------------------------------*/
 
     return (
         <>
@@ -113,7 +127,7 @@ export default function AutoModal() {
                             value={aiGeneratedText}
                             onChange={(e) => setTextField(e.target.value)}
                             variant="outlined"
-                            placeholder='No AI text generated yet.'
+                            placeholder='AI 텍스트 생성 버튼을 눌러주세요'
                             multiline
                             rows={10}
                             maxRows={10}
@@ -148,6 +162,7 @@ export default function AutoModal() {
                         </Button>
 
                         <Button 
+                            onClick={handleAddTextClick}
                             sx={{
                                 ...modal_style.complete_button,
                                 width: 70,   

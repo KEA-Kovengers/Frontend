@@ -13,7 +13,6 @@ import MapModal from '../modal/MapModal';
 import GrammarModal from '../modal/GrammarModal';
 import AutoModal from '../modal/AutoModal';
 
-
 export const createIconElement = (iconSrc, iconWidth, onClick) => {
     const iconElement = document.createElement('span');
     iconElement.style = 'cursor: pointer; vertical-align: top; ';
