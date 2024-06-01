@@ -11,7 +11,7 @@ import { Tooltip, TextField, Button, Box } from '@mui/material';
 import { styled } from 'styled-components';
 import CustomModal from 'src/components/CustomModal/CustomModal';
 import FriendModal from './FriendModal';
-import { GetFriendList, PostFriendRequest } from 'src/api/friend.api';
+import { GetFriendList, PostFriendRequest, DeleteFriend } from 'src/api/friend.api';
 import { useAccountStore } from 'src/store/useAccountStore';
 import { useUserInfo } from './UserInfo';
 import { GetUserInfo, PostImage, PostProfileImage, PostUserInfo } from 'src/api/user.api';
@@ -20,34 +20,33 @@ import { useFriendStore } from 'src/store/useFriendStore';
 
 export default function UserInfo() {
   const { accountInfo, updateAccountInfo } = useAccountStore();
-  const { friend, addFriend } = useFriendStore();
+  const { friendsList, removeFriend } = useFriendStore();
   const { userInfo, setUserInfo } = useUserInfo();
   const params = useParams();
   const userId = Number(params.id);
   const isMine = userId === accountInfo.id;
-  // console.log('paprams.id', userId);
-  // console.log('accountInfo.id', accountInfo.id);
-  console.log('isMine', isMine);
 
-  const [isFriend, setIsFriend] = useState(true); //친구인지 아닌지
+  console.log('friendList', friendsList);
+
+  const [isFriend, setIsFriend] = useState(friendsList.some((friend) => friend.userID === userId)); //친구인지 아닌지
 
   let friendToggle;
   let requestFriendToggle;
   let removeFriendToggle;
-  let requestAlertTotgle;
+  let requestAlertToggle;
   let removeAlertToggle;
   if (isMine) {
     friendToggle = useToggle();
   } else {
     requestFriendToggle = useToggle();
     removeFriendToggle = useToggle();
-    requestAlertTotgle = useToggle();
+    requestAlertToggle = useToggle();
     removeAlertToggle = useToggle();
   }
   //   const friendToggle = useToggle();
   //   const requestFriendToggle = useToggle();
   //   const removeFriendToggle = useToggle();
-  //   const requestAlertTotgle = useToggle();
+  //   const requestAlertToggle = useToggle();
   //   const removeAlertToggle = useToggle();
 
   const [modify, setModify] = useState(false);
@@ -57,26 +56,32 @@ export default function UserInfo() {
   const showFriend = () => {
     friendToggle.toggle();
     console.log('친구 목록');
-    // const id = isMine ? accountInfo.id : userId;
-    // GetFriendList(id)
-    //   .then((res) => {
-    //     console.log(res);
-    //   })
-    //   .catch((err) => {
-    //     console.log(err);
-    //   });
   };
 
   const RequestFriend = (id) => {
     console.log('친구 신청');
     PostFriendRequest(id)
       .then((res) => {
-        console.log(res);
+        console.log('친구 신청 성공', res);
+        requestAlertToggle.toggle();
       })
       .catch((err) => {
         console.log(err);
       });
-    requestFriendToggle.toggle();
+  };
+
+  const ClickDeleteFriend = (id) => {
+    console.log('친구 삭제');
+    DeleteFriend(id)
+      .then((res) => {
+        console.log('친구 삭제 성공', res);
+        removeFriend(id);
+        removeAlertToggle.toggle();
+        setIsFriend(false);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
   useEffect(() => {
@@ -84,27 +89,28 @@ export default function UserInfo() {
       GetUserInfo(userId)
         .then((res) => {
           console.log(res);
-          console.log(res.data.result);
-          setUserInfo({
-            id: userId,
-            nickName: res.data.result.nickName,
-            blogName: res.data.result.blogName,
-            profileImg: res.data.result.profileImg,
-            bio: res.data.result.bio,
-            role: 'USER',
-            friendCount: 0,
-          });
-          // console.log(userInfo);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    } else {
-      GetFriendList(userId)
-        .then((res) => {
-          console.log(res);
-          console.log(res.data.result);
-          setUserInfo({ friendCount: res.data.result.length });
+          console.log('다른 유저', res.data.result);
+
+          // console.log('다른 유저', userInfo.id);
+          GetFriendList(userId)
+            .then((response) => {
+              console.log(response);
+              console.log(response.data.result);
+              setUserInfo({
+                id: userId,
+                nickName: res.data.result.nickName,
+                blogName: res.data.result.blogName,
+                profileImg: res.data.result.profileImg,
+                bio: res.data.result.bio,
+                role: 'USER',
+                friendCount: response.data.result.length,
+              });
+              console.log('다른 유저 친구수', userInfo.friendCount);
+              console.log('다른 유저', userInfo);
+            })
+            .catch((err) => {
+              console.log(err);
+            });
         })
         .catch((err) => {
           console.log(err);
@@ -170,7 +176,7 @@ export default function UserInfo() {
                   {isMine ? accountInfo.nickName : userInfo.nickName}
                 </span>
                 <span style={{ fontSize: '13px' }}>
-                  친구 {isMine ? accountInfo.friendCount : userInfo.nickName}명
+                  친구 {isMine ? accountInfo.friendCount : userInfo.friendCount}명
                 </span>
                 <span style={{ fontSize: '13px', marginTop: '15px' }}>
                   {isMine ? accountInfo.bio : userInfo.bio}
@@ -242,7 +248,7 @@ export default function UserInfo() {
                         open={requestFriendToggle.isOpen}
                         onClose={requestFriendToggle.toggle}
                         title="친구 신청"
-                        colorText={account.displayName}
+                        colorText={userInfo.nickName}
                         contents="님에게 친구 신청을 보내시겠습니까?"
                         rightButton="신청"
                         mode="title"
@@ -258,21 +264,23 @@ export default function UserInfo() {
                       open={removeFriendToggle.isOpen}
                       onClose={removeFriendToggle.toggle}
                       title="친구 삭제"
-                      colorText={account.displayName}
+                      colorText={userInfo.nickName}
                       contents="님을 친구에서 삭제하시겠습니까?"
                       rightButton="삭제"
                       mode="title"
                       buttonAction={{
                         rightAction: () => {
-                          removeAlertToggle.toggle();
+                          ClickDeleteFriend(
+                            friendsList.filter((friend) => friend.userID === userId)[0].friendshipID
+                          );
                         },
                       }}
                     />
                     <CustomModal
-                      open={requestAlertTotgle.isOpen}
-                      onClose={requestAlertTotgle.toggle}
+                      open={requestAlertToggle.isOpen}
+                      onClose={requestAlertToggle.toggle}
                       title="친구 신청"
-                      colorText={account.displayName}
+                      colorText={userInfo.nickName}
                       contents="님에게 친구 신청을 보냈습니다."
                       mode="alert"
                     />
@@ -280,7 +288,7 @@ export default function UserInfo() {
                       open={removeAlertToggle.isOpen}
                       onClose={removeAlertToggle.toggle}
                       title="친구 삭제"
-                      colorText={account.displayName}
+                      colorText={userInfo.nickName}
                       contents="님을 친구에서 삭제했습니다."
                       mode="alert"
                     />

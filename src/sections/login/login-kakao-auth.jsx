@@ -11,9 +11,11 @@ import { GetFriendList } from 'src/api/friend.api';
 import { Box } from '@mui/material';
 import { bgGradient } from 'src/theme/css';
 import { alpha, useTheme } from '@mui/material/styles';
+import { useFriendStore } from 'src/store/useFriendStore';
 
 export default function LoginKakaoAuth() {
   const { accountInfo, updateAccountInfo } = useAccountStore();
+  const { setFriendsList } = useFriendStore();
   const [cookies, setCookie] = useCookies(['token']);
   const navigate = useNavigate();
   const theme = useTheme();
@@ -26,7 +28,11 @@ export default function LoginKakaoAuth() {
         console.log(res);
         setCookie(
           'token',
-          { token: res.data.result.accessToken, refreshToken: res.data.result.refreshToken },
+          {
+            token: res.data.result.accessToken,
+            refreshToken: res.data.result.refreshToken,
+            userId: Number(res.data.result.userId),
+          },
           { path: '/' }
         ); // 쿠키에 토큰 저장
         updateAccountInfo('id', Number(res.data.result.userId));
@@ -35,11 +41,7 @@ export default function LoginKakaoAuth() {
           console.log(res);
           console.log(res.data.result);
           updateAccountInfo('friendCount', res.data.result.length);
-          {
-            res.data.result.map((user) => {
-              addFriend(user.friendID);
-            });
-          }
+          setFriendsList(res.data.result);
         });
         GetUserInfo(Number(res.data.result.userId))
           .then((response) => {

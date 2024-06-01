@@ -16,6 +16,7 @@ import Iconify from 'src/components/iconify';
 import { NAV, HEADER } from './config-layout';
 import AccountPopover from './common/account-popover';
 import NotificationsPopover from './common/NotificationsPopover';
+import { useAccountStore } from 'src/store/useAccountStore';
 
 // ----------------------------------------------------------------------
 
@@ -23,6 +24,7 @@ export default function Header({ onOpenNav }) {
   const theme = useTheme();
 
   const lgUp = useResponsive('up', 'lg');
+  const accountInfo = useAccountStore();
   // test
   const renderContent = (
     <>
@@ -36,7 +38,7 @@ export default function Header({ onOpenNav }) {
       <Box sx={{ flexGrow: 1 }} />
 
       <Stack direction="row" alignItems="center" spacing={1}>
-        <NotificationsPopover />
+        {accountInfo.id && <NotificationsPopover />}
         <AccountPopover />
       </Stack>
     </>
