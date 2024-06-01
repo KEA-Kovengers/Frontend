@@ -12,6 +12,7 @@ import { useFolder } from '../hooks/useFolder';
 import AddArticleModal from '../AddArticleModal';
 import { GetFolderArticleList, DeleteFolder } from 'src/api/folder.api';
 import { useParams } from 'react-router-dom';
+import { GetPostDetail } from 'src/api/posts.api';
 
 const articleList = [
   {
@@ -98,8 +99,29 @@ export default function FolderPageView({ id, setId }) {
   useEffect(() => {
     GetFolderArticleList(id.folderId)
       .then((res) => {
-        console.log('폴더 아티클 리스트', res);
-        setPostList(res.data.result);
+        console.log('폴더 아티클 리스트', res.data.result);
+        {
+          res.data.result &&
+            res.data.result.map((article) => {
+              GetPostDetail(article.post_id).then((res) => {
+                console.log('포스트 디테일', res.data.result);
+                setPostList((prev) => [
+                  ...prev,
+                  {
+                    id: res.data.result.id,
+                    title: res.data.result.title,
+                    body: res.data.result.body,
+                    date: res.data.result.date,
+                    // likecnt: res.data.result.likecnt,
+                    // commentcnt: res.data.result.commentcnt,
+                    likecnt: 10,
+                    commentcnt: 5,
+                    thumbnail: res.data.result.thumbnail,
+                  },
+                ]);
+              });
+            });
+        }
       })
       .catch((err) => {
         console.log('폴더 아티클 리스트 에러', err);
@@ -192,10 +214,11 @@ export default function FolderPageView({ id, setId }) {
       {postList.map((article) => (
         <ProfileArticle
           key={article.id}
-          imgurl={article.imgurl}
+          imgurl={article.thumbnail}
           title={article.title}
-          content={article.content}
-          date={article.date}
+          content={article.body}
+          // date={article.date}
+          date={'2024-05-24T17:15:35.869+00:00'}
           isLike={article.isLike}
           likecnt={article.likecnt}
           commentcnt={article.commentcnt}

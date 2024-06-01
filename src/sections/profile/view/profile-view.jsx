@@ -35,7 +35,6 @@ export default function ProfileView() {
   const [value, setValue] = useState(0);
   const [postList, setPostList] = useState([]);
   const [folderList, setFolderList] = useState([]);
-  const [activityList, setActivityList] = useState([]);
   const createFolderToggle = useToggle();
 
   const CreateFolder = (name) => {
@@ -63,7 +62,6 @@ export default function ProfileView() {
         .then((res) => {
           console.log(res);
           console.log(res.data.result.postList.content);
-          setActivityList(res.data.result.postList.content);
           setLikedPosts(res.data.result.postList.content);
         })
         .catch((err) => {
@@ -239,7 +237,7 @@ export default function ProfileView() {
                 display: 'flex',
               }}
             >
-              {activityList.map((article) => (
+              {likedPosts.map((article) => (
                 <ProfileArticle
                   key={article.id}
                   imgurl={article.imgurl}

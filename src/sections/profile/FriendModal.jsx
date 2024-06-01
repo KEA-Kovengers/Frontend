@@ -13,11 +13,13 @@ import {
   PostFriendAccept,
   DeleteFriend,
 } from 'src/api/friend.api';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAccountStore } from 'src/store/useAccountStore';
 import { useFriendStore } from 'src/store/useFriendStore';
+import { GetUserInfo } from 'src/api/user.api';
 
 export default function FriendModal({ open, onClose }) {
+  const navigate = useNavigate();
   const [index, setIndex] = useState(0);
   // const deleteFriendToggle = useToggle();
   const deleteAlertToggle = useToggle();
@@ -35,13 +37,15 @@ export default function FriendModal({ open, onClose }) {
       .then((res) => {
         console.log(res);
         console.log(res.data.result);
+
         setFriendsList(res.data.result);
+
         console.log(friendsList);
       })
       .catch((err) => {
         console.log(err);
       });
-  }, []);
+  }, [addFriend, removeFriend]);
 
   const handleChange = (event, newValue) => {
     if (newValue === 1) {
@@ -71,13 +75,16 @@ export default function FriendModal({ open, onClose }) {
     deleteAlertToggle.toggle();
   };
 
-  const AccecptFriend = (id, nickName) => {
+  const AcceptFriend = (id, nickName) => {
     setFriendName(nickName);
     console.log('수락');
     PostFriendAccept(id)
       .then((res) => {
         console.log(res);
-        addFriend(id);
+        GetUserInfo(id).then((res) => {
+          console.log(res);
+          addFriend(res.data.result);
+        });
       })
       .catch((err) => {
         console.log(err);
@@ -174,10 +181,23 @@ export default function FriendModal({ open, onClose }) {
               {friendsList.length === 0 && <Typography>친구가 없습니다.</Typography>}
               {friendsList.map((user) => (
                 <FriendRow>
-                  <div style={{ flexDirection: 'row', display: 'flex', alignItems: 'center' }}>
+                  <div
+                    style={{
+                      flexDirection: 'row',
+                      display: 'flex',
+                      alignItems: 'center',
+                      cursor: 'pointer',
+                    }}
+                    onClick={() => navigate(`/user/${user.userID}`)}
+                  >
                     <Avatar
                       src={user.profileImg}
-                      sx={{ width: 60, height: 60, marginRight: '10px' }}
+                      sx={{
+                        width: 60,
+                        height: 60,
+                        marginRight: '10px',
+                        '&:hover': { opacity: 0.72 },
+                      }}
                     />
                     <Typography variant="body1">{user.nickName}</Typography>
                   </div>
@@ -237,7 +257,7 @@ export default function FriendModal({ open, onClose }) {
                     </Button>
                     <Button
                       sx={{ backgroundColor: colors.first, color: 'white' }}
-                      onClick={() => AccecptFriend(user.friendshipID, user.nickName)}
+                      onClick={() => AcceptFriend(user.friendshipID, user.nickName)}
                     >
                       수락
                     </Button>
