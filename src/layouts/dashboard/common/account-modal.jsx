@@ -61,6 +61,7 @@ export default function AccountModal({ rightButton, onClose, open, contents, sub
       removeCookie('token');
       removeCookie('refreshToken');
       removeCookie('userId');
+      navigate('/');
       window.location.reload();
     } catch (e) {
       console.log(e);
@@ -75,6 +76,7 @@ export default function AccountModal({ rightButton, onClose, open, contents, sub
         removeCookie('token');
         removeCookie('refreshToken');
         removeCookie('userId');
+        navigate('/');
         window.location.reload();
       })
       .catch((err) => {
