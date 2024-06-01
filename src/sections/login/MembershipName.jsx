@@ -1,12 +1,12 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-
-import { 
+import { PostupdateName } from 'src/api/user.api';
+import {
   TextField,
   Box,
   Card,
   Stack,
-  Typography, 
+  Typography,
   Button,
 } from '@mui/material';
 
@@ -15,95 +15,112 @@ import { alpha, useTheme } from '@mui/material/styles';
 import { bgGradient } from 'src/theme/css';
 
 import Logo from 'src/components/logo';
+import { useAccountStore } from 'src/store/useAccountStore';
 // import MembershipProfile from './MembershipProfile';
 
 // ----------------------------------------------------------------------
 
-export default function MembershipName(){
-    const theme = useTheme();
-    const [textField, setTextField] = useState('');
-    const [textField2, setTextField2] = useState('');
+export default function MembershipName() {
+  const theme = useTheme();
+  // const [textField, setTextField] = useState('');
+  // const [textField2, setTextField2] = useState('');
 
-    const navigate = useNavigate();
+  const { accountInfo, updateAccountInfo } = useAccountStore();
 
-    const handleNextClick = () => {
-        navigate('/membership-profile',);
-        // { state: { nickname: textField, blogName: textField2 } });
-    };
-    
-    return (
-        <Box
+  const navigate = useNavigate();
+
+  const handleNextClick = () => {
+    //update name api 호출
+    // updateName();
+    navigate('/membership-profile',);
+    // { state: { nickname: textField, blogName: textField2 } });
+  };
+
+  const updateName = () => {
+    PostupdateName(accountInfo.nickName, accountInfo.blogName)
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  return (
+    <Box
+      sx={{
+        ...bgGradient({
+          color: alpha(theme.palette.background.default, 0.9),
+          imgUrl: '/assets/background/login_background.jpg',
+        }),
+        height: 1,
+      }}
+    >
+      <Logo
         sx={{
-          ...bgGradient({
-            color: alpha(theme.palette.background.default, 0.9),
-            imgUrl: '/assets/background/login_background.jpg',
-          }),
-          height: 1,
+          position: 'fixed',
+          top: { xs: 16, md: 24 },
+          left: { xs: 16, md: 24 },
         }}
-      >
-        <Logo
+      />
+
+      <Stack alignItems="center" justifyContent="center" sx={{ height: 1 }}>
+        <Card
           sx={{
-            position: 'fixed',
-            top: { xs: 16, md: 24 },
-            left: { xs: 16, md: 24 },
+            width: 487,
+            height: 573,
           }}
-        />
-  
-        <Stack alignItems="center" justifyContent="center" sx={{ height: 1 }}>
-          <Card
+        >
+          <Box
             sx={{
-              width: 487,
-              height: 573,
-            }}
-          >
-            <Box
+              textAlign: 'center',
+              paddingTop: '43px'
+            }}>
+            <Logo />
+          </Box>
+
+          <Box
+            sx={{
+              textAlign: "left",
+              paddingTop: "45.11px",
+              paddingLeft: "52px"
+            }}>
+            <Typography variant="h4">Join the membership</Typography>
+            <Typography variant="body2" sx={{ paddingTop: '31px' }}>정보를 입력하세요</Typography>
+            <TextField
+              id="filter-text"
+              label="Nickname"
+              // value={textField}
+              defaultValue={accountInfo.nickName}
+              onChange={(e) => updateAccountInfo('nickName', e.target.value)}
+              margin="normal"
               sx={{
-                textAlign:'center',
-                paddingTop: '43px'
-              }}>
-              <Logo/>
-            </Box>
-  
-            <Box
+                width: '90%',
+                height: 53,
+              }}
+            />
+            <TextField
+              id="filter-text2"
+              label="Blog Name"
+              defaultValue={accountInfo.blogName}
+              // value={textField2}
+              onChange={(e) => updateAccountInfo('blogName', e.target.value)}
+              margin="normal"
               sx={{
-                textAlign: "left",
-                paddingTop: "45.11px",
-                paddingLeft: "52px"
-              }}>
-              <Typography variant="h4">Join the membership</Typography>
-              <Typography variant="body2" sx={{ paddingTop:'31px' }}>정보를 입력하세요</Typography>
-              <TextField
-                id="filter-text"
-                label="Nickname"
-                value={textField}
-                onChange={(e) => setTextField(e.target.value)}
-                margin="normal"
-                sx={{
-                    width: '90%',
-                    height: 53,
-                }}
-                />
-                <TextField
-                id="filter-text2"
-                label="Blog Name"
-                value={textField2}
-                onChange={(e) => setTextField2(e.target.value)}
-                margin="normal"
-                sx={{
-                    width: '90%',
-                    height: 53,
-                }}
-                />
-                <Button 
-                  onClick={handleNextClick}
-                  sx={{...button, marginTop: '30px'}}>
-                  Next
-                </Button>
-                </Box>
-          </Card>
-        </Stack>
-      </Box>
-    );
+                width: '90%',
+                height: 53,
+              }}
+            />
+            <Button
+              onClick={handleNextClick}
+              sx={{ ...button, marginTop: '30px' }}>
+              Next
+            </Button>
+          </Box>
+        </Card>
+      </Stack>
+    </Box>
+  );
 }
 
 const button = {
