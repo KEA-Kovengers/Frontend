@@ -29,11 +29,13 @@ export default function SelectOptionView() {
   const location = useLocation();
   const [title, setTitle] = useState(location.state.title);
   const [tags, setTags] = useState(location.state.tags);
+  const [ postID, setPostID ] = useState(location.state.postID);
 
   const [ thumbnail, setThumbnail ] = useState('');
   const [ thumbnailUrl, setThumbnailUrl ] = useState('');
+  const [ id, setId ] = useState(''); // [id]
 
-  const [ postID, setPostID ] = useState(location.state.postID);
+  const articleID = '1';
 
   console.log('select-option title: ',title);
   console.log('select-option tags: ',tags);
@@ -61,17 +63,33 @@ export default function SelectOptionView() {
       const input = document.createElement('input');
       input.type = 'file';
       input.accept = 'image/*';
-      input.onchange = function (event) {
+      input.onchange = async function (event) {
 
         const file = event.target.files[0];
         const imgUrl = URL.createObjectURL(file);
         const thumbnail = file;
-        const thumbnailUrl = PostObjectUpload(file);;
+        // const thumbnailUrl = imgUrl;
+        // const thumbnailUrl = PostObjectUpload(file);
+        const formData = new FormData();
+        formData.append('files', file);
+        try{
+          const response = await PostObjectUpload(formData);
+          console.log('select-option: ',response);
 
-        setImgFile(file);
-        setImageUrl(imgUrl);
-        setThumbnail(thumbnail);
-        setThumbnailUrl(thumbnailUrl);
+          const thumbnailUrl = response.data;
+          console.log('upload response: ',thumbnailUrl);
+                  
+          setImgFile(file);
+          setImageUrl(imgUrl);
+          setThumbnail(thumbnail);
+          setThumbnailUrl(thumbnailUrl);
+          // callback(imageUthumbnailUrlrl, 'Uploaded image');
+
+          const id = response.result.id;
+          setId(id);
+        } catch (error) {
+          console.error('Failed to upload image', error);
+        }
 
         // console.log('imgUrl', imgUrl);
         console.log('img file: ',file);
@@ -121,7 +139,8 @@ export default function SelectOptionView() {
           tags,
           thumbnail,
           thumbnailUrl,
-          postID 
+          postID
+          // articleID 
         } 
       }
     );
@@ -134,7 +153,8 @@ export default function SelectOptionView() {
           tags,
           thumbnail,
           thumbnailUrl,
-          postID 
+          postID
+          // articleID 
         } 
       }
     );

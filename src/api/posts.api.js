@@ -1,3 +1,8 @@
+import { Client } from '@stomp/stompjs';
+import 'bootstrap/dist/css/bootstrap.min.css';
+
+import Cookies from 'js-cookie';
+
 import api from './api';
 import httpApi from './http.api';
 
@@ -41,6 +46,30 @@ export const PostCreate = (data) => {
     },
   });
 };
+
+export const SetUpWebSocket = () => {
+  
+  let accessToken = null;
+  const tokenString = Cookies.get('token');
+
+  if(tokenString) {
+    try {
+      const tokenData = JSON.parse(tokenString);
+      accessToken = tokenData.token;
+    }catch(e) {
+      console.error('Error parsing token from cookie:', e);
+    }
+  }
+
+  const client = new Client({
+    brokerURL: 'ws://newcord.kro.kr/ws',
+    connectHeaders: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+
+  return client;
+}
 
 // 게시글 내용 수정
 export const PostCreateEditSession = (data) => {

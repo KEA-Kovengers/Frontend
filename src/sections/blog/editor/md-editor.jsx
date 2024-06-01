@@ -14,21 +14,21 @@ import 'tui-color-picker/dist/tui-color-picker.css';
 import '@toast-ui/editor-plugin-color-syntax/dist/toastui-editor-plugin-color-syntax.css';
 import colorSyntax from '@toast-ui/editor-plugin-color-syntax';
 import { toolbar } from './md-toolbar';
+
 import { PostGenerateHashtag } from 'src/api/ai.api';
+import { PostObjectUpload } from 'src/api/posts.api';
+import { SetUpWebSocket } from 'src/api/posts.api';
+
 // import { set } from 'lodash';
 import axios from 'axios';
 
 import { useEditStore } from 'src/store/useEditStore.js';
 
-// websocket
-import { Client } from '@stomp/stompjs';
-import 'bootstrap/dist/css/bootstrap.min.css';
+import WebSocketManager from '../websocket/WebSocketManager';
 
-const accessToken = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIzNDI2NjEyOTM3IiwiaXNzIjoia292ZW5nZXJzIiwiaWF0IjoxNzE2NDUzNjUwLCJleHAiOjE3MTgyNTM2NTB9.nUtA_AQqcV_5445OWdM89pt9eCLpBNIlJvWAz2XmTYY";
 
 // 수정해야하는 부분: 블럭 삭제 버튼
-
-export default function MdEditorWithHeader({ title, setTitle, tags, setTags, onChangeContents }) {
+export default function MdEditorWithHeader({ postID, title, setTitle, tags, setTags, onChangeContents }) {
 
   const [tagInput, setTagInput] = useState('');
 
@@ -66,40 +66,92 @@ export default function MdEditorWithHeader({ title, setTitle, tags, setTags, onC
       }
     };
 
-    // 웹 소켓 연결 및 메세지 수신
-    const setupWebsocket = () => {
-      const client = new Client({
-        brokerURL: 'ws://newcord.kro.kr/ws',
-        connectHeaders: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-    });
-  }
+  // ----------------------------------------------------------
+  // 웹 소켓 연결 및 메세지 수신 코드
+  const [stompClient, setStompClient] = useState(null);
 
-    // useEffect를 사용하여 customToolbar 상태가 변경될 때마다 applyCustomToolbar 함수를 호출합니다.
-    useEffect(() => {
-      applyCustomToolbar();
-    }, [customToolbar]);
+  useEffect(() => {
 
-   // 컴포넌트가 마운트될 때 ref를 업데이트합니다.
-   useEffect(() => {
-    setEditorRef1(editorRef1.current);
-    setEditorRef2(editorRef2.current);
-  }, [setEditorRef1, setEditorRef2]);
+    if (!postID) {
+        console.log('postID is not set');
+        return;
+    }
+    const client = SetUpWebSocket();
+    
+    // 웹소켓 연결 이벤트 정의
+    client.onConnect = (frame) => {
+        console.log('Connected: ' + frame);
 
-  /*----------------------------------------------------------*/
+        const destination = `/exchange/${postID}/fanout`;
+        console.log('postID:', postID);
+        // 구독 정의
+        // 웹소켓의 STOMP 프로토콜을 사용한다.
+        // STOMP 프로토콜은 PUB/SUB구조로 메세지를 주고 받는 프로토콜이다.
+        // SUBSCRIBE : 메세지를 수신하기 위한 구독. 구독중인 주제(Topic)에 메세지가 발행되면 해당 메세지를 수신한다.
+        // PUBLSH : 메세지를 발행하는 명령어. 주제(Topic)에 메세지를 발행한다.
+        client.subscribe(destination, (greeting) => {
+        const response = JSON.parse(greeting.body);
+        const destination = response.dest;
 
-  // 제목 입력창의 너비를 동적으로 조절하는 함수
-  // const handleTitleChange = (event) => {
-  //   setTitle(event.target.value);
-  // };
-  const handleTitleChange = (event) => {
-    const newTitle = event.target.value;
-    setTitle(newTitle);
-    onChangeContents({ title: newTitle, tags });
-  };
+        const dests = destination.split('/');
+        
+        // 메세지 수신시 메세지 처리 부분
+        // 메세지의 목직지에 따라 다른 처리를 함
+        if (dests[1] === 'updateBlock') {
+            receiveUpdateBlock(response.result);
+        } else if (dests[1] === 'createBlock') {
+            receiveCreateBlock(response.result);
+        } else if (dests[1] === 'updateBlockSequence') {
+            receiveUpdateBlockSequence(response.result);
+        } else if (dests[1] === 'deleteBlock') {
+            receiveDeleteBlock(response.result);
+        }
 
-  /*----------------------------------------------------------*/
+        console.log("Received: " + greeting.body);
+        });
+    };
+
+    // 웹소켓 에러 이벤트 정의
+    client.onWebSocketError = (error) => {
+    console.error('Error with websocket', error);
+    };
+
+    // STOMP 에러 이벤트 정의
+    client.onStompError = (frame) => {
+        console.error('Broker reported error: ' + frame.headers['message']);
+        console.error('Additional details: ' + frame.body);
+    };
+
+    client.activate();
+    setStompClient(client);
+  }, [postID]);
+
+  // ----------------------------------------------------------
+
+  // useEffect를 사용하여 customToolbar 상태가 변경될 때마다 applyCustomToolbar 함수를 호출합니다.
+  useEffect(() => {
+    applyCustomToolbar();
+  }, [customToolbar]);
+
+  // 컴포넌트가 마운트될 때 ref를 업데이트합니다.
+  useEffect(() => {
+  setEditorRef1(editorRef1.current);
+  setEditorRef2(editorRef2.current);
+}, [setEditorRef1, setEditorRef2]);
+
+/*----------------------------------------------------------*/
+
+// 제목 입력창의 너비를 동적으로 조절하는 함수
+// const handleTitleChange = (event) => {
+//   setTitle(event.target.value);
+// };
+const handleTitleChange = (event) => {
+  const newTitle = event.target.value;
+  setTitle(newTitle);
+  onChangeContents({ title: newTitle, tags });
+};
+
+/*----------------------------------------------------------*/
 
   // 해시태그 입력창의 너비를 동적으로 조절하는 함수
   useEffect(() => {
@@ -141,7 +193,6 @@ export default function MdEditorWithHeader({ title, setTitle, tags, setTags, onC
     console.log('tags', tags);
   };
 
-  
 
   // ai 태그 생성 버튼 클릭 시 실행되는 함수
   const handleAiTagClick = () => {
@@ -226,20 +277,20 @@ export default function MdEditorWithHeader({ title, setTitle, tags, setTags, onC
     if (editorRef1.current) {
       // editorHtml1 = editorRef1.current.getInstance().getMarkdown();
       updateEditorHtml1(editorRef1.current.getInstance().getMarkdown());
-      console.log('editorHtml1:', editorHtml1);
+      // console.log('editorHtml1:', editorHtml1);
     }
     else if (editorRef2.current) {
       // const editorHtml2 = editorRef2.current.getInstance().getMarkdown();
       updateEditorHtml2(editorRef2.current.getInstance().getMarkdown());
-      console.log('editorHtml2: ',editorHtml2);
+      // console.log('editorHtml2: ',editorHtml2);
     }
   }
   
   /*----------------------------------------------------------*/
 
-  console.log('title:', title);
-  console.log('tags:', tags);
-  console.log('contents:', contents);
+  // console.log('title:', title);
+  // console.log('tags:', tags);
+  // console.log('contents:', contents);
 
   // ----------------------------------------------------------
 
@@ -348,17 +399,13 @@ export default function MdEditorWithHeader({ title, setTitle, tags, setTags, onC
                     console.log(callback);
         
                     try{
-                      const response = await axios.post('http://newcord.kro.kr/articles/object/upload', formData, {
-                        headers: {
-                          'Content-Type': 'multipart/form-data',
-                        },
-                      });
+                      const response = await PostObjectUpload(formData);
+                      console.log('md-editor: ',response);
         
                       const imageUrl = response.data;
-                      console.log(imageUrl);
+                      console.log('upload response: ',imageUrl);
                       callback(imageUrl, 'Uploaded image');
-        
-                    }catch (error) {
+                    } catch (error) {
                       console.error('Failed to upload image', error);
                     }
                   }
@@ -431,18 +478,13 @@ export default function MdEditorWithHeader({ title, setTitle, tags, setTags, onC
             console.log(callback);
 
             try{
-              const response = await axios.post('http://newcord.kro.kr/articles/object/upload', formData, {
-                headers: {
-                  'Content-Type': 'multipart/form-data',
-                  'Authorization': `Bearer ${accessToken}`,
-                },
-              });
+              const response = await PostObjectUpload(formData);
+              console.log('md-editor: ',response);
 
               const imageUrl = response.data;
-              console.log(imageUrl);
+              console.log('upload response: ',imageUrl);
               callback(imageUrl, 'Uploaded image');
-
-            }catch (error) {
+            } catch (error) {
               console.error('Failed to upload image', error);
             }
           }

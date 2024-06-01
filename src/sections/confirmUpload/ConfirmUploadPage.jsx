@@ -31,10 +31,12 @@ export default function ConfirmUploadPage() {
   const [thumbnail, setThumbnail] = useState(location.state.thumbnail);
   const [thumbnailUrl, setThumbnailUrl] = useState(location.state.thumbnailUrl);
   const [ postID, setPostID ] = useState(location.state.postID);
+  // const postID = '1180';
+  // const articleID = '1';
 
   console.log('confirm-upload title: ',title);
   console.log('confirm-upload tags: ',tags);
-  console.log('confirm-upload thumbnail: ',thumbnail);
+  console.log('confirm-upload thumbnail Url: ',thumbnailUrl);
   console.log('confirm-upload postID: ',postID);
 
   const { accountInfo } = useAccountStore();
@@ -55,14 +57,16 @@ export default function ConfirmUploadPage() {
     try{
       const requestBody ={
         id: postID,
-        thumbnail: thumbnailUrl,
+        thumbnail: `${thumbnailUrl}`,
         title: title,
         // body: "",
         // hashtags: tags,
         status: 'POST',
       };
       const response = await PostEdit(requestBody);
+
       console.log('POST response: ',response);
+      console.log('confirm upload id: ',postID);
 
       if(response.data && response.data.isSuccess) {
         console.log('Post created successfully');

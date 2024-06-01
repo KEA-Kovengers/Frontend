@@ -65,7 +65,7 @@ export default function BlogView() {
 
       if (response.data && response.data.isSuccess) {
         const postID = response.data.result.id;
-        console.log('Post created with ID:', postID);
+        console.log('Post created with postID:', postID);
         setPostID(postID);
       } else {
         console.error('API response was not successful');
@@ -149,6 +149,7 @@ export default function BlogView() {
 
   console.log('blog-view title: ',title);
   console.log('blog-view tags: ',tags);
+  console.log('blog-view postID: ',postID);
 
   return (
     <>
@@ -157,7 +158,8 @@ export default function BlogView() {
         <Grid container spacing={3}>
           <Grid item xs={12}>
             <Box mt={9.5}>
-              <MdEditorWithHeader 
+              <MdEditorWithHeader
+                postID={postID} articleVersion={articleVersion} 
                 title={title} setTitle={setTitle}
                 tags={tags} setTags={setTags} 
                 onChangeContents={onChangeContents} />
