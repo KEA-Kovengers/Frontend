@@ -11,8 +11,8 @@ export default function NotFoundPage() {
         <title> 404 Page Not Found </title>
       </Helmet>
 
-      {/* <NotFoundView /> */}
-      <SelectOptionView />
+      <NotFoundView />
+      {/* <SelectOptionView /> */}
     </>
   );
 }

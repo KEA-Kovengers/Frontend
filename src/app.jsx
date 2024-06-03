@@ -13,6 +13,9 @@ import { GetUserInfo } from 'src/api/user.api';
 import { GetFriendList } from 'src/api/friend.api';
 import { useAccountStore } from 'src/store/useAccountStore';
 import { useFriendStore } from './store/useFriendStore';
+import { GetLikeArticle } from './api/like.api';
+import { useLikedPostStore } from './store/useLikedPostStore';
+import { set } from 'lodash';
 
 // ----------------------------------------------------------------------
 
@@ -20,6 +23,7 @@ export default function App() {
   useScrollToTop();
   const { accountInfo, updateAccountInfo } = useAccountStore();
   const { setFriendsList } = useFriendStore();
+  const { setLikedPosts } = useLikedPostStore();
   const tokenString = Cookies.get('token');
   let accessToken = null;
 
@@ -52,6 +56,10 @@ export default function App() {
         console.log('나의 친구', res.data.result);
         updateAccountInfo('friendCount', res.data.result.length);
         setFriendsList(res.data.result);
+      });
+      GetLikeArticle(userId).then((res) => {
+        console.log('좋아요 한 게시글', res.data.result);
+        setLikedPosts(res.data.result);
       });
       GetUserInfo(userId)
         .then((response) => {
