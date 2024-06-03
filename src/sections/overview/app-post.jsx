@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { useRef,useEffect } from 'react';
+import { useRef, useEffect } from 'react';
 
 import { styled } from '@mui/system';
 
@@ -15,20 +15,13 @@ const ScrollContainer = styled('div')({
   // display: 'flex',
   justifyContent: 'center', // SnapElement를 가로 방향으로 가운데로 정렬
   flexDirection: 'column',
-  scrollSnapType: 'y mandatory', 
-  overflowY: 'auto', 
-  scrollbarWidth: 'none', 
+  scrollSnapType: 'y mandatory',
+  overflowY: 'auto',
+  scrollbarWidth: 'none',
   '&::-webkit-scrollbar': {
     display: 'none'
   },
-  height: '100vh', 
-});
-
-// AppPost 컴포넌트에 스타일을 적용
-const SnapElement = styled('div')({
-  scrollSnapAlign: 'center',
-  justifyContent: 'center', 
-  alignItems: 'center', 
+  height: '100vh',
 });
 
 // AppFilter 속 AppPost: filter가 바뀜에 따라 보여지는 컴포넌트도 달라짐
@@ -48,19 +41,9 @@ export default function AppPost({ filter }) {
 
   const Component = filterComponentMap[filter] || null;
 
-  const snapRef = useRef(null);
-
-  useEffect(() => {
-    if (snapRef.current) {
-      snapRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    }
-  }, [filter]);
-
   return (
     <ScrollContainer>
-      <SnapElement ref={snapRef}>
-        {Component && <Component />}
-      </SnapElement>
+      {Component && <Component />}
     </ScrollContainer>
   );
 

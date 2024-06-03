@@ -89,8 +89,8 @@ export default function AppCardInfo({ info }) {
   );
 
   const [like, setLike] = useState(false);
-  const [likeCount, setLikeCount] = useState(0);
-
+  const [likeCount, setLikeCount] = useState(info[0].likeCnt);
+  const [commentCount, setCommentCount] = useState(info[0].commentCnt);
   const addLike = () => {
     setLikeCount(likeCount + 1);
   };
@@ -154,7 +154,7 @@ export default function AppCardInfo({ info }) {
             verticalAlign: 'center',
           }}
         >
-          3
+          {commentCount}
         </Typography>
       </Stack>
     </Stack>

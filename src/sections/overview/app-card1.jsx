@@ -13,12 +13,12 @@ export default function AppCard1() {
   return (
 
     <div>
-    {data.map(item => (
-      <div key={item.id}>
-        <AppCardImage images={[item.image]} />
-        <AppCardInfo info={[item.info]} />
-      </div>
-    ))}
-  </div>
+      {data.map(item => (
+        <div key={item.id}>
+          <AppCardImage images={[item.image]} />
+          <AppCardInfo info={[item.info]} />
+        </div>
+      ))}
+    </div>
   );
 }
