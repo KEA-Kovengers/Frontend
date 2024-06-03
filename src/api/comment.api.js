@@ -6,7 +6,7 @@ export const GetCommentedArticle = (id) => {
 };
 
 export const GetArticleComment = (id) => {
-  return httpApi.get(`/articles/articles/comment/${id}`);
+  return httpApi.get(`/articles/comment/userlist/${id}`);
 };
 
 export const PostComment = (postID, commentID, body) => {
