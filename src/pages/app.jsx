@@ -14,7 +14,7 @@ export default function AppPage() {
         <title> Newcord </title>
       </Helmet>
 
-      {accountInfo.role !== 'admin' ? <AppView /> : <ManagerMain />}
+      {accountInfo.status !== 'admin' ? <AppView /> : <ManagerMain />}
     </>
   );
 }

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-
+import { useNavigate } from 'react-router-dom';
 import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
 import Table from '@mui/material/Table';
@@ -10,8 +10,6 @@ import Typography from '@mui/material/Typography';
 import TableContainer from '@mui/material/TableContainer';
 import TablePagination from '@mui/material/TablePagination';
 
-import { Reports } from 'src/_mock/Reports';
-
 import Iconify from 'src/components/iconify';
 import Scrollbar from 'src/components/scrollbar';
 
@@ -21,25 +19,58 @@ import TableEmptyRows from './table-empty-rows';
 import UserTableToolbar from './user-table-toolbar';
 import { emptyRows, applyFilter, getComparator } from './utils';
 
-// ----------------------------------------------------------------------
+import { GetTypeReportList } from 'src/api/report.api';
+import { GetUserInfo } from 'src/api/user.api';
 
 export default function MonitoringPage() {
+  const [reports, setReports] = useState([]);
   const [page, setPage] = useState(0);
-
   const [order, setOrder] = useState('asc');
-
   const [selected, setSelected] = useState([]);
-
   const [orderBy, setOrderBy] = useState('name');
-
   const [filterName, setFilterName] = useState('');
-
   const [rowsPerPage, setRowsPerPage] = useState(5);
-
   const [selectedBreadcrumb, setSelectedBreadcrumb] = useState(0);
+  const [userProfiles, setUserProfiles] = useState({});
+  const [userNames, setUserNames] = useState({});
+  const navigate = useNavigate();
+
+  const fetchReports = (type) => {
+    const fetchFunction = type ? GetTypeReportList : null;
+    fetchFunction(type).then(response => {
+      if (response.data.isSuccess) {
+        const reportList = response.data.result;
+        setReports(reportList);
+        reportList.forEach(report => {
+          GetUserInfo(report.report.userID).then(userResponse => {
+            if (userResponse.data.isSuccess) {
+              setUserProfiles(prevProfiles => ({
+                ...prevProfiles,
+                [report.report.userID]: userResponse.data.result.profileImg,
+              }));
+              setUserNames(prevNames => ({
+                ...prevNames,
+                [report.report.userID]: userResponse.data.result.nickName,
+              }));
+            } else {
+              console.error('Failed to fetch user info');
+            }
+          });
+        });
+      } else {
+        console.error('Failed to fetch reports');
+      }
+    });
+  };
 
   useEffect(() => {
-    console.log(`${Reports[selectedBreadcrumb]} filter clicked.`);
+    if (selectedBreadcrumb === 0) {
+      fetchReports('POST');
+    } else if (selectedBreadcrumb === 1) {
+      fetchReports('COMMENT');
+    } else {
+      fetchReports(null);
+    }
   }, [selectedBreadcrumb]);
 
   const handleSort = (event, id) => {
@@ -52,7 +83,7 @@ export default function MonitoringPage() {
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelecteds = Reports.map((n) => n.name);
+      const newSelecteds = reports.map((n) => n.name);
       setSelected(newSelecteds);
       return;
     }
@@ -92,12 +123,11 @@ export default function MonitoringPage() {
   };
 
   const dataFiltered = applyFilter({
-    inputData: Reports,
+    inputData: reports,
     comparator: getComparator(order, orderBy),
     filterName,
+    userNames,
   });
-
-  const notFound = !dataFiltered.length && !!filterName;
 
   return (
     <Container>
@@ -120,41 +150,42 @@ export default function MonitoringPage() {
               <UserTableHead
                 order={order}
                 orderBy={orderBy}
-                rowCount={Reports.length}
+                rowCount={reports.length}
                 numSelected={selected.length}
                 onRequestSort={handleSort}
                 onSelectAllClick={handleSelectAllClick}
                 headLabel={[
-                  { id: 'content', label: 'Content' },
-                  { id: 'date', label: 'Date' },
-                  { id: 'title', label: 'Article' },
-                  { id: 'name', label: 'Reporter' },
-                  { id: 'status', label: 'Status' },
+                  { id: 'body', label: 'Content' },
+                  { id: 'created_at', label: 'Date' },
+                  { id: 'type', label: 'Article' },
+                  { id: 'userID', label: 'Reporter' },
                 ]}
               />
               <TableBody>
                 {dataFiltered
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                  .map((row) => (
+                  .map((row, index) => (
                     <UserTableRow
-                      key={row.id}
-                      name={row.name}
-                      title={row.title}
-                      status={row.status}
-                      content={row.content}
-                      avatarUrl={row.avatarUrl}
-                      date={row.date}
-                      selected={selected.indexOf(row.name) !== -1}
-                      handleClick={(event) => handleClick(event, row.name)}
+                      key={index}
+                      name={userNames[row.report.userID] || ''}
+                      title={row.title || 'No title'}
+                      content={row.report.body}
+                      avatarUrl={userProfiles[row.report.userID] || ''}
+                      date={new Date(row.report.created_at).toLocaleDateString()}
+                      selected={selected.indexOf(userNames[row.report.userID] || '') !== -1}
+                      handleClick={(event) => handleClick(event, userNames[row.report.userID] || `User ${row.report.userID}`)}
+                      onRowClick={() => {
+                        if (row.report.type === 'POST') {
+                          navigate(`/article/${row.report.contentID}`);
+                        }
+                      }}
                     />
                   ))}
 
                 <TableEmptyRows
                   height={77}
-                  emptyRows={emptyRows(page, rowsPerPage, Reports.length)}
+                  emptyRows={emptyRows(page, rowsPerPage, reports.length)}
                 />
-
-                {notFound && <TableNoData query={filterName} />}
               </TableBody>
             </Table>
           </TableContainer>
@@ -163,7 +194,7 @@ export default function MonitoringPage() {
         <TablePagination
           page={page}
           component="div"
-          count={Reports.length}
+          count={reports.length}
           rowsPerPage={rowsPerPage}
           onPageChange={handleChangePage}
           rowsPerPageOptions={[5, 10, 25]}

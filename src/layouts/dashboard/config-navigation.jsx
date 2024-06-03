@@ -36,7 +36,7 @@ const navConfig = () => {
     },
   ];
 
-  if (accountInfo.role === 'admin') {
+  if (accountInfo.status === 'admin') {
     config.push({
       title: '모니터링',
       path: '/monitoring',

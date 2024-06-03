@@ -35,11 +35,11 @@ export function getComparator(order, orderBy) {
     : (a, b) => -descendingComparator(a, b, orderBy);
 }
 
-export function applyFilter({ inputData, comparator, filterName }) {
+export function applyFilter({ inputData, comparator, filterName, userNames }) {
   const stabilizedThis = inputData.map((el, index) => [el, index]);
 
   stabilizedThis.sort((a, b) => {
-    const order = comparator(a[0], b[0]);
+    const order = comparator(a[0].report, b[0].report); // report 객체 내부 필드로 정렬
     if (order !== 0) return order;
     return a[1] - b[1];
   });
@@ -47,10 +47,13 @@ export function applyFilter({ inputData, comparator, filterName }) {
   inputData = stabilizedThis.map((el) => el[0]);
 
   if (filterName) {
-    inputData = inputData.filter(
-      (user) => user.name.toLowerCase().indexOf(filterName.toLowerCase()) !== -1
-    );
+    inputData = inputData.filter((item) => {
+      const lowerCaseFilter = filterName.toLowerCase();
+      const name = userNames[item.report.userID] || `User ${item.report.userID}`; // report 객체 내부 필드로 필터링
+      return name.toLowerCase().includes(lowerCaseFilter);
+    });
   }
 
   return inputData;
 }
+

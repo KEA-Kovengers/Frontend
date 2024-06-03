@@ -11,9 +11,7 @@ import { styled, emphasize } from '@mui/material';
 
 import Iconify from 'src/components/iconify';
 import { Stack } from '@mui/material';
-import { useState } from 'react';
 
-// ----------------------------------------------------------------------
 const StyledBreadcrumb = styled(Chip)(({ theme, selected }) => {
   const backgroundColor = theme.palette.grey[300];
   const primaryColor = theme.palette.primary.lighter;
@@ -91,20 +89,12 @@ export default function UserTableToolbar({
           <StyledBreadcrumb
             label={'게시글'}
             selected={selectedBreadcrumb === 0}
-            onClick={() => {
-              if (selectedBreadcrumb === 1) {
-                handleBreadcrumbClick(0);
-              }
-            }}
+            onClick={() => handleBreadcrumbClick(0)}
           />
           <StyledBreadcrumb
             label={'댓글'}
             selected={selectedBreadcrumb === 1}
-            onClick={() => {
-              if (selectedBreadcrumb === 0) {
-                handleBreadcrumbClick(1);
-              }
-            }}
+            onClick={() => handleBreadcrumbClick(1)}
           />
         </Stack>
       )}
@@ -116,4 +106,6 @@ UserTableToolbar.propTypes = {
   numSelected: PropTypes.number,
   filterName: PropTypes.string,
   onFilterName: PropTypes.func,
+  selectedBreadcrumb: PropTypes.number,
+  setSelectedBreadcrumb: PropTypes.func,
 };
