@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
 import Badge from '@mui/material/Badge';
 import { styled } from '@mui/material/styles';
 
@@ -28,22 +28,42 @@ const StyledRoot = styled('div')(({ theme }) => ({
 
 // ----------------------------------------------------------------------
 
-export default function AiWidget() {
+export default function AiWidget({ post }) {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [aiSummaryText, setAiSummaryText] = useState('');
 
+  // const [blockList, setBlockList] = useState([post.blockList]);
+  // const blockList= post.blockList;
+
   const handleRootClick = () => {
     setIsAddModalOpen(true);
+    // const [content, setContent] = useState('');
+    // {
+    //   post.blockList &&
+    //     post.blockList.map((block) => {
+    //       setContent(content + block.content);
+    //     });
+    // }
+    // console.log('content', content);
 
     //여기서 하면 돼요 res를 가공해서 띄우세여
-    PostSummary(text)
+    PostSummary('안녕하세요')
       .then((res) => {
-        console.log(res);
-        console.log(res.data);
+        // console.log(res);
+        console.log('ai 요약 성공', res.data);
         setAiSummaryText(res.data);
       })
       .catch((err) => {
-        console.log(err);
+        console.log('ai요약 실패', err);
+        PostSummary('안녕하세요')
+          .then((res) => {
+            // console.log(res);
+            console.log('ai 요약 성공', res.data);
+            setAiSummaryText(res.data);
+          })
+          .catch((err) => {
+            console.log('ai요약 실패', err);
+          });
       });
   };
 

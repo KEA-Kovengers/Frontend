@@ -12,10 +12,13 @@ import { Box } from '@mui/material';
 import { bgGradient } from 'src/theme/css';
 import { alpha, useTheme } from '@mui/material/styles';
 import { useFriendStore } from 'src/store/useFriendStore';
+import { GetLikeArticle } from 'src/api/like.api';
+import { useLikedPostStore } from 'src/store/useLikedPostStore';
 
 export default function LoginKakaoAuth() {
   const { accountInfo, updateAccountInfo } = useAccountStore();
   const { setFriendsList } = useFriendStore();
+  const { likedPosts, setLikedPosts } = useLikedPostStore();
   const [cookies, setCookie] = useCookies(['token']);
   const navigate = useNavigate();
   const theme = useTheme();
@@ -43,6 +46,11 @@ export default function LoginKakaoAuth() {
           updateAccountInfo('friendCount', res.data.result.length);
           setFriendsList(res.data.result);
         });
+        GetLikeArticle(Number(res.data.result.userId)).then((res) => {
+          console.log('좋아요 한 게시글', res);
+          console.log(res.data.result);
+          setLikedPosts(res.data.result);
+        });
         GetUserInfo(Number(res.data.result.userId))
           .then((response) => {
             console.log(response);
@@ -63,7 +71,7 @@ export default function LoginKakaoAuth() {
           });
       })
       .catch((err) => {
-        console.log(err);
+        console.log('GetLogin 실패', err);
       });
   }, []);
 
