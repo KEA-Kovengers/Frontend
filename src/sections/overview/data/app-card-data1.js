@@ -22,10 +22,9 @@ export default function AppCardData1({ tag }) {
             const date = new Date(datetimeString);
             const formattedDate = date.toISOString().split('T')[0];
 
-            //console.log('item', userPromises);
             return {
               id: item.id,
-              image: { src: '/assets/images/covers/cat.jpg' }, // Adjust based on your actual image structure
+              image: { src: String(item.thumbnails[0].url) || 'http://k.kakaocdn.net/dn/un84b/btsAaIdBjIX/k16a3FniQw1aw8sAx76fAk/img_640x640.jpg' }, // Adjust based on your actual image structure
               info: {
                 id: item.id,
                 userImage: userData.profileImg || '/assets/images/avatars/avatar_25.jpg', // Assuming userData contains userImage

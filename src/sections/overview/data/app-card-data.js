@@ -26,11 +26,11 @@ export default function AppCard() {
             const formattedDate = date.toISOString().split('T')[0];
 
 
+
             return {
               id: item.id,
-              image: { src: '/assets/images/covers/cat.jpg' }, // Adjust based on your actual image structure
+              image: { src: String(item.thumbnails[0].url) || '/assets/images/avatars/avatar_25.jpg' }, // Adjust based on your actual image structure
               info: {
-                id: item.id,
                 userImage: userData.profileImg || '/assets/images/avatars/avatar_25.jpg', // Assuming userData contains userImage
                 title: item.title,
                 userName: userData.nickName || '알수없음', // Assuming userData contains userName

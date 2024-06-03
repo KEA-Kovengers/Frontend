@@ -51,7 +51,7 @@ export default function AppFilters() {
 
   const setHashtags = () => {
     const existingHashtags = Cookies.get('hashtags');
-    let hashtagsArray = [];
+    let hashtagsArray = ['전체'];
 
     if (existingHashtags) {
       //console.log('existingHashtags', existingHashtags);
@@ -62,8 +62,7 @@ export default function AppFilters() {
       }
 
     }
-    setFiltersList([...hashtagsArray]);
-
+    setFiltersList([...hashtagsArray])
   };
 
   const handleBreadcrumbClick = (tag) => {
@@ -91,7 +90,7 @@ export default function AppFilters() {
 
   useEffect(() => {
     setHashtags();
-  }, filtersList);
+  }, []);
 
   return (
     <Container maxWidth="lg">
