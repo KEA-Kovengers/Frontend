@@ -24,7 +24,7 @@ export default function AppCardData1({ tag }) {
 
             return {
               id: item.id,
-              image: { src: String(item.thumbnails[0].url) || 'http://k.kakaocdn.net/dn/un84b/btsAaIdBjIX/k16a3FniQw1aw8sAx76fAk/img_640x640.jpg' }, // Adjust based on your actual image structure
+              image: { src: item.thumbnails[0] ? String(item.thumbnails[0].url) : '/assets/not_thumbnail.png' }, // Adjust based on your actual image structure
               info: {
                 id: item.id,
                 userImage: userData.profileImg || '/assets/images/avatars/avatar_25.jpg', // Assuming userData contains userImage
