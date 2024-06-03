@@ -164,7 +164,6 @@ export default function FolderPageView({ id, setId }) {
           title={article.title}
           content={article.body}
           date={article.date}
-          // date={'2024-05-24T17:15:35.869+00:00'}
           isLike={article.isLike}
           likecnt={article.likecnt}
           commentcnt={article.commentcnt}
