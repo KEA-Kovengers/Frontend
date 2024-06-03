@@ -51,7 +51,7 @@ export default function FolderPageView({ id, setId }) {
                     id: res.data.result.id,
                     title: res.data.result.title,
                     body: res.data.result.body,
-                    date: res.data.result.date,
+                    date: res.data.result.updated,
                     // likecnt: res.data.result.likecnt,
                     // commentcnt: res.data.result.commentcnt,
                     likecnt: 10,
@@ -163,8 +163,7 @@ export default function FolderPageView({ id, setId }) {
           thumbnail={article.thumbnail}
           title={article.title}
           content={article.body}
-          // date={article.date}
-          date={'2024-05-24T17:15:35.869+00:00'}
+          date={article.date}
           isLike={article.isLike}
           likecnt={article.likecnt}
           commentcnt={article.commentcnt}
