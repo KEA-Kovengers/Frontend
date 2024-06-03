@@ -57,7 +57,7 @@ export default function ArticleView() {
               blogName: userInfo.blogName,
               profileImg: userInfo.profileImg,
               bio: userInfo.bio,
-              role: 'USER',
+              status: 'USER',
               friendCount: 0,
             });
           } catch (error) {

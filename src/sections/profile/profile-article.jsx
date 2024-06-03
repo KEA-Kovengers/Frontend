@@ -12,13 +12,12 @@ import { ko } from 'date-fns/locale';
 
 export default function ProfileArticle({
   id,
-  imgurl,
+  thumbnail,
   title,
   content,
   date,
   isLike,
   likecnt,
-  isComment,
   commentcnt,
 }) {
   const formatDate = (dateString) => {
@@ -27,10 +26,15 @@ export default function ProfileArticle({
   };
 
   const navigate = useNavigate();
+  // console.log('thumbnail', thumbnail);
 
   return (
     <RowStyled>
-      <ImageStyled onClick={() => navigate(`article/${id}`)} component="img" src={imgurl} />
+      <ImageStyled
+        onClick={() => navigate(`/article/${id}`)}
+        component={thumbnail.type.toLowerCase() === 'video' ? 'video' : 'img'}
+        src={thumbnail.url}
+      />
       <div
         style={{
           alignContent: 'start',
@@ -56,7 +60,13 @@ export default function ProfileArticle({
           }}
         >
           <div style={{ fontSize: '15px', color: colors.textGrey }}>{formatDate(date)}</div>
-          <div style={{ flexDirection: 'row', display: 'flex', alignItems: 'center' }}>
+          <div
+            style={{
+              flexDirection: 'row',
+              display: 'flex',
+              alignItems: 'center',
+            }}
+          >
             <Iconify
               icon={isLike ? 'gridicons:heart' : 'ph:heart'}
               sx={{
@@ -66,14 +76,14 @@ export default function ProfileArticle({
                 marginRight: 1,
               }}
             />
-            <p style={{ marginRight: '8px', fontSize: '15px', color: colors.textGrey }}>
+            <div style={{ marginRight: '8px', fontSize: '15px', color: colors.textGrey }}>
               {likecnt}
-            </p>
+            </div>
             <Iconify
-              icon={isComment ? 'iconoir:chat-bubble-solid' : 'iconoir:chat-bubble'}
-              sx={{ width: '17px', height: '15px', marginRight: 1, color: colors.textGrey }}
+              icon={'iconoir:chat-bubble'}
+              sx={{ width: '17px', height: '15px', mr: 1, color: colors.textGrey }}
             />
-            <p style={{ fontSize: '17px', color: colors.textGrey }}>{commentcnt}</p>
+            <div style={{ fontSize: '17px', color: colors.textGrey }}>{commentcnt}</div>
           </div>
         </div>
       </div>
