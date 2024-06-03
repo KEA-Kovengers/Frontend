@@ -51,20 +51,24 @@ export default function App() {
     if (userId) {
       console.log('쿠키에 저장된 유저 아이디:', userId);
       updateAccountInfo('id', userId);
-      GetFriendList(userId).then((res) => {
-        // console.log(res);
-        console.log('나의 친구', res.data.result);
-        updateAccountInfo('friendCount', res.data.result.length);
-        setFriendsList(res.data.result);
-      });
+      GetFriendList(userId)
+        .then((res) => {
+          // console.log(res);
+          console.log('나의 친구', res.data.result);
+          updateAccountInfo('friendCount', res.data.result.length);
+          setFriendsList(res.data.result);
+        })
+        .catch((err) => {
+          console.log('친구 리스트 에러', err);
+        });
       GetLikeArticle(userId).then((res) => {
         console.log('좋아요 한 게시글', res.data.result);
         setLikedPosts(res.data.result);
       });
       GetUserInfo(userId)
         .then((response) => {
-          console.log(response);
-          console.log(response.data.result);
+          // console.log(response);
+          // console.log(response.data.result);
           updateAccountInfo('status', response.data.result.status);
           updateAccountInfo('nickName', response.data.result.nickName);
           updateAccountInfo('blogName', response.data.result.blogName);

@@ -36,7 +36,7 @@ export default function ArticleContent({ post, user }) {
   const [tags, setTags] = useState([post.hashtags]);
   // console.log('tags:', post.blockList[0].content);
 
-  const [blockList, setBlockList] = useState([post.blockList]);
+  // const [blockList, setBlockList] = useState([post.blockList]);
 
   useEffect(() => {
     console.log('[content]선택된 유저', user);

@@ -30,10 +30,13 @@ export default function ProfileArticle({
 
   return (
     <RowStyled>
-      <ImageStyled
+      <ThumbnailStyled
         onClick={() => navigate(`/article/${id}`)}
         component={thumbnail.type.toLowerCase() === 'video' ? 'video' : 'img'}
         src={thumbnail.url}
+        autoPlay={thumbnail.type.toLowerCase() === 'video'}
+        muted={thumbnail.type.toLowerCase() === 'video'} // Add this line to mute the video by default
+        loop={thumbnail.type.toLowerCase() === 'video'} // Add this line to loop the video by default
       />
       <div
         style={{
@@ -113,7 +116,7 @@ export const RowStyled = styled.div`
   height: 250px;
 `;
 
-export const ImageStyled = styled(Box)`
+export const ThumbnailStyled = styled(Box)`
   width: 48%;
   height: 90%;
   object-fit: cover;
