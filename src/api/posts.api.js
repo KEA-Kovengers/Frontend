@@ -13,7 +13,7 @@ export const GetSocialFeed = () => {
 
 // 소셜 피드 해시태그로 조회
 export const GetSocialFeedByHashtag = (hashtag) => {
-  return httpApi.get(`/articles/posts/social/${hashtag}`);
+  return httpApi.get(`/articles/posts/social/${hashtag}?page=0&size=20`);
 }
 
 // 유저의 게시글 목록 조회

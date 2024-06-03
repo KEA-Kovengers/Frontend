@@ -27,20 +27,25 @@ const ScrollContainer = styled('div')({
 // AppFilter 속 AppPost: filter가 바뀜에 따라 보여지는 컴포넌트도 달라짐
 export default function AppPost({ filter }) {
 
+  useEffect(() => {
+    console.log('filter', filter);
+  }, []);
+
   // 필터와 컴포넌트를 매핑하는 객체
-  const filterComponentMap = {
-    0: AppCard,
-    1: AppCard1,
-    2: AppCard2,
-    3: AppCard3,
-    // 추가된 필터에 맞는 컴포넌트를 추가
-    4: AppCard,
-    5: AppCard,
-    6: AppCard,
-  };
+  // const filterComponentMap = {
+  //   '전체': AppCard,
+  //   '여행': () => <AppCard1 tag={filter} />,
+  //   2: AppCard2,
+  // };
 
-  const Component = filterComponentMap[filter] || null;
+  // const Component = filterComponentMap[filter] || null;
+  if (filter === '전체') {
+    var Component = AppCard;
+  }
+  else {
+    var Component = () => <AppCard1 tag={filter} />;
 
+  }
   return (
     <ScrollContainer>
       {Component && <Component />}
@@ -50,5 +55,5 @@ export default function AppPost({ filter }) {
 }
 
 AppPost.propTypes = {
-  filter: PropTypes.number.isRequired,
+  filter: PropTypes.string.isRequired,
 };

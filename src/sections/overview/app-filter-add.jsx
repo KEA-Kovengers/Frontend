@@ -1,6 +1,6 @@
-import React,{ useState } from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-
+import Cookies from 'js-cookie';
 import {
   Container,
   Box,
@@ -14,18 +14,42 @@ import {
 import Iconify from 'src/components/iconify';
 import { colors } from 'src/theme/variableColors';
 
-
-export default function AppAddFilters({ open, onClose, onAdd}) {
-
+export default function AppAddFilters({ open, onClose, onAdd }) {
   const [textField, setTextField] = useState('');
 
   const handleAddFilter = () => {
-      if (textField.trim() !== '') {
-        onAdd([textField.trim()]);
-        onClose();
-        setTextField('');
+    if (textField.trim() !== '') {
+      const newHashtag = textField.trim();
+
+      // Retrieve existing hashtags from the cookie
+      const existingHashtags = Cookies.get('hashtags');
+      let hashtagsArray = [];
+
+      if (existingHashtags) {
+        try {
+          hashtagsArray = JSON.parse(existingHashtags);
+          if (!Array.isArray(hashtagsArray)) {
+            hashtagsArray = [];
+          }
+        } catch (error) {
+          hashtagsArray = [];
+        }
       }
-    };
+
+      // Add the new hashtag to the array
+      hashtagsArray.push(newHashtag);
+
+      // Store the updated list back in the cookie
+      Cookies.set('hashtags', JSON.stringify(hashtagsArray), { path: '/' });
+
+      // Optionally, pass the new hashtag to the parent component
+      onAdd([newHashtag]);
+
+      // Reset the input field and close the modal
+      setTextField('');
+      onClose();
+    }
+  };
 
   const modal_style = {
     position: 'absolute',
@@ -36,7 +60,6 @@ export default function AppAddFilters({ open, onClose, onAdd}) {
     height: 270,
     bgcolor: 'background.paper',
     borderRadius: 3,
-
     left_button: {
       width: 120,
       height: 40,
@@ -78,54 +101,37 @@ export default function AppAddFilters({ open, onClose, onAdd}) {
               height: '63%',
             }}
           >
-
-        <Stack
-            sx={{
-            width: '80%',
-            }}
-        >
-        <Typography 
-            id="modal-modal-title" 
-            variant="h4" 
-            component="h4"
-            color={colors.blueBlack}
-            >
-            Hashtag              
-        </Typography>
-
-            <Typography
-            id="modal-modal-description"
-            variant="body2"
-            component="body2"
-            color={colors.textGrey}
-            sx={{ fontSize: '16px' }}
-            >
-            해시태그를 추가해 보세요!
-            </Typography>
-            <TextField
-            id="filter-text"
-            label="#"
-            value={textField}
-            onChange={(e) => setTextField(e.target.value)}
-            margin="normal"
-            sx={{
-                width: 330,
-                height: 53,
-            }}
-            />
-
+            <Stack sx={{ width: '80%' }}>
+              <Typography id="modal-modal-title" variant="h4" component="h4" color={colors.blueBlack}>
+                Hashtag
+              </Typography>
+              <Typography
+                id="modal-modal-description"
+                variant="body2"
+                component="body2"
+                color={colors.textGrey}
+                sx={{ fontSize: '16px' }}
+              >
+                해시태그를 추가해 보세요!
+              </Typography>
+              <TextField
+                id="filter-text"
+                label="#"
+                value={textField}
+                onChange={(e) => setTextField(e.target.value)}
+                margin="normal"
+                sx={{ width: 330, height: 53 }}
+              />
             </Stack>
-
           </Box>
-
-        <Stack direction="row" justifyContent="center" sx={{}}>
+          <Stack direction="row" justifyContent="center">
             <Button onClick={onClose} sx={modal_style.left_button}>
-            취소
+              취소
             </Button>
             <Button onClick={handleAddFilter} sx={modal_style.right_button}>
-            생성
+              생성
             </Button>
-        </Stack>
+          </Stack>
         </Box>
       </Modal>
     )
@@ -133,7 +139,7 @@ export default function AppAddFilters({ open, onClose, onAdd}) {
 }
 
 AppAddFilters.propTypes = {
-    open: PropTypes.bool,
-    onClose: PropTypes.func,
-    onAdd: PropTypes.func,
+  open: PropTypes.bool,
+  onClose: PropTypes.func,
+  onAdd: PropTypes.func,
 };

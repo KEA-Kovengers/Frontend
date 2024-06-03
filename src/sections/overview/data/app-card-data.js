@@ -7,7 +7,7 @@ import { get } from 'lodash';
 import { it, tr } from 'date-fns/locale';
 
 export default function AppCard() {
-  // State to store fetched data
+
   const [data, setData] = useState([]);
 
   // Function to fetch social feed and update state
@@ -28,11 +28,12 @@ export default function AppCard() {
 
             return {
               id: item.id,
-              image: { src: item.thumbnails[0]?.src || '/assets/images/covers/cat.jpg' }, // Adjust based on your actual image structure
+              image: { src: '/assets/images/covers/cat.jpg' }, // Adjust based on your actual image structure
               info: {
+                id: item.id,
                 userImage: userData.profileImg || '/assets/images/avatars/avatar_25.jpg', // Assuming userData contains userImage
                 title: item.title,
-                userName: userData.nickName || '소정', // Assuming userData contains userName
+                userName: userData.nickName || '알수없음', // Assuming userData contains userName
                 date: formattedDate,
                 likeCnt: item.likeCnt,
                 commentCnt: item.commentCnt,

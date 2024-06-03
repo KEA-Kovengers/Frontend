@@ -142,7 +142,7 @@ export default function AppCard() {
 
     <div>
       {data.map(item => (
-        <div key={item.id}>
+        <div key={item.id} >
           <AppCardImage images={[item.image]} />
           <AppCardInfo info={[item.info]} />
         </div>
