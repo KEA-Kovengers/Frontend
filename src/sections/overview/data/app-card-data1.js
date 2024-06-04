@@ -1,107 +1,127 @@
-// useData.js
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { GetSocialFeedByHashtag } from 'src/api/posts.api';
 import { GetUserInfo } from 'src/api/user.api';
+
 export default function AppCardData1({ tag }) {
-
   const [data, setData] = useState([]);
+  const [page, setPage] = useState(0); // Track the current page
+  const [loading, setLoading] = useState(false);
+  const [hasMore, setHasMore] = useState(true); // Track if more data is available
+  const target = useRef(null); // Target element for Intersection Observer
 
-
-  const getPostByTag = () => {
-    GetSocialFeedByHashtag(tag).then((res) => {
-      const postsList = res.data.result.postsList.content;
-
-      const userPromises = postsList.map((item) => getUserinfo(item.userId));
-
-      Promise.all(userPromises)
-        .then((userResults) => {
-          const transformedData = postsList.map((item, index) => {
-            const userData = userResults[index];
-            const datetimeString = item.created;
-            const date = new Date(datetimeString);
-            const formattedDate = date.toISOString().split('T')[0];
-            const images = item.thumbnails;
-            //  console.log('postlist-images', images);
-            return {
-              id: item.id,
-              image: { images }, // Adjust based on your actual image structure
-              info: {
-                id: item.id,
-                userImage: userData.profileImg || '/assets/images/avatars/avatar_25.jpg', // Assuming userData contains userImage
-                title: item.title,
-                userName: userData.nickName || '알수없음', // Assuming userData contains userName
-                date: formattedDate,
-                likeCnt: item.likeCnt,
-                commentCnt: item.commentCnt,
-              },
-            };
-          });
-          setData(transformedData);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    })
-      .catch((err) => {
-        console.log(err);
-      });
-  }
-
-  const getUserinfo = (id) => {
-    return GetUserInfo(id)
+  // Function to fetch social feed and update state
+  const getPostByTag = (page) => {
+    setLoading(true);
+    GetSocialFeedByHashtag(tag, page)
       .then((res) => {
+        const postsList = res.data.result.postsList.content;
 
-        return res.data.result;
+        if (postsList.length === 0) {
+          setHasMore(false);
+          setLoading(false);
+          return;
+        }
+
+        const userPromises = postsList.map((item) => getUserinfo(item.userId));
+        Promise.all(userPromises)
+          .then((userResults) => {
+            const transformedData = postsList.map((item, index) => {
+              const userData = userResults[index];
+              const datetimeString = item.created;
+              const date = new Date(datetimeString);
+              const formattedDate = date.toISOString().split('T')[0];
+              const images = item.thumbnails;
+
+              return {
+                id: item.id,
+                image: { images }, // Adjust based on your actual image structure
+                info: {
+                  id: item.id,
+                  userImage: userData.profileImg || '/assets/images/avatars/avatar_25.jpg', // Assuming userData contains userImage
+                  title: item.title,
+                  userName: userData, // Assuming userData contains userName
+                  date: formattedDate,
+                  likeCnt: item.likeCnt,
+                  commentCnt: item.commentCnt,
+                },
+              };
+            });
+            setData((prevData) => [...prevData, ...transformedData]);
+            setLoading(false);
+          })
+          .catch((err) => {
+            console.log(err);
+            setLoading(false);
+          });
       })
       .catch((err) => {
         console.log(err);
+        setLoading(false);
       });
-  }
+  };
 
+  // Function to fetch user info
+  // Function to fetch user info
+  const getUserinfo = (userid) => {
+    if (Array.isArray(userid)) {
+
+      return Promise.all(userid.map((id) =>
+        GetUserInfo(id)
+          .then((res) => res.data.result)
+          .catch((err) => {
+            console.log(err);
+            return null; // Return null if an error occurs
+          })
+      ));
+    } else {
+
+      return GetUserInfo(userid)
+        .then((res) => res.data.result)
+        .catch((err) => {
+          console.log(err);
+          return null; // Return null if an error occurs
+        });
+    }
+  };
 
   useEffect(() => {
     if (tag) {
-      getPostByTag();
+      setData([]);
+      setPage(0);
+      setHasMore(true);
     }
   }, [tag]);
 
-  // const [data, setData] = useState([
-  //   {
-  //     id: 0,
-  //     image: { src: '/assets/images/covers/popular.jpg' },
-  //     info: {
-  //       userImage: '/assets/images/avatars/avatar_25.jpg',
-  //       title: '인기 급상승',
-  //       userName: '소정이의 블로그',
-  //       date: '2024-03-15',
-  //     }
-  //   },
-  //   {
-  //     id: 1,
-  //     image: { src: '/assets/images/covers/jadu.jpg' },
-  //     info: {
-  //       userImage: '/assets/images/avatars/avatar_2.jpg',
-  //       title: '떡볶이나 먹자',
-  //       userName: 'Hello Jadoo TV 안녕 자두야',
-  //       date: '2023-05-20',
-  //     }
-  //   },
-  //   {
-  //     id: 2,
-  //     image: { src: '/assets/images/covers/ghibli.jpg' },
-  //     info: {
-  //       userImage: '/assets/images/avatars/avatar_13.jpg',
-  //       title: '2 시간 지브리 음악 🌍',
-  //       userName: 'Ghibli Music',
-  //       date: '2024-02-26',
-  //     }
-  //   }
-  // ]);
+  useEffect(() => {
+    if (tag && hasMore && !loading) {
+      getPostByTag(page); // Fetch data when the page or tag changes
+    }
+  }, [tag, page]);
 
-  return [data, setData];
+  useEffect(() => {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting && !loading && hasMore) {
+          setPage((prevPage) => prevPage + 1); // Increment the page number to fetch the next page
+        }
+      });
+    });
+
+    if (target.current) {
+      observer.observe(target.current);
+    }
+
+    return () => {
+      if (target.current) {
+        observer.unobserve(target.current);
+      }
+    };
+  }, [loading, hasMore]);
+
+  return [data, target, loading];
 }
 
 AppCardData1.propTypes = {
-  tag: PropTypes.array.isRequired,
+  tag: PropTypes.string.isRequired,
 };

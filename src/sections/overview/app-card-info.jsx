@@ -18,7 +18,7 @@ import { colors } from 'src/theme/variableColors';
 import { useAccountStore } from 'src/store/useAccountStore';
 import Iconify from 'src/components/iconify';
 import { useLikedPostStore } from 'src/store/useLikedPostStore';
-
+import { Avatar, AvatarGroup, Icon, Tooltip } from '@mui/material';
 // ----------------------------------------------------------------------
 
 export default function AppCardInfo({ info }) {
@@ -27,20 +27,39 @@ export default function AppCardInfo({ info }) {
     borderRadius: 0,
     bgcolor: 'background.default',
   };
-
+  useEffect(() => {
+    console.log('info', info[0].userName);
+  }, []);
 
   const Userimage = (
-    <img
-      src={info[0].userImage}
-      alt="user"
-      style={{
-        borderRadius: '50%',
-        width: '100%',
-        height: '100%',
-        maxWidth: '50px',
-        maxHeight: '50px',
-      }}
-    />
+    // <img
+    //   src={info[0].userImage}
+    //   alt="user"
+    //   style={{
+    //     borderRadius: '50%',
+    //     width: '100%',
+    //     height: '100%',
+    //     maxWidth: '50px',
+    //     maxHeight: '50px',
+    //   }}
+    // />
+    <AvatarGroup max={info[0].userName.length} spacing={10}>
+      {info[0].userName.map((acc) => (
+        <Tooltip title={acc.nickName} key={acc.id}>
+          <Avatar
+            src={acc.profileImg}
+
+            style={{
+              width: 30,
+              height: 30,
+
+              '&:hover': { opacity: 0.72 },
+              cursor: 'pointer',
+            }}
+          />
+        </Tooltip>
+      ))}
+    </AvatarGroup>
   );
 
   const Title = (
@@ -48,7 +67,7 @@ export default function AppCardInfo({ info }) {
       sx={{
         color: colors.blueBlack,
         fontSize: '20px',
-        maxWidth: '75%',
+        maxWidth: '100px',
         textOverflow: 'ellipsis',
         overflow: 'hidden',
         whiteSpace: 'nowrap',
@@ -77,6 +96,7 @@ export default function AppCardInfo({ info }) {
       {info[0].userName}
     </Typography>
   );
+
 
   const Date = (
     <Typography
@@ -185,19 +205,27 @@ export default function AppCardInfo({ info }) {
   return (
     <Card sx={{ ...card_style, marginBottom: '70px', paddingLeft: '10px' }}>
       <Grid container alignItems="center">
-        <Grid item xs={1}>
-          <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-            {Userimage}
+        <Grid item xs={2}>
+          <Box sx={{ display: 'flex', flexDirection: 'row' }}>{Title}</Box>
+          <Box sx={{ display: 'flex' }}>
+            {/* {UserName} */}
+            {Date}
           </Box>
+          {/* <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+            {Userimage}
+          </Box> */}
         </Grid>
 
-        <Grid item xs={11}>
+        <Grid item xs={10}>
           <CardContent sx={{ display: 'flex', flexDirection: 'column' }}>
-            <Box sx={{ display: 'flex', flexDirection: 'row' }}>{Title}</Box>
+            {/* <Box sx={{ display: 'flex', flexDirection: 'row' }}>{Title}</Box> */}
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <Box sx={{ display: 'flex' }}>
+              {/* <Box sx={{ display: 'flex' }}>
                 {UserName}
                 {Date}
+              </Box> */}
+              <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                {Userimage}
               </Box>
               <Box
                 sx={{ display: 'flex', justifyContent: 'flex-end', flexDirection: 'row-reverse' }}

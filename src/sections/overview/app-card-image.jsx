@@ -79,9 +79,9 @@ export default function AppCardImage({ images }) {
         nextArrow: <CustomNextArrow onClick={() => sliderRef.current.slickNext()} />,
     };
 
-    useEffect(() => {
-        console.log('images', images);
-    }, [images]);
+    // useEffect(() => {
+    //     console.log('images', images);
+    // }, [images]);
 
     const flattenedImages = images.length > 0 && Array.isArray(images[0].images)
         ? images[0].images
@@ -110,6 +110,9 @@ export default function AppCardImage({ images }) {
                     <CustomCardMedia
                         component={flattenedImages[0].type === 'VIDEO' ? 'video' : 'img'}
                         src={flattenedImages[0].url}
+                        autoPlay={flattenedImages[0].type.toLowerCase() === 'video'}
+                        muted={flattenedImages[0].type.toLowerCase() === 'video'}
+                        loop={flattenedImages[0].type.toLowerCase() === 'video'}
                         alt={`image-0`} />
                 </Card>
             ) : (
