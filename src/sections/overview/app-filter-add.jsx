@@ -51,6 +51,7 @@ export default function AppAddFilters({ open, onClose, onAdd }) {
     }
   };
 
+
   const modal_style = {
     position: 'absolute',
     top: '50%',

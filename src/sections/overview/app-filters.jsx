@@ -14,6 +14,7 @@ import AppPost from './app-post';
 import AppAddFilters from './app-filter-add';
 import Cookies from 'js-cookie';
 import { has, set } from 'lodash';
+import { useCookies } from 'react-cookie';
 
 // ----------------------------------------------------------------------
 
@@ -46,25 +47,45 @@ export default function AppFilters() {
   const [selectedBreadcrumb, setSelectedBreadcrumb] = useState('전체');
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [filtersList, setFiltersList] = useState([
-    '전체'
-  ]);
 
+  ]);
+  // const [filtersList, setFiltersList] = useState([
+  //   '최신순',
+  //   '인기 급상승',
+  //   '여행',
+  //   '운동',
+  // ]);
+  // const setHashtags = () => {
+  //   const existingHashtags = Cookies.get('hashtags');
+  //   let hashtagsArray = ['전체'];
+
+  //   if (existingHashtags) {
+  //     //console.log('existingHashtags', existingHashtags);
+  //     hashtagsArray = JSON.parse(existingHashtags);
+  //     console.log('hashtagsArray', hashtagsArray);
+  //     if (!Array.isArray(hashtagsArray)) {
+  //       hashtagsArray = [];
+  //     }
+
+  //   }
+  //   setFiltersList([...hashtagsArray])
+  // };
+  const [tags, settags] = useCookies(['hashtags']);
   const setHashtags = () => {
     const existingHashtags = Cookies.get('hashtags');
-    let hashtagsArray = ['전체'];
-
-    if (existingHashtags) {
-      //console.log('existingHashtags', existingHashtags);
-      hashtagsArray = JSON.parse(existingHashtags);
-      console.log('hashtagsArray', hashtagsArray);
-      if (!Array.isArray(hashtagsArray)) {
-        hashtagsArray = [];
-      }
-
+    if (existingHashtags === undefined) {
+      settags('hashtags', ['전체'], { path: '/' });
     }
-    setFiltersList([...hashtagsArray])
-  };
-
+    if (existingHashtags.length === 0) {
+      settags('hashtags', ['전체'], { path: '/' });
+    }
+    // if (typeof window === 'undefined') {
+    //   settags('hashtags', ['전체'], { path: '/' });
+    // }
+    //  settags('hashtags', ['전체'], { path: '/' });
+    console.log('existingHashtags', existingHashtags);
+    setFiltersList([...JSON.parse(existingHashtags)]);
+  }
   const handleBreadcrumbClick = (tag) => {
     setSelectedBreadcrumb(tag); // Update selected breadcrumb tag
   };
@@ -80,14 +101,24 @@ export default function AppFilters() {
   };
 
   // Add filter handler
-  const handleAddFilter = (newFilterText) => {
-    if (!filtersList.includes(newFilterText)) {
-      const updatedFilters = [...filtersList, newFilterText];
-      setFiltersList(updatedFilters);
-      Cookies.set('hashtags', JSON.stringify(updatedFilters), { path: '/' });
-    }
-  };
+  // const handleAddFilter = (newFilterText) => {
+  //   if (!filtersList.includes(newFilterText)) {
+  //     const updatedFilters = [...filtersList, newFilterText];
+  //     setFiltersList(updatedFilters);
+  //     Cookies.set('hashtags', JSON.stringify(updatedFilters), { path: '/' });
+  //   }
+  // };
+  // const handleAddFilter = (newFilterText) => {
+  //   // 새로운 필터를 기존 필터 목록에 추가
+  //   setFiltersList([...filtersList, newFilterText]);
+  // };
 
+  const handleAddFilter = (newFilterText) => {
+    // 새로운 필터를 기존 필터 목록에 추가
+    const updatedFilters = [...filtersList, newFilterText];
+    setFiltersList(updatedFilters);
+    Cookies.set('hashtags', JSON.stringify(updatedFilters), { path: '/' });
+  };
   useEffect(() => {
     setHashtags();
   }, []);
