@@ -51,7 +51,7 @@ export default function AppCardData1({ tag }) {
   const getUserinfo = (id) => {
     return GetUserInfo(id)
       .then((res) => {
-        console.log('data1', res.data.result);
+
         return res.data.result;
       })
       .catch((err) => {

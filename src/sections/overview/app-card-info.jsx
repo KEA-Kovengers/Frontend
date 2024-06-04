@@ -27,10 +27,7 @@ export default function AppCardInfo({ info }) {
     borderRadius: 0,
     bgcolor: 'background.default',
   };
-  useEffect(() => {
-    console.log('info', info[0].id);
-    console.log('title', info[0].title);
-  }, []);
+
 
   const Userimage = (
     <img

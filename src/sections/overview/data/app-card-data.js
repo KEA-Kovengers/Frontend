@@ -14,10 +14,10 @@ export default function AppCard() {
   const getSocialFeed = () => {
     GetSocialFeed().then((res) => {
       const postsList = res.data.result.postsList.content;
-      console.log('postsList', postsList);
+
 
       const userPromises = postsList.map((item) => getUserinfo(item.userId));
-
+      console.log('userPromises', userPromises);
       Promise.all(userPromises)
         .then((userResults) => {
           const transformedData = postsList.map((item, index) => {
@@ -25,10 +25,10 @@ export default function AppCard() {
             const datetimeString = item.created;
             const date = new Date(datetimeString);
             const formattedDate = date.toISOString().split('T')[0];
-
+            const images = item.thumbnails
             return {
               id: item.id,
-              image: { src: item.thumbnails[0] ? String(item.thumbnails[0].url) : '/assets/not_thumbnail.png' }, // Adjust based on your actual image structure
+              image: { images }, // Adjust based on your actual image structure
               info: {
                 id: item.id,
                 userImage: userData.profileImg || '/assets/images/avatars/avatar_25.jpg', // Assuming userData contains userImage
@@ -51,16 +51,46 @@ export default function AppCard() {
       });
   };
 
-  const getUserinfo = (id) => {
-    GetUserInfo(id)
-      .then((res) => {
-        console.log('data', res.data.result);
-        return res.data.result;
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }
+  // const getUserinfo = (id) => {
+  //   console.log('id', id);
+  //   GetUserInfo(id)
+  //     .then((res) => {
+  //       console.log('data', res.data.result);
+  //       return res.data.result;
+  //     })
+  //     .catch((err) => {
+  //       console.log(err);
+  //     });
+  // }
+  const getUserinfo = (userid) => {
+    if (Array.isArray(userid)) {
+      // userid가 배열인 경우
+      return Promise.all(userid.map((id) => {
+
+        return GetUserInfo(id)
+          .then((res) => {
+
+            return res.data.result;
+          })
+          .catch((err) => {
+            console.log(err);
+            return null; // 에러 발생 시 null 반환
+          });
+      }));
+    } else {
+      // userid가 배열이 아닌 경우 (단일 id)
+
+      return GetUserInfo(userid)
+        .then((res) => {
+
+          return res.data.result;
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
+  };
+
 
 
   useEffect(() => {
