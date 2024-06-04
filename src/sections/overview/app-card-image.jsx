@@ -13,6 +13,7 @@ import { colors } from 'src/theme/variableColors';
 
 import Iconify from 'src/components/iconify';
 
+
 // ----------------------------------------------------------------------
 
 const cardStyle = {
@@ -33,6 +34,7 @@ const CustomCardMedia = styled(CardMedia)({
 });
 
 export default function AppCardImage({ images }) {
+
 
     // 슬라이더 추가
     const sliderRef = useRef(null);
