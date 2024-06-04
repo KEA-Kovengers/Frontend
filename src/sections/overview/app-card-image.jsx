@@ -33,6 +33,7 @@ const CustomCardMedia = styled(CardMedia)({
 });
 
 export default function AppCardImage({ images }) {
+    console.log('images', images);
 
     // 슬라이더 추가
     const sliderRef = useRef(null);
@@ -50,24 +51,57 @@ export default function AppCardImage({ images }) {
     return (
 
         <div>
-            {Array.isArray(images) && images.length > 1 ? (
+            {
+                Array.isArray(images) && images.length > 1 ? (
+                    <Slider {...settings} ref={sliderRef}>
+                        {images.map((image) => (
+                            <Card key={image.id} sx={card_style}>
+                                <CustomCardMedia
+                                    component={image.type === 'VIDEO' ? 'video' : 'img'}
+                                    src={image.url}
+                                    alt={image.id} />
+                            </Card>
+                        ))}
+                    </Slider>
+                ) : (
+                    images.length === 1 ?
+                        (images.map((image, idx) => (
+                            <Card key={idx} sx={card_style}>
+                                <CustomCardMedia component={image.type === 'VIDEO' ? 'video' : 'img'} src={image.url} alt={image.id} />
+                            </Card>
+                        )
+                        )) : (
+                            <Card sx={card_style}>
+                                <CustomCardMedia component='img' src='/assets/not_thumbnail.png' alt='not_thumbnail' />
+                            </Card>)
+                    // images===null : '/assets/not_thumbnail.png'
+                )
+            }
+            {/* {Array.isArray(images) && images.length > 1 ? (
                 <Slider {...settings} ref={sliderRef}>
-                    {images.map((image) => (
+                    {images.images.map((image) => (
                         <Card key={image.id} sx={card_style}>
                             <CustomCardMedia
-                                component="img"
-                                src={image.src}
+                                component={image.type === 'VIDEO' ? 'video' : 'img'}
+                                src={image.url}
                                 alt={image.id} />
                         </Card>
                     ))}
                 </Slider>
-            ) : (
-                images.map((image, idx) => (
-                    <Card key={idx} sx={card_style}>
-                        <CustomCardMedia component="img" src={image.src} alt={image.id} />
-                    </Card>
-                ))
-            )}
+            ) : {
+                images.length === 1 ?
+                    (images.images.map((image, idx) => (
+                        <Card key={idx} sx={card_style}>
+                            <CustomCardMedia component={image.type === 'VIDEO' ? 'video' : 'img'} src={image.url} alt={image.id} />
+                        </Card>
+                    )
+                    )) : (
+                        <Card sx={card_style}>
+                            <CustomCardMedia component='img' src='/assets/not_thumbnail.png' alt='not_thumbnail' />
+                        </Card>)
+                // images===null : '/assets/not_thumbnail.png'
+            }} */}
+
         </div>
     );
 }

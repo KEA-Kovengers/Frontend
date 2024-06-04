@@ -14,6 +14,7 @@ export default function AppCard() {
   const getSocialFeed = () => {
     GetSocialFeed().then((res) => {
       const postsList = res.data.result.postsList.content;
+      console.log('postsList', postsList);
 
       const userPromises = postsList.map((item) => getUserinfo(item.userId));
 
@@ -51,8 +52,9 @@ export default function AppCard() {
   };
 
   const getUserinfo = (id) => {
-    return GetUserInfo(id)
+    GetUserInfo(id)
       .then((res) => {
+        console.log('data', res.data.result);
         return res.data.result;
       })
       .catch((err) => {

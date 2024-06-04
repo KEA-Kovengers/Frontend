@@ -3,15 +3,17 @@ import AppCardData1 from './data/app-card-data1';
 import PropTypes from 'prop-types';
 import AppCardImage from "./app-card-image";
 import AppCardInfo from "./app-card-info";
-import { Tag } from '@mui/icons-material';
+
 
 // ----------------------------------------------------------------------
 
 export default function AppCard1({ tag }) {
-  useEffect(() => {
-    console.log('tag', tag);
-  }, []);
+
   const [data, setData] = AppCardData1({ tag: tag });
+
+  // useEffect(() => {
+  //   console.log('data card1', data);
+  // }, [data]);
 
   return (
 

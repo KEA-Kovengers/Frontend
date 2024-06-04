@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
-
+import { DeleteLike, PostLike } from 'src/api/like.api';
 import {
   Card,
   CardContent,
@@ -15,8 +15,9 @@ import {
 } from '@mui/material';
 
 import { colors } from 'src/theme/variableColors';
-
+import { useAccountStore } from 'src/store/useAccountStore';
 import Iconify from 'src/components/iconify';
+import { useLikedPostStore } from 'src/store/useLikedPostStore';
 
 // ----------------------------------------------------------------------
 
@@ -92,21 +93,39 @@ export default function AppCardInfo({ info }) {
       {info[0].date}
     </Typography>
   );
+  const { accountInfo } = useAccountStore();
 
-  const [like, setLike] = useState(false);
+  const { likedPosts } = useLikedPostStore();
+
+  const [like, setLike] = useState(likedPosts.some((post) => post.likes.post_id === info[0].id));
   const [likeCount, setLikeCount] = useState(info[0].likeCnt);
   const [commentCount, setCommentCount] = useState(info[0].commentCnt);
   const addLike = () => {
     setLikeCount(likeCount + 1);
+    PostLike(info[0].id)
+      .then((res) => {
+        console.log('좋아요 추가', res);
+      })
+      .catch((err) => {
+        console.log('좋아요 추가 에러', err);
+      });
   };
 
   const removeLike = () => {
     setLikeCount(likeCount - 1);
+    DeleteLike(accountInfo.id, info[0].id)
+      .then((res) => {
+        console.log('좋아요 취소', res);
+      })
+      .catch((err) => {
+        console.log('좋아요 취소 에러', err);
+      });
   };
 
   const handleLike = () => {
     setLike(!like);
     like ? removeLike() : addLike();
+
   };
 
   const handleLikeCountClick = () => {

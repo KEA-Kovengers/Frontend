@@ -21,10 +21,11 @@ export default function AppCardData1({ tag }) {
             const datetimeString = item.created;
             const date = new Date(datetimeString);
             const formattedDate = date.toISOString().split('T')[0];
-
+            const images = item.thumbnails;
+            //  console.log('postlist-images', images);
             return {
               id: item.id,
-              image: { src: item.thumbnails[0] ? String(item.thumbnails[0].url) : '/assets/not_thumbnail.png' }, // Adjust based on your actual image structure
+              image: { images }, // Adjust based on your actual image structure
               info: {
                 id: item.id,
                 userImage: userData.profileImg || '/assets/images/avatars/avatar_25.jpg', // Assuming userData contains userImage
@@ -50,6 +51,7 @@ export default function AppCardData1({ tag }) {
   const getUserinfo = (id) => {
     return GetUserInfo(id)
       .then((res) => {
+        console.log('data1', res.data.result);
         return res.data.result;
       })
       .catch((err) => {
