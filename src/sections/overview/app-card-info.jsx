@@ -17,6 +17,7 @@ import {
 import { colors } from 'src/theme/variableColors';
 
 import Iconify from 'src/components/iconify';
+import { PostLike } from 'src/api/like.api'; // Assuming you have this import
 
 // ----------------------------------------------------------------------
 
@@ -26,10 +27,32 @@ export default function AppCardInfo({ info }) {
     borderRadius: 0,
     bgcolor: 'background.default',
   };
-  useEffect(() => {
-    console.log('info', info[0].id);
-    console.log('title', info[0].title);
-  }, []);
+
+  // Like & Comment counts from API data
+  const [likeCount, setLikeCount] = useState(info[0].likeCnt);
+  const commentCount = info[0].commentCnt;
+  const [isLiked, setIsLiked] = useState(false); // Track if the post is liked
+
+  // Handle Like Click
+  const handleLike = async () => {
+    try {
+      const postId = info[0].id;
+      if (isLiked) {
+        // If liked, unlike the post
+        // Implement logic to unlike the post (remove like from the server)
+        // ... You might need to call an API to remove the like
+        setIsLiked(false);
+        setLikeCount(likeCount - 1);
+      } else {
+        // If not liked, like the post
+        await PostLike(postId); // Call your API to like the post
+        setIsLiked(true);
+        setLikeCount(likeCount + 1);
+      }
+    } catch (error) {
+      console.error('Error liking post:', error);
+    }
+  };
 
   const Userimage = (
     <img
@@ -93,46 +116,18 @@ export default function AppCardInfo({ info }) {
     </Typography>
   );
 
-  const [like, setLike] = useState(false);
-  const [likeCount, setLikeCount] = useState(info[0].likeCnt);
-  const [commentCount, setCommentCount] = useState(info[0].commentCnt);
-  const addLike = () => {
-    setLikeCount(likeCount + 1);
-  };
-
-  const removeLike = () => {
-    setLikeCount(likeCount - 1);
-  };
-
-  const handleLike = () => {
-    setLike(!like);
-    like ? removeLike() : addLike();
-  };
-
-  const handleLikeCountClick = () => {
-    setShowLikeTable(!showLikeTable); // 토글
-  };
-
-
   const CommunityInformation = (
     <Stack flexDirection="row">
       <Stack direction="row">
-        <IconButton onClick={handleLike} color={like ? '#FF5631' : '#637381'}>
+        <IconButton onClick={handleLike} color={isLiked ? '#FF5631' : '#637381'}>
           <Iconify
-            icon={like ? 'flat-color-icons:like' : 'icon-park-outline:like'}
+            icon={isLiked ? 'flat-color-icons:like' : 'icon-park-outline:like'}
             sx={{ display: 'flex', mr: 0.5 }}
             color={colors.blueBlack}
           />
         </IconButton>
         <Typography
           style={{ fontSize: '13px', color: colors.blueBlack, cursor: 'pointer' }}
-          onClick={handleLikeCountClick}
-          onKeyDown={(event) => {
-            if (event.key === 'Enter') {
-              handleLikeCountClick();
-            }
-          }}
-          tabIndex={0}
           sx={{
             display: 'flex',
             justifyContent: 'center',

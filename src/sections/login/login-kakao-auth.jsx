@@ -59,7 +59,7 @@ export default function LoginKakaoAuth() {
             updateAccountInfo('blogName', response.data.result.blogName);
             updateAccountInfo('profileImg', response.data.result.profileImg);
             updateAccountInfo('bio', response.data.result.bio);
-            updateAccountInfo('role', response.data.result.role);
+            
             if (res.data.result.status === 'new') {
               navigate('/membership');
             } else {
