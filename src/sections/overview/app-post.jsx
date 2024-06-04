@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { useRef,useEffect } from 'react';
+import { useRef, useEffect } from 'react';
 
 import { styled } from '@mui/system';
 
@@ -15,57 +15,45 @@ const ScrollContainer = styled('div')({
   // display: 'flex',
   justifyContent: 'center', // SnapElement를 가로 방향으로 가운데로 정렬
   flexDirection: 'column',
-  scrollSnapType: 'y mandatory', 
-  overflowY: 'auto', 
-  scrollbarWidth: 'none', 
+  scrollSnapType: 'y mandatory',
+  overflowY: 'auto',
+  scrollbarWidth: 'none',
   '&::-webkit-scrollbar': {
     display: 'none'
   },
-  height: '100vh', 
-});
-
-// AppPost 컴포넌트에 스타일을 적용
-const SnapElement = styled('div')({
-  scrollSnapAlign: 'center',
-  justifyContent: 'center', 
-  alignItems: 'center', 
+  height: '100vh',
 });
 
 // AppFilter 속 AppPost: filter가 바뀜에 따라 보여지는 컴포넌트도 달라짐
 export default function AppPost({ filter }) {
 
-  // 필터와 컴포넌트를 매핑하는 객체
-  const filterComponentMap = {
-    0: AppCard,
-    1: AppCard1,
-    2: AppCard2,
-    3: AppCard3,
-    // 추가된 필터에 맞는 컴포넌트를 추가
-    4: AppCard,
-    5: AppCard,
-    6: AppCard,
-  };
-
-  const Component = filterComponentMap[filter] || null;
-
-  const snapRef = useRef(null);
-
   useEffect(() => {
-    if (snapRef.current) {
-      snapRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    }
-  }, [filter]);
+    console.log('filter', filter);
+  }, []);
 
+  // 필터와 컴포넌트를 매핑하는 객체
+  // const filterComponentMap = {
+  //   '전체': AppCard,
+  //   '여행': () => <AppCard1 tag={filter} />,
+  //   2: AppCard2,
+  // };
+
+  // const Component = filterComponentMap[filter] || null;
+  if (filter === '전체') {
+    var Component = AppCard;
+  }
+  else {
+    var Component = () => <AppCard1 tag={filter} />;
+
+  }
   return (
     <ScrollContainer>
-      <SnapElement ref={snapRef}>
-        {Component && <Component />}
-      </SnapElement>
+      {Component && <Component />}
     </ScrollContainer>
   );
 
 }
 
 AppPost.propTypes = {
-  filter: PropTypes.number.isRequired,
+  filter: PropTypes.string.isRequired,
 };

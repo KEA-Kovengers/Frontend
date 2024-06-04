@@ -8,6 +8,7 @@ import { useEffect, useState } from 'react';
 import { GetEditorList } from 'src/api/editor.api';
 import { GetUserInfo } from 'src/api/user.api';
 import { GetPostDetail } from 'src/api/posts.api';
+import { GetLikeArticle, GetLikedUser } from 'src/api/like.api';
 
 export default function ArticleView() {
   const params = useParams();
@@ -24,6 +25,7 @@ export default function ArticleView() {
       .then((res) => {
         console.log('게시글 상세', res);
         setPost(res.data.result);
+        console.log(post);
       })
       .catch((err) => {
         console.log('게시글 상세 에러', err);
@@ -57,7 +59,7 @@ export default function ArticleView() {
               blogName: userInfo.blogName,
               profileImg: userInfo.profileImg,
               bio: userInfo.bio,
-              role: 'USER',
+              status: 'USER',
               friendCount: 0,
             });
           } catch (error) {
@@ -102,8 +104,8 @@ export default function ArticleView() {
           setUser={setSelectedUser}
         />
         <ArticleContent post={post} user={selectedUser} />
-        <AiWidget />
-        <ArticleCommunity />
+        <AiWidget post={post} />
+        <ArticleCommunity views={post.views} />
       </div>
     </div>
   );

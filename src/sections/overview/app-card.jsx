@@ -1,11 +1,11 @@
 import React from 'react';
 import axios from 'axios';
-import { useEffect,useState, useRef } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import AppCardData from './data/app-card-data';
 
 import AppCardImage from "./app-card-image";
 import AppCardInfo from "./app-card-info";
-
+import { GetSocialFeed } from 'src/api/posts.api';
 // ----------------------------------------------------------------------
 
 export default function AppCard() {
@@ -48,7 +48,7 @@ export default function AppCard() {
   //         setOffset((offset) => offset + res.data.length);
   //         // 다음 요청 전까지 요청 그만 보내도록 false로 변경
   //         setIsLoaded(false);
-          
+
   //         if (res.data.length < 3) {
   //           // 전체 데이터를 다 불러온 경우(불러온 값이 12개 보다 적다면 -> 매번 12개씩 불러오기로 했으므로 해당 값보다 작으면 마지막 페이지) 아예 로드를 중지
   //           setStop(true);
@@ -70,7 +70,7 @@ export default function AppCard() {
   //     observer.unobserve(entry.target);
   //     // 데이터 불러오기
   //     await getMoreItem();
-      
+
   //     // 불러온 후 다시 관찰 실행
   //     observer.observe(entry.target);
   //   }
@@ -119,31 +119,46 @@ export default function AppCard() {
   //       observer = new IntersectionObserver(onIntersect, { threshold: 1.0 });
   //       observer.observe(loadMoreRef.current);
   //     }
-  
+
   //     return () => observer && observer.disconnect();
   //   }, [loadMoreRef, isLoaded]);
 
   // 카드 내 데이터를 가져옴 (이미지, 정보)
   const [data, setData] = AppCardData();
+  // const test = () => {
+  //   GetSocialFeed().then((res) => {
+  //     console.log(res);
+  //     console.log(res.data.result);
+  //   })
+  //     .catch((err) => {
+  //       console.log(err);
+  //     });
+  // }
 
+  // useEffect(() => {
+  //   test();
+  // }, []);
   return (
 
     <div>
-    {data.map(item => (
-      <div key={item.id}>
-        <AppCardImage images={[item.image]} />
-        <AppCardInfo info={[item.info]} />
-      </div>
-    ))}
+      {data.map(item => (
+        <div key={item.id} >
+          <AppCardImage images={[item.image]} />
+          <AppCardInfo info={[item.info]} />
+        </div>
+      ))}
+      <div>
 
-  {/*
+      </div>
+
+      {/*
     <div ref={setTarget}></div>
   */}
-  
-  {/*
+
+      {/*
   <div ref={loadMoreRef}></div>
   */}
 
-  </div>
+    </div>
   );
 }

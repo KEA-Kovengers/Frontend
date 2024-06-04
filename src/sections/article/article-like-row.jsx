@@ -14,13 +14,26 @@ import IconButton from '@mui/material/IconButton';
 import Iconify from 'src/components/iconify';
 import CustomModal from 'src/components/CustomModal/CustomModal';
 import { useToggle } from 'src/hooks/useToggle';
+import { PostFriendRequest } from 'src/api/friend.api';
 
 import { colors } from 'src/theme/variableColors';
 // ----------------------------------------------------------------------
 
-export default function LikeRow({ name, avatarUrl, company, isFriend }) {
+export default function LikeRow({ id, name, avatarUrl, company, isFriend }) {
   const [open, setOpen] = useState(null);
   const { toggle, isOpen } = useToggle();
+
+  const RequestFriend = (id) => {
+    console.log('친구 신청');
+    PostFriendRequest(id)
+      .then((res) => {
+        console.log('친구 신청 성공', res);
+        requestAlertToggle.toggle();
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
 
   return (
     <>
@@ -77,7 +90,7 @@ export default function LikeRow({ name, avatarUrl, company, isFriend }) {
             colorText={name}
             contents={'님에게 친구 신청을 보내겠습니까?'}
             open={isOpen}
-            // buttonAction={{ rightAction: }}
+            buttonAction={{ rightAction: () => RequestFriend(id) }}
           />
         </TableCell>
       </TableRow>

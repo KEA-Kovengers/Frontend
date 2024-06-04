@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 import {
   Card,
@@ -20,10 +21,15 @@ import Iconify from 'src/components/iconify';
 // ----------------------------------------------------------------------
 
 export default function AppCardInfo({ info }) {
+  const navigate = useNavigate();
   const card_style = {
     borderRadius: 0,
     bgcolor: 'background.default',
   };
+  useEffect(() => {
+    console.log('info', info[0].id);
+    console.log('title', info[0].title);
+  }, []);
 
   const Userimage = (
     <img
@@ -41,8 +47,6 @@ export default function AppCardInfo({ info }) {
 
   const Title = (
     <Typography
-      component={Link}
-      to="/article"
       sx={{
         color: colors.blueBlack,
         fontSize: '20px',
@@ -55,6 +59,7 @@ export default function AppCardInfo({ info }) {
           textDecoration: 'underline',
         },
       }}
+      onClick={() => navigate(`/article/${info[0].id}`)}
     >
       {info[0].title}
     </Typography>
@@ -89,8 +94,8 @@ export default function AppCardInfo({ info }) {
   );
 
   const [like, setLike] = useState(false);
-  const [likeCount, setLikeCount] = useState(0);
-
+  const [likeCount, setLikeCount] = useState(info[0].likeCnt);
+  const [commentCount, setCommentCount] = useState(info[0].commentCnt);
   const addLike = () => {
     setLikeCount(likeCount + 1);
   };
@@ -107,6 +112,7 @@ export default function AppCardInfo({ info }) {
   const handleLikeCountClick = () => {
     setShowLikeTable(!showLikeTable); // 토글
   };
+
 
   const CommunityInformation = (
     <Stack flexDirection="row">
@@ -154,7 +160,7 @@ export default function AppCardInfo({ info }) {
             verticalAlign: 'center',
           }}
         >
-          3
+          {commentCount}
         </Typography>
       </Stack>
     </Stack>
