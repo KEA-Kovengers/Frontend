@@ -6,6 +6,11 @@ import Cookies from 'js-cookie';
 import api from './api';
 import httpApi from './http.api';
 
+// 소셜 피드 전체 조회
+export const GetSocialFeed = () => {
+  return httpApi.get('/articles/posts/social?page=0&size=10');
+};
+
 export const GetPostsList = (id) => {
   return httpApi.get(`/articles/posts/list/${id}?page=0&size=10`);
 };
