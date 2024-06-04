@@ -2,12 +2,13 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Grid, snackbarClasses } from '@mui/material';
 import AppCardImage from 'src/sections/overview/app-card-image';
-import AppCardInfo from 'src/sections/overview/app-card-info';
+import AppCardInfo2 from 'src/sections/overview/app-card-info2';
 import { GetSocialFeed } from 'src/api/posts.api';
 
 export default function ManagerMain() {
   const [data, setData] = useState([]);
   const navigate = useNavigate();
+  const [isRefreshed, setIsRefreshed] = useState(false);
 
   useEffect(() => {
     GetSocialFeed()
@@ -21,7 +22,11 @@ export default function ManagerMain() {
       .catch(error => {
         console.error('Error fetching posts:', error);
       });
-  }, []);
+  }, [isRefreshed]);
+
+  const handleRefresh = () => {
+    setIsRefreshed(!isRefreshed); // Toggle isRefreshed on button click
+  };
 
   return (
     <div
@@ -41,6 +46,7 @@ export default function ManagerMain() {
           paddingTop: '20px',
         }}
       >
+
         <Grid container spacing={3} style={{ flexGrow: 1 }}>
           {data.map((item, index) => (
             <Grid item xs={12} sm={6} md={4} key={index}>
@@ -48,16 +54,16 @@ export default function ManagerMain() {
                 images={
                   item.thumbnails.length > 0
                     ? item.thumbnails.map((thumbnail, idx) => ({
-                        src: String(thumbnail.url),
-                        id: idx,
-                        type: String(thumbnail.type),
-                      }))
+                      src: String(thumbnail.url),
+                      id: idx,
+                      type: String(thumbnail.type),
+                    }))
                     : [{ src: '/assets/not_thumbnail.png', id: 0 }]
                 }
                 key={item.id}
               />
               <div>
-                <AppCardInfo
+                <AppCardInfo2
                   info={[{
                     id: item.id,
                     title: item.title,

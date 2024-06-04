@@ -7,14 +7,15 @@ import api from './api';
 import httpApi from './http.api';
 
 // 소셜 피드 전체 조회
-export const GetSocialFeed = () => {
-  return httpApi.get('/articles/posts/social?page=0&size=10');
+export const GetSocialFeed = (page = 0) => {
+  return httpApi.get(`/articles/posts/social?page=${page}&size=100`);
 };
 
 // 소셜 피드 해시태그로 조회
-export const GetSocialFeedByHashtag = (hashtag) => {
-  return httpApi.get(`/articles/posts/social/${hashtag}?page=0&size=20`);
-}
+export const GetSocialFeedByHashtag = (hashtag, page = 0) => {
+  return httpApi.get(`/articles/posts/social/${hashtag}?page=${page}&size=100`);
+};
+
 
 // 유저의 게시글 목록 조회
 export const GetPostsList = (id) => {

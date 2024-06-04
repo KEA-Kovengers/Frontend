@@ -1,146 +1,105 @@
-// useData.js
-import { useEffect, useState } from 'react';
-import { faker } from '@faker-js/faker';
+import { useEffect, useState, useRef } from 'react';
 import { GetSocialFeed } from 'src/api/posts.api';
 import { GetUserInfo } from 'src/api/user.api';
-import { get } from 'lodash';
-import { it, tr } from 'date-fns/locale';
 
-export default function AppCard() {
-
+export default function useData() {
   const [data, setData] = useState([]);
+  const [page, setPage] = useState(0); // Track the current page
+  const [loading, setLoading] = useState(false);
+  const target = useRef(null);
 
   // Function to fetch social feed and update state
-  const getSocialFeed = () => {
-    GetSocialFeed().then((res) => {
-      const postsList = res.data.result.postsList.content;
-
-      const userPromises = postsList.map((item) => getUserinfo(item.userId));
-
-      Promise.all(userPromises)
-        .then((userResults) => {
-          const transformedData = postsList.map((item, index) => {
-            const userData = userResults[index];
-            const datetimeString = item.created;
-            const date = new Date(datetimeString);
-            const formattedDate = date.toISOString().split('T')[0];
-
-            return {
-              id: item.id,
-              image: { src: item.thumbnails[0] ? String(item.thumbnails[0].url) : '/assets/not_thumbnail.png' }, // Adjust based on your actual image structure
-              info: {
-                id: item.id,
-                userImage: userData.profileImg || '/assets/images/avatars/avatar_25.jpg', // Assuming userData contains userImage
-                title: item.title,
-                userName: userData.nickName || '알수없음', // Assuming userData contains userName
-                date: formattedDate,
-                likeCnt: item.likeCnt,
-                commentCnt: item.commentCnt,
-              },
-            };
-          });
-          setData(transformedData);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    })
-      .catch((err) => {
-        console.log(err);
-      });
-  };
-
-  const getUserinfo = (id) => {
-    return GetUserInfo(id)
+  const getSocialFeed = (page) => {
+    setLoading(true);
+    GetSocialFeed(page)
       .then((res) => {
-        return res.data.result;
+        const postsList = res.data.result.postsList.content;
+        const userPromises = postsList.map((item) => getUserinfo(item.userId));
+
+        Promise.all(userPromises)
+          .then((userResults) => {
+            const transformedData = postsList.map((item, index) => {
+              const userData = userResults[index];
+
+              const datetimeString = item.created;
+              const date = new Date(datetimeString);
+              const formattedDate = date.toISOString().split('T')[0];
+              const images = item.thumbnails;
+
+              return {
+                id: item.id,
+                image: { images }, // Adjusted based on your actual image structure
+                info: {
+                  id: item.id,
+                  userImage: userData.profileImg || '/assets/images/avatars/avatar_25.jpg', // Assuming userData contains userImage
+                  title: item.title,
+                  userName: userData, // Assuming userData contains userName
+                  date: formattedDate,
+                  likeCnt: item.likeCnt,
+                  commentCnt: item.commentCnt,
+                },
+              };
+            });
+            setData((prevData) => [...prevData, ...transformedData]);
+            setLoading(false);
+          })
+          .catch((err) => {
+            console.log(err);
+            setLoading(false);
+          });
       })
       .catch((err) => {
         console.log(err);
+        setLoading(false);
       });
-  }
+  };
+
+  // Function to fetch user info
+  const getUserinfo = (userid) => {
+    if (Array.isArray(userid)) {
+
+      return Promise.all(userid.map((id) =>
+        GetUserInfo(id)
+          .then((res) => res.data.result)
+          .catch((err) => {
+            console.log(err);
+            return null; // Return null if an error occurs
+          })
+      ));
+    } else {
+
+      return GetUserInfo(userid)
+        .then((res) => res.data.result)
+        .catch((err) => {
+          console.log(err);
+          return null; // Return null if an error occurs
+        });
+    }
+  };
 
 
   useEffect(() => {
-    getSocialFeed();
-  }, []);
+    getSocialFeed(page); // Fetch the initial page of data
+  }, [page]);
 
+  useEffect(() => {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting || loading) return;
+        setPage((prevPage) => prevPage + 1); // Increment the page number to fetch the next page
+      });
+    });
 
+    if (target.current) {
+      observer.observe(target.current);
+    }
 
-  // data.map((item) => {
-  //   item.id = item.string.uuid();
-  //   item.image = { src: item.image };
-  //   item.info = {
-  //     userImage: item.user.profileImg,
-  //     title: item.title,
-  //     userName: item.user.nickName,
-  //     date: item.createdAt,
-  //   }
-  // }
-  // );
+    return () => {
+      if (target.current) {
+        observer.unobserve(target.current);
+      }
+    };
+  }, [loading]);
 
-  // const [data, setData] = useState([
-  //   {
-  //     id: faker.string.uuid(),
-  //     image: { src: '/assets/images/covers/cat.jpg' },
-  //     info: {
-  //       userImage: '/assets/images/avatars/avatar_25.jpg',
-  //       title: '고양이 감기 : 허피스 바이러스',
-  //       userName: '소정이의 블로그',
-  //       date: '2024-03-15',
-  //     }
-  //   },
-  //   {
-  //     id: faker.string.uuid(),
-  //     image: { src: '/assets/images/covers/jadu.jpg' },
-  //     info: {
-  //       userImage: '/assets/images/avatars/avatar_2.jpg',
-  //       title: '떡볶이나 먹자',
-  //       userName: 'Hello Jadoo TV 안녕 자두야',
-  //       date: '2023-05-20',
-  //     }
-  //   },
-  //   {
-  //     id: faker.string.uuid(),
-  //     image: { src: '/assets/images/covers/ghibli.jpg' },
-  //     info: {
-  //       userImage: '/assets/images/avatars/avatar_13.jpg',
-  //       title: '2 시간 지브리 음악 🌍',
-  //       userName: 'Ghibli Music',
-  //       date: '2024-02-26',
-  //     }
-  //   },
-  //   {
-  //     id: faker.string.uuid(),
-  //     image: { src: '/assets/images/covers/ghibli.jpg' },
-  //     info: {
-  //       userImage: '/assets/images/avatars/avatar_13.jpg',
-  //       title: '2 시간 지브리 음악 🌍',
-  //       userName: 'Ghibli Music',
-  //       date: '2024-02-26',
-  //     }
-  //   },
-  //   {
-  //     id: faker.string.uuid(),
-  //     image: { src: '/assets/images/covers/ghibli.jpg' },
-  //     info: {
-  //       userImage: '/assets/images/avatars/avatar_13.jpg',
-  //       title: '2 시간 지브리 음악 🌍',
-  //       userName: 'Ghibli Music',
-  //       date: '2024-02-26',
-  //     }
-  //   },
-  //   {
-  //     id: faker.string.uuid(),
-  //     image: { src: '/assets/images/covers/ghibli.jpg' },
-  //     info: {
-  //       userImage: '/assets/images/avatars/avatar_13.jpg',
-  //       title: '2 시간 지브리 음악 🌍',
-  //       userName: 'Ghibli Music',
-  //       date: '2024-02-26',
-  //     }
-  //   }
-  // ]);
-
-  return [data, setData];
+  return [data, target];
 }

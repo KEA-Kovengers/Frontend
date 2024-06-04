@@ -15,13 +15,13 @@ import Iconify from 'src/components/iconify';
 
 // ----------------------------------------------------------------------
 
-const card_style = {
+const cardStyle = {
     borderRadius: 0,
     bgcolor: 'background.default',
     width: '100%',
     position: 'relative',
-    paddingBottom: '56.25%', //16:9 비율
-}
+    paddingBottom: '56.25%', // 16:9 ratio
+};
 
 const CustomCardMedia = styled(CardMedia)({
     objectFit: 'cover',
@@ -47,51 +47,41 @@ export default function AppCardImage({ images }) {
         nextArrow: <CustomNextArrow onClick={() => sliderRef.current.slickNext()} />,
     };
 
-    return (
+    const flattenedImages = images.length > 0 && Array.isArray(images[0].images)
+        ? images[0].images
+        : [];
 
+    if (!Array.isArray(flattenedImages)) {
+        console.error('flattenedImages should be an array');
+        return null;
+    }
+    return (
         <div>
-            {Array.isArray(images) && images.length > 1 ? (
+            {flattenedImages.length > 1 ? (
                 <Slider {...settings} ref={sliderRef}>
-                    {images.map((image) => (
-                        <Card key={image.id} sx={card_style}>
-                            {image.type && image.type.toLowerCase() === 'video' ? (
-                                <CustomCardMedia
-                                    component="video"
-                                    src={image.src}
-                                    autoPlay
-                                    muted
-                                    loop
-                                />
-                            ) : (
-                                <CustomCardMedia
-                                    component="img"
-                                    src={image.src}
-                                    alt={image.id}
-                                />
-                            )}
+                    {flattenedImages.map((image, idx) => (
+                        <Card key={idx} sx={cardStyle}>
+                            <CustomCardMedia
+                                component={image.type === 'VIDEO' ? 'video' : 'img'}
+                                src={image.url}
+                                alt={`image-${idx}`} />
                         </Card>
                     ))}
                 </Slider>
+            ) : flattenedImages.length === 1 ? (
+                <Card sx={cardStyle}>
+                    <CustomCardMedia
+                        component={flattenedImages[0].type === 'VIDEO' ? 'video' : 'img'}
+                        src={flattenedImages[0].url}
+                        autoPlay={flattenedImages[0].type.toLowerCase() === 'video'}
+                        muted={flattenedImages[0].type.toLowerCase() === 'video'}
+                        loop={flattenedImages[0].type.toLowerCase() === 'video'}
+                        alt={`image-0`} />
+                </Card>
             ) : (
-                images.map((image, idx) => (
-                    <Card key={idx} sx={card_style}>
-                        {image.type && image.type.toLowerCase() === 'video' ? (
-                            <CustomCardMedia
-                                component="video"
-                                src={image.src}
-                                autoPlay
-                                muted
-                                loop
-                            />
-                        ) : (
-                            <CustomCardMedia
-                                component="img"
-                                src={image.src}
-                                alt={image.id}
-                            />
-                        )}
-                    </Card>
-                ))
+                <Card sx={cardStyle}>
+                    <CustomCardMedia component='img' src='/assets/not_thumbnail.png' alt='not_thumbnail' />
+                </Card>
             )}
         </div>
     );
