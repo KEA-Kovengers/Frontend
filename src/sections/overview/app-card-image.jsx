@@ -6,12 +6,12 @@ import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 
-import {Box, Card, CardMedia,IconButton} from '@mui/material'
+import { Box, Card, CardMedia, IconButton } from '@mui/material'
 
 import { styled } from '@mui/material/styles';
 import { colors } from 'src/theme/variableColors';
 
-import Iconify from 'src/components/iconify'; 
+import Iconify from 'src/components/iconify';
 
 // ----------------------------------------------------------------------
 
@@ -30,79 +30,79 @@ const CustomCardMedia = styled(CardMedia)({
     position: 'absolute',
     top: 0, // 이거를 안하면 이미지가 겹쳐서 보임
     left: 0,
-  });
+});
 
-export default function AppCardImage({images}){
+export default function AppCardImage({ images }) {
 
     // 슬라이더 추가
     const sliderRef = useRef(null);
     const settings = {
-      arrows:true,
-      dots: true,
-      dotsClass : "slick-dots", 
-      speed: 100,
-      slidesToShow: 1,
-      slidesToScroll: 1,
-      prevArrow: <CustomPrevArrow onClick={()=>sliderRef.current.slickPrev()}/>,
-      nextArrow: <CustomNextArrow onClick={()=>sliderRef.current.slickNext()}/>,
+        arrows: true,
+        dots: true,
+        dotsClass: "slick-dots",
+        speed: 100,
+        slidesToShow: 1,
+        slidesToScroll: 1,
+        prevArrow: <CustomPrevArrow onClick={() => sliderRef.current.slickPrev()} />,
+        nextArrow: <CustomNextArrow onClick={() => sliderRef.current.slickNext()} />,
     };
 
     return (
 
-    <div>
-    {Array.isArray(images) && images.length > 1 ? (
-      <Slider {...settings} ref={sliderRef}>
-           {images.map((image) => (
-              <Card key={image.id} sx={card_style}>
-                  <CustomCardMedia 
-                  component="img"
-                  src={image.src} 
-                  alt={image.id} />
-          </Card>
-          ))}
-      </Slider>
-      ) : (
-      images.map((image, idx) => (
-        <Card key={idx} sx={card_style}>
-          <CustomCardMedia component="img" src={image.src} alt={image.id} />
-        </Card>
-      ))
-    )}
-  </div>
+        <div>
+            {Array.isArray(images) && images.length > 1 ? (
+                <Slider {...settings} ref={sliderRef}>
+                    {images.map((image) => (
+                        <Card key={image.id} sx={card_style}>
+                            <CustomCardMedia
+                                component="img"
+                                src={image.src}
+                                alt={image.id} />
+                        </Card>
+                    ))}
+                </Slider>
+            ) : (
+                images.map((image, idx) => (
+                    <Card key={idx} sx={card_style}>
+                        <CustomCardMedia component="img" src={image.src} alt={image.id} />
+                    </Card>
+                ))
+            )}
+        </div>
     );
 }
 
 // 슬라이더 화살표 커스텀
-const CustomPrevArrow = ({onClick}) => (
+const CustomPrevArrow = ({ onClick }) => (
     <IconButton
         onClick={onClick}
         style={{
-        color: colors.divider1, 
-        position: 'absolute',
-        top: '50%',
-        left: 0,
-        zIndex: 1,
-        cursor: 'pointer',
+            color: colors.divider1,
+            position: 'absolute',
+            top: '50%',
+            left: 0,
+            zIndex: 1,
+            cursor: 'pointer',
         }}
     >
         <Iconify icon="iconamoon:arrow-left-6-circle-fill" />
-    </IconButton> 
+    </IconButton>
 );
-    
+
 CustomPrevArrow.propTypes = {
     onClick: PropTypes.func.isRequired,
 };
 
-const CustomNextArrow = ({onClick}) => (
+const CustomNextArrow = ({ onClick }) => (
     <IconButton
         onClick={onClick}
         style={{
-        color: colors.divider1,
-        position: 'absolute',
-        top: '50%',
-        right: 0,
-        zIndex: 1,
-        cursor: 'pointer',
+            color: colors.divider1,
+            position: 'absolute',
+            top: '50%',
+            right: 0,
+            zIndex: 1,
+            cursor: 'pointer',
         }}
     >
         <Iconify icon="iconamoon:arrow-right-6-circle-fill" />
@@ -110,7 +110,7 @@ const CustomNextArrow = ({onClick}) => (
 );
 
 CustomNextArrow.propTypes = {
-    onClick: PropTypes.func.isRequired, 
+    onClick: PropTypes.func.isRequired,
 };
 
 AppCardImage.propTypes = {
