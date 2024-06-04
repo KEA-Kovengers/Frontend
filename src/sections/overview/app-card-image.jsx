@@ -54,17 +54,42 @@ export default function AppCardImage({ images }) {
                 <Slider {...settings} ref={sliderRef}>
                     {images.map((image) => (
                         <Card key={image.id} sx={card_style}>
-                            <CustomCardMedia
-                                component="img"
-                                src={image.src}
-                                alt={image.id} />
+                            {image.type && image.type.toLowerCase() === 'video' ? (
+                                <CustomCardMedia
+                                    component="video"
+                                    src={image.src}
+                                    autoPlay
+                                    muted
+                                    loop
+                                />
+                            ) : (
+                                <CustomCardMedia
+                                    component="img"
+                                    src={image.src}
+                                    alt={image.id}
+                                />
+                            )}
                         </Card>
                     ))}
                 </Slider>
             ) : (
                 images.map((image, idx) => (
                     <Card key={idx} sx={card_style}>
-                        <CustomCardMedia component="img" src={image.src} alt={image.id} />
+                        {image.type && image.type.toLowerCase() === 'video' ? (
+                            <CustomCardMedia
+                                component="video"
+                                src={image.src}
+                                autoPlay
+                                muted
+                                loop
+                            />
+                        ) : (
+                            <CustomCardMedia
+                                component="img"
+                                src={image.src}
+                                alt={image.id}
+                            />
+                        )}
                     </Card>
                 ))
             )}
