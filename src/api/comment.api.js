@@ -2,7 +2,7 @@ import httpApi from './http.api';
 import api from './api';
 
 export const GetCommentedArticle = (id) => {
-  return httpApi.get(`/articles/articles/comment/commentlist/${id}`);
+  return httpApi.get(`/articles/comment/commentlist/${id}`);
 };
 
 export const GetArticleComment = (id) => {
@@ -10,13 +10,13 @@ export const GetArticleComment = (id) => {
 };
 
 export const PostComment = (postID, commentID, body) => {
-  return api.post(`/articles/articles/comment/create`, {
-    postID,
-    commentID,
-    body,
+  return api.post(`/articles/comment/create`, {
+    postID: postID,
+    commentID: commentID,
+    body: body,
   });
 };
 
 export const DeleteComment = (id) => {
-  return api.post(`/articles/articles/comment/delete`, id);
+  return api.post(`/articles/comment/delete`);
 };
