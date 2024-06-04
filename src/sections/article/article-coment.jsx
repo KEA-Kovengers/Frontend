@@ -167,7 +167,7 @@ export default function ArticleComment({ commentId, id, body, updated_at, func, 
             <div style={{ fontSize: '12px', color: '#637381', marginRight: 13 }}>
               {formatDate(updated_at)}
             </div>
-            {id !== accountInfo.id && (
+            {accountInfo.id !== null && id !== accountInfo.id && (
               <>
                 <span
                   style={{
@@ -202,8 +202,10 @@ export default function ArticleComment({ commentId, id, body, updated_at, func, 
               </>
             )}
           </div>
+
         </div>
       </div>
     </div>
+
   );
 }
