@@ -41,6 +41,7 @@ export default function ProfileView() {
   const createFolderToggle = useToggle();
 
   const CreateFolder = (name) => {
+    setFolderList([]);
     PostFolderAdd(name)
       .then((res) => {
         console.log(res);
@@ -60,6 +61,7 @@ export default function ProfileView() {
   const handleChange = (event, newValue) => {
     setValue(newValue);
     if (newValue === 1) {
+      setFolderList([]);
       console.log('폴더 페이지로 이동');
       GetFolderList(userId).then((res) => {
         // console.log(res);
@@ -67,6 +69,7 @@ export default function ProfileView() {
         setFolderList(res.data.result);
       });
     } else if (newValue === 2) {
+      setLikedList([]);
       GetLikeArticle(userId)
         .then((res) => {
           // console.log(res);
@@ -77,6 +80,7 @@ export default function ProfileView() {
           console.log(err);
         });
     } else if (newValue === 3) {
+      setCommentedList([]);
       GetCommentedArticle(userId)
         .then((res) => {
           // console.log(res);
@@ -84,7 +88,7 @@ export default function ProfileView() {
           setCommentedList(res.data.result);
         })
         .catch((err) => {
-          console.log(err);
+          console.log('댓글 단 게시글 실패', err);
         });
     }
   };
@@ -304,7 +308,7 @@ export default function ProfileView() {
                       type: 'IMAGE',
                     }
                   }
-                  title={article.comments.title}
+                  title={article.posts.title}
                   content={article.comments.body}
                   date={article.comments.updated_at}
                   isLike={likedPosts.some(

@@ -13,6 +13,10 @@ export const PostLike = (id) => {
   return api.post(`/articles/articles/like/create`, id);
 };
 
-export const DeleteLike = (id) => {
-  return api.delete(`/articles/articles/like/delete`, id);
+export const DeleteLike = (userId, postId) => {
+  return httpApi({
+    method: 'delete',
+    url: `/articles/articles/like/delete`,
+    data: { userID: userId, postID: postId },
+  });
 };

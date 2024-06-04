@@ -3,14 +3,12 @@ import Iconify from 'src/components/iconify';
 import IconButton from '@mui/material/IconButton';
 import OutlinedInput from '@mui/material/OutlinedInput';
 import InputAdornment from '@mui/material/InputAdornment';
-import { format } from 'date-fns';
-import { ko } from 'date-fns/locale';
 
 import { Button, Divider } from '@mui/material';
 import ArticleComment from './article-coment';
 import LikeTable from './article-like-table';
 import ReComment from './ReComment';
-import { GetLikedUser, PostLike } from 'src/api/like.api';
+import { DeleteLike, GetLikedUser, PostLike } from 'src/api/like.api';
 import { useParams } from 'react-router-dom';
 import { GetArticleComment, PostComment } from 'src/api/comment.api';
 import { useAccountStore } from 'src/store/useAccountStore';
@@ -29,7 +27,9 @@ export default function ArticleCommunity({ views }) {
   const [showLikeTable, setShowLikeTable] = useState(false);
 
   const [likeUser, setLikeUser] = useState([]);
-  const [comment, setComment] = useState([]);
+  const [commentList, setCommentList] = useState([]);
+  const [reCommentList, setReCommentList] = useState([]);
+  const [content, setContent] = useState('');
 
   useEffect(() => {
     GetLikedUser(postId)
@@ -44,8 +44,8 @@ export default function ArticleCommunity({ views }) {
 
     GetArticleComment(postId)
       .then((res) => {
-        console.log('댓글 리스트', res);
-        setComment(res.data.result);
+        console.log('댓글 리스트', res.data.result);
+        setCommentList(res.data.result);
         setCommentCount(res.data.result.length);
       })
       .catch((err) => {
@@ -53,22 +53,10 @@ export default function ArticleCommunity({ views }) {
       });
   }, []);
 
-  const [commentList, setCommentList] = useState([
-    { content: 'hello', time: '2021. 10. 10 14:40' },
-    { content: 'hi', time: '2031. 10. 10 14:40' },
-  ]);
-
-  const [reCommentList, setReCommentList] = useState([
-    { content: 'hello', time: '2021. 10. 10 14:40', exist: true },
-    { content: 'hi', time: '2031. 10. 10 14:40', exist: true },
-  ]);
-  const [content, setContent] = useState('');
-
   //댓글 추가
   const handleAddComment = () => {
-    console.log('댓글 추가');
-    setCommentList([...commentList, { content: content, time: formatTime(new Date()) }]);
-    setContent('');
+    console.log('댓글 추가 누름');
+
     PostComment(postId, null, content)
       .then((res) => {
         console.log('댓글 추가', res);
@@ -76,6 +64,11 @@ export default function ArticleCommunity({ views }) {
       .catch((err) => {
         console.log('댓글 추가 에러', err);
       });
+    setCommentList([
+      ...commentList,
+      { user_id: accountInfo.id, body: content, updated_at: new Date() },
+    ]);
+    setContent('');
   };
   //대댓글 추가
   const handleAddReComment = () => {
@@ -96,6 +89,13 @@ export default function ArticleCommunity({ views }) {
   //좋아요 취소
   const removeLike = () => {
     setLikeCount(likeCount - 1);
+    DeleteLike(accountInfo.id, postId)
+      .then((res) => {
+        console.log('좋아요 취소', res);
+      })
+      .catch((err) => {
+        console.log('좋아요 취소 에러', err);
+      });
   };
 
   const handleLike = () => {
@@ -109,11 +109,6 @@ export default function ArticleCommunity({ views }) {
 
   const handleCommentCount = () => {
     setCommentCount(commentCount + 1);
-  };
-
-  const formatDate = (dateString) => {
-    const date = new Date(dateString);
-    return format(date, 'yyyy-MM-dd hh:mm', { locale: ko });
   };
 
   return (
@@ -205,9 +200,12 @@ export default function ArticleCommunity({ views }) {
         <>
           <ArticleComment
             key={index}
-            content={comment.content}
-            time={comment.time}
+            commentId={comment.id}
+            id={comment.user_id}
+            body={comment.body}
+            updated_at={comment.updated_at}
             func={handleAddReComment}
+            isDeleted={comment.isDeleted}
           />
           <Divider style={{ margin: 1 }} />
           {reCommentList.map((reComment, index) => (
@@ -222,18 +220,11 @@ export default function ArticleCommunity({ views }) {
                   exist={reComment.exist}
                 />
               )}
-
               <Divider style={{ margin: 1 }} />
             </>
           ))}
         </>
       ))}
-      {/* <ArticleComment />
-      <Divider style={{ margin: 1 }} />
-      <ReComment />
-      <Divider style={{ margin: 1 }} />
-      <ArticleComment />
-      <Divider style={{ margin: 1 }} /> */}
     </div>
   );
 }
