@@ -271,21 +271,21 @@ export default function MdEditorWithHeader({ postID, title, setTitle, tags, setT
     stompClient.publish({
       destination: `/app/createBlock/${postID}`,
       body: JSON.stringify({
-        'uuid': 'testtest',
-        'userID': userID,
-        'dto': {
-          'articleVersion': articleVersion,
-          'blockType': 'testBlockType',
-          'position': blockIds.length,
-          'content': blockContents.join(', '), // 배열의 요소를 문자열로 변환
+        uuid: 'testtest',
+        userID: userID,
+        dto: {
+          articleVersion: articleVersion,
+          blockType: 'testBlockType',
+          position: blockIds.length,
+          content: editorHtml1, // 배열의 요소를 문자열로 변환
           // 'content': blockContents.toString(), // array to string 필요
-          'blockParent': {
-            'type': 'testType',
-            'page_id': 'testPageId'
+          blockParent: {
+            type: 'testType',
+            page_id: 'testPageId'
           },
-          'created_by': {
-            'creator_id': userID,
-            'created_at': new Date().toISOString()
+          created_by: {
+            creator_id: userID,
+            created_at: new Date().toISOString()
           }
         }
       })
@@ -446,7 +446,7 @@ export default function MdEditorWithHeader({ postID, title, setTitle, tags, setT
   };
 
   // 블럭 삭제 요청 정의
-  const blockDelete = () => {
+  const blockDelete = (id) => {
     // const blockIds = document.getElementById('n_block3').value;
 
     // 서버에 메세지 발행
@@ -456,7 +456,7 @@ export default function MdEditorWithHeader({ postID, title, setTitle, tags, setT
       body: JSON.stringify({
         'uuid': 'testtest',
         'userID': userID,
-        'dto': blockIds.toString()
+        'dto': id
       })
     });
   };
@@ -473,33 +473,36 @@ export default function MdEditorWithHeader({ postID, title, setTitle, tags, setT
 
   // 저장 버튼 클릭 시 실행되는 함수
   const handleCompleteButtonClick = () => {
+    // // 저장 버튼을 눌렀을 때 createBlock 요청 + text insert
+    // // 취소 완료 버튼이 있을 때는 text insert 이런 것만 가능하게끔
+    if (postID && stompClient && stompClient.connected && blockIds && blockContents) {
+      console.log('useEffect createBlock');
+      createBlock();
+    }
+
     const editorInstance = editorRef1.current.getInstance();
-    const currentContent = editorInstance.getMarkdown();
-    const updatedContents = [...contents, currentContent]; // 새로운 내용을 기존 contents 배열에 추가
-    setContents(updatedContents); // contents 배열 업데이트
-    console.log('저장');
+    // const currentContent = editorInstance.getMarkdown();
+    // const updatedContents = [...contents, currentContent]; // 새로운 내용을 기존 contents 배열에 추가
+    // setContents(updatedContents); // contents 배열 업데이트
+    // console.log('저장');
 
     // 에디터를 초기화하고 toolbar가 적용된 Editor로 전환
     editorInstance.setMarkdown('');
     setEditingIndex(null);
 
-    // 저장 버튼을 눌렀을 때 createBlock 요청 + text insert
-    // 취소 완료 버튼이 있을 때는 text insert 이런 것만 가능하게끔
-    if (postID && stompClient && stompClient.connected && blockIds && blockContents) {
-      console.log('useEffect createBlock');
-      createBlock();
-    }
-    updateBlock('INSERT');
+
+    // updateBlock('INSERT');
   };
 
-  const handleDeleteButtonClick = () => {
+  const handleDeleteButtonClick = (id, index) => {
     console.log('삭제');
-    blockDelete();
-    updateBlock('DELETE');
+    blockDelete(id, index);
+    // updateBlock('DELETE');
 
     // Remove the content from the contents array based on editingIndex
-    setContents(prevContents => prevContents.filter((_, idx) => idx !== editingIndex));
+    // setContents(prevContents => prevContents.filter((_, idx) => idx !== editingIndex));
     setEditingIndex(null); // Reset the editing index
+    setBlockContents(prev => prev.filter((_, idx) => idx !== index));
   }
 
   // 취소 버튼 클릭 시 실행되는 함수
@@ -655,7 +658,7 @@ export default function MdEditorWithHeader({ postID, title, setTitle, tags, setT
               <Editor
                 previewStyle="vertical"
                 initialValue={blockContents[index]}
-                placeholder="글을 작성해 주세요"
+
                 toolbarItems={toolbar}
                 height="300px"
                 plugins={[colorSyntax, [codeSyntaxHighlight, { highlighter: Prism }]]}
@@ -685,7 +688,7 @@ export default function MdEditorWithHeader({ postID, title, setTitle, tags, setT
               />
               <Box sx={{ display: 'flex', justifyContent: 'center' }}>
                 <Button
-                  onClick={handleDeleteButtonClick}
+                  onClick={() => handleDeleteButtonClick(blockIds[index], index)}
                   sx={{
                     width: 20,
                     height: 25,
@@ -844,7 +847,7 @@ export default function MdEditorWithHeader({ postID, title, setTitle, tags, setT
           <Editor
             previewStyle="vertical"
             initialEditType="markdown"
-            placeholder="글을 작성해 주세요"
+
             toolbarItems={toolbar}
             height="300px"
             plugins={[colorSyntax, [codeSyntaxHighlight, { highlighter: Prism }]]}
@@ -878,7 +881,7 @@ export default function MdEditorWithHeader({ postID, title, setTitle, tags, setT
             <Button
               onClick={() => {
                 handleCompleteButtonClick();
-                // createBlock(postID, stompClient, blockIds, blockContents);
+                // createBlock();
               }}
               sx={{
                 width: 20,
