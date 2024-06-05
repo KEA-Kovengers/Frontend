@@ -111,7 +111,7 @@ export default function DashboardModal({ open, onClose }) {
             />
             <HorizontalBarChart
               title="유저 별 참여한 블럭 수"
-              subheader="(+43%) than last year"
+
               chart={{
                 // series: [
                 //   { label: 'Italy', value: 5 },

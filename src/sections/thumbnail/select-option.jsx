@@ -29,17 +29,17 @@ export default function SelectOptionView() {
   const location = useLocation();
   const [title, setTitle] = useState(location.state.title);
   const [tags, setTags] = useState(location.state.tags);
-  const [ postID, setPostID ] = useState(location.state.postID);
+  const [postID, setPostID] = useState(location.state.postId);
 
-  const [ thumbnail, setThumbnail ] = useState('');
-  const [ thumbnailUrl, setThumbnailUrl ] = useState('');
+  const [thumbnail, setThumbnail] = useState();
+  const [thumbnailUrl, setThumbnailUrl] = useState([]);
   // const [ id, setId ] = useState(''); // [id]
 
   // const articleID = '1';
 
-  console.log('select-option title: ',title);
-  console.log('select-option tags: ',tags);
-  console.log('select-option postID: ',postID);
+  console.log('select-option title: ', title);
+  console.log('select-option tags: ', tags);
+  console.log('select-option postID: ', postID);
 
   const [isSelected, setIsSelected] = useState(null);
   const [imageUrl, setImageUrl] = useState(null); // State to store the image URL
@@ -72,27 +72,27 @@ export default function SelectOptionView() {
         // const thumbnailUrl = PostObjectUpload(file);
         const formData = new FormData();
         formData.append('files', file);
-        try{
+        try {
           const response = await PostObjectUpload(formData);
-          console.log('select-option: ',response);
+          console.log('select-option: ', response);
 
           const thumbnailUrl = response.data;
-          console.log('upload response: ',thumbnailUrl);
-                  
+          console.log('upload response: ', thumbnailUrl);
+
           setImgFile(file);
           setImageUrl(imgUrl);
           setThumbnail(thumbnail);
           setThumbnailUrl(thumbnailUrl);
           // callback(imageUthumbnailUrlrl, 'Uploaded image');
 
-          const id = response.result.id;
-          setId(id);
+          // const id = response.result.id;
+          // setId(id);
         } catch (error) {
           console.error('Failed to upload image', error);
         }
 
         // console.log('imgUrl', imgUrl);
-        console.log('img file: ',file);
+        console.log('img file: ', file);
         console.log('img thumbnail Url: ', thumbnailUrl);
 
         if (file) {
@@ -133,29 +133,31 @@ export default function SelectOptionView() {
     console.log('ConfirmAiImage');
     reset();
     navigate('/confirm-upload',
-      { 
-        state: { 
+      {
+        state: {
           title,
           tags,
           thumbnail,
           thumbnailUrl,
           postID
           // articleID 
-        } 
+        }
       }
     );
   };
   const ConfirmFile = () => {
+
+
     navigate('/confirm-upload',
-      { 
-        state: { 
+      {
+        state: {
           title,
           tags,
           thumbnail,
           thumbnailUrl,
           postID
           // articleID 
-        } 
+        }
       }
     );
   };

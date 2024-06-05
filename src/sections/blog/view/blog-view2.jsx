@@ -49,6 +49,15 @@ export default function BlogView2() {
         setTags(value.tags);
     }, []);
 
+    const postArticle = () => {
+        PostEdit(data).then((res) => {
+            console.log('postArticle', res)
+        }).catch((err) => {
+            console.log('postArticle', err)
+
+        });
+    }
+
     const GetEditorlist = async () => {
         try {
             const res = await GetEditorList(postId);
