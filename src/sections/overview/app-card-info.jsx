@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-import { Link } from 'react-router-dom';
-
+import { useNavigate } from 'react-router-dom';
+import { DeleteLike, PostLike } from 'src/api/like.api';
 import {
   Card,
   CardContent,
@@ -14,39 +14,61 @@ import {
 } from '@mui/material';
 
 import { colors } from 'src/theme/variableColors';
-
+import { useAccountStore } from 'src/store/useAccountStore';
 import Iconify from 'src/components/iconify';
+import { useLikedPostStore } from 'src/store/useLikedPostStore';
+import { Avatar, AvatarGroup, Icon, Tooltip } from '@mui/material';
 
 // ----------------------------------------------------------------------
 
 export default function AppCardInfo({ info }) {
+  const { accountInfo } = useAccountStore();
+  const navigate = useNavigate();
   const card_style = {
     borderRadius: 0,
     bgcolor: 'background.default',
   };
+  useEffect(() => {
+    console.log('info', info[0].userName);
+  }, []);
 
   const Userimage = (
-    <img
-      src={info[0].userImage}
-      alt="user"
-      style={{
-        borderRadius: '50%',
-        width: '100%',
-        height: '100%',
-        maxWidth: '50px',
-        maxHeight: '50px',
-      }}
-    />
+    // <img
+    //   src={info[0].userImage}
+    //   alt="user"
+    //   style={{
+    //     borderRadius: '50%',
+    //     width: '100%',
+    //     height: '100%',
+    //     maxWidth: '50px',
+    //     maxHeight: '50px',
+    //   }}
+    // />
+    <AvatarGroup max={info[0].userName.length} spacing={10}>
+      {info[0].userName.map((acc) => (
+        <Tooltip title={acc.nickName} key={acc.id}>
+          <Avatar
+            src={acc.profileImg}
+
+            style={{
+              width: 30,
+              height: 30,
+
+              '&:hover': { opacity: 0.72 },
+              cursor: 'pointer',
+            }}
+          />
+        </Tooltip>
+      ))}
+    </AvatarGroup>
   );
 
   const Title = (
     <Typography
-      component={Link}
-      to="/article"
       sx={{
         color: colors.blueBlack,
         fontSize: '20px',
-        maxWidth: '75%',
+        maxWidth: '100px',
         textOverflow: 'ellipsis',
         overflow: 'hidden',
         whiteSpace: 'nowrap',
@@ -55,6 +77,7 @@ export default function AppCardInfo({ info }) {
           textDecoration: 'underline',
         },
       }}
+      onClick={() => navigate(`/article/${info[0].id}`)}
     >
       {info[0].title}
     </Typography>
@@ -75,6 +98,7 @@ export default function AppCardInfo({ info }) {
     </Typography>
   );
 
+
   const Date = (
     <Typography
       variant="caption"
@@ -88,30 +112,49 @@ export default function AppCardInfo({ info }) {
     </Typography>
   );
 
-  const [like, setLike] = useState(false);
-  const [likeCount, setLikeCount] = useState(0);
 
+  const { likedPosts } = useLikedPostStore();
+
+  const [like, setLike] = useState(likedPosts.some((post) => post.likes.post_id === info[0].id));
+  const [likeCount, setLikeCount] = useState(info[0].likeCnt);
+  const [commentCount, setCommentCount] = useState(info[0].commentCnt);
   const addLike = () => {
     setLikeCount(likeCount + 1);
+    PostLike(info[0].id)
+      .then((res) => {
+        console.log('좋아요 추가', res);
+      })
+      .catch((err) => {
+        console.log('좋아요 추가 에러', err);
+      });
   };
 
   const removeLike = () => {
     setLikeCount(likeCount - 1);
+    DeleteLike(accountInfo.id, info[0].id)
+      .then((res) => {
+        console.log('좋아요 취소', res);
+      })
+      .catch((err) => {
+        console.log('좋아요 취소 에러', err);
+      });
   };
 
   const handleLike = () => {
     setLike(!like);
     like ? removeLike() : addLike();
+
   };
 
   const handleLikeCountClick = () => {
     setShowLikeTable(!showLikeTable); // 토글
   };
 
+
   const CommunityInformation = (
     <Stack flexDirection="row">
       <Stack direction="row">
-        <IconButton onClick={handleLike} color={like ? '#FF5631' : '#637381'}>
+        <IconButton onClick={handleLike} color={like ? '#FF5631' : '#637381'} disabled={accountInfo.id === null}>
           <Iconify
             icon={like ? 'flat-color-icons:like' : 'icon-park-outline:like'}
             sx={{ display: 'flex', mr: 0.5 }}
@@ -154,7 +197,7 @@ export default function AppCardInfo({ info }) {
             verticalAlign: 'center',
           }}
         >
-          3
+          {commentCount}
         </Typography>
       </Stack>
     </Stack>
@@ -163,19 +206,27 @@ export default function AppCardInfo({ info }) {
   return (
     <Card sx={{ ...card_style, marginBottom: '70px', paddingLeft: '10px' }}>
       <Grid container alignItems="center">
-        <Grid item xs={1}>
-          <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-            {Userimage}
+        <Grid item xs={2}>
+          <Box sx={{ display: 'flex', flexDirection: 'row' }}>{Title}</Box>
+          <Box sx={{ display: 'flex' }}>
+            {/* {UserName} */}
+            {Date}
           </Box>
+          {/* <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+            {Userimage}
+          </Box> */}
         </Grid>
 
-        <Grid item xs={11}>
+        <Grid item xs={10}>
           <CardContent sx={{ display: 'flex', flexDirection: 'column' }}>
-            <Box sx={{ display: 'flex', flexDirection: 'row' }}>{Title}</Box>
+            {/* <Box sx={{ display: 'flex', flexDirection: 'row' }}>{Title}</Box> */}
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <Box sx={{ display: 'flex' }}>
+              {/* <Box sx={{ display: 'flex' }}>
                 {UserName}
                 {Date}
+              </Box> */}
+              <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                {Userimage}
               </Box>
               <Box
                 sx={{ display: 'flex', justifyContent: 'flex-end', flexDirection: 'row-reverse' }}

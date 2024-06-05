@@ -1,5 +1,5 @@
 import axios from 'axios';
-import api from './http.api';
+import api from './api';
 
 const url = import.meta.env.VITE_FASTAPI_URL;
 

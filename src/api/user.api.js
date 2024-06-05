@@ -5,6 +5,15 @@ export const PostUserInfo = (data) => {
   return api.post('/users/update', data);
 };
 
+export const PostupdateName = (nickName, blogName) => {
+  return api.post('/users/updateName',
+    {
+      nickName: nickName,
+      blogName: blogName
+    }
+  );
+}
+
 export const GetUserInfo = (id) => {
   return httpApi.get(`/users/view/${id}`);
 };

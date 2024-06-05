@@ -8,13 +8,14 @@ import { AppView } from 'src/sections/overview/view';
 
 export default function AppPage() {
   const { accountInfo } = useAccountStore();
+
   return (
     <>
       <Helmet>
         <title> Newcord </title>
       </Helmet>
 
-      {accountInfo.role !== 'admin' ? <AppView /> : <ManagerMain />}
+      {accountInfo.status !== 'admin' ? <AppView /> : <ManagerMain />}
     </>
   );
 }

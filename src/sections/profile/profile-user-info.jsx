@@ -26,7 +26,7 @@ export default function UserInfo() {
   const userId = Number(params.id);
   const isMine = userId === accountInfo.id;
 
-  console.log('friendList', friendsList);
+  // console.log('friendList', friendsList);
 
   const [isFriend, setIsFriend] = useState(friendsList.some((friend) => friend.userID === userId)); //친구인지 아닌지
 

@@ -18,12 +18,12 @@ import { format } from 'date-fns';
 import { ko } from 'date-fns/locale';
 import { PostFolderUpdate } from 'src/api/folder.api';
 
-export default function AddArticleModal({ open, onClose, buttonAction, id, setId }) {
-  const [selectedIndex, setSelectedIndex] = useState([]);
+export default function AddArticleModal({ open, onClose, buttonAction, id, setId, postIds }) {
+  const [selectedIndex, setSelectedIndex] = useState(postIds);
   const [postList, setPostList] = useState([]);
   const params = useParams();
   const userId = params.id;
-  const [name, setName] = useState('');
+  const [name, setName] = useState(id.folderName);
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
@@ -57,8 +57,8 @@ export default function AddArticleModal({ open, onClose, buttonAction, id, setId
     GetPostsList(userId)
       .then((res) => {
         console.log(res);
-        console.log(res.data.result);
-        setPostList(res.data.result.postList.content);
+        console.log(res.data.result.editorPostResponseDTOS);
+        setPostList(res.data.result.editorPostResponseDTOS);
       })
       .catch((err) => {
         console.log(err);
@@ -138,14 +138,14 @@ export default function AddArticleModal({ open, onClose, buttonAction, id, setId
                 >
                   <Checkbox
                     disableRipple
-                    checked={selectedIndex.includes(article.id)}
-                    onChange={() => handleCheckboxChange(article.id)}
+                    checked={selectedIndex.includes(article.postList.post.id)}
+                    onChange={() => handleCheckboxChange(article.postList.post.id)}
                     sx={{ marginRight: '10px' }}
                   />
                   <div>
-                    <Typography sx={{ fontSize: '14px' }}>{article.post.title}</Typography>
+                    <Typography sx={{ fontSize: '14px' }}>{article.postList.post.title}</Typography>
                     <Typography sx={{ fontSize: '11px', color: 'grey' }}>
-                      {formatDate(article.updated_at)}
+                      {formatDate(article.postList.post.updated_at)}
                     </Typography>
                   </div>
                 </TableCell>

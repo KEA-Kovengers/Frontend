@@ -403,6 +403,8 @@ const handleTitleChange = (event) => {
     // });
   };  
 
+  
+
   // 블럭 업데이트 메세지 수신 및 로직 정의
   const receiveUpdateBlock = (dto) => {
     console.log('receiveUpdateBlock:', dto);

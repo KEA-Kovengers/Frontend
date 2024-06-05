@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { useRef,useEffect } from 'react';
+import { useRef, useEffect } from 'react';
 
 import { styled } from '@mui/system';
 
@@ -15,19 +15,25 @@ const ScrollContainer = styled('div')({
   // display: 'flex',
   justifyContent: 'center', // SnapElement를 가로 방향으로 가운데로 정렬
   flexDirection: 'column',
-  scrollSnapType: 'y mandatory', 
-  overflowY: 'auto', 
-  scrollbarWidth: 'none', 
+  scrollSnapType: 'y mandatory',
+  overflowY: 'auto',
+  scrollbarWidth: 'none',
   '&::-webkit-scrollbar': {
     display: 'none'
   },
+<<<<<<< HEAD
   height: '100vh', 
 });
 
+=======
+  height: '100vh',
+});
+>>>>>>> 0b5ab7848e8e900c704edd0decdc63c78217827d
 
 // AppFilter 속 AppPost: filter가 바뀜에 따라 보여지는 컴포넌트도 달라짐
 export default function AppPost({ filter }) {
 
+<<<<<<< HEAD
   // 필터와 컴포넌트를 매핑하는 객체
   const filterComponentMap = {
     0: AppCard,
@@ -45,11 +51,35 @@ export default function AppPost({ filter }) {
   return (
     <ScrollContainer>
         {Component && <Component />}
+=======
+  useEffect(() => {
+    console.log('filter', filter);
+  }, []);
+
+  // 필터와 컴포넌트를 매핑하는 객체
+  // const filterComponentMap = {
+  //   '전체': AppCard,
+  //   '여행': () => <AppCard1 tag={filter} />,
+  //   2: AppCard2,
+  // };
+
+  // const Component = filterComponentMap[filter] || null;
+  if (filter === '전체') {
+    var Component = AppCard;
+  }
+  else {
+    var Component = () => <AppCard1 tag={filter} />;
+
+  }
+  return (
+    <ScrollContainer>
+      {Component && <Component />}
+>>>>>>> 0b5ab7848e8e900c704edd0decdc63c78217827d
     </ScrollContainer>
   );
 
 }
 
 AppPost.propTypes = {
-  filter: PropTypes.number.isRequired,
+  filter: PropTypes.string.isRequired,
 };

@@ -21,6 +21,7 @@ import { GetLikeArticle } from 'src/api/like.api';
 import { useLikedPostStore } from 'src/store/useLikedPostStore';
 import { useParams } from 'react-router-dom';
 import { useAccountStore } from 'src/store/useAccountStore';
+import { GetCommentedArticle } from 'src/api/comment.api';
 
 export default function ProfileView() {
   const { accountInfo } = useAccountStore();
@@ -35,12 +36,22 @@ export default function ProfileView() {
   const [value, setValue] = useState(0);
   const [postList, setPostList] = useState([]);
   const [folderList, setFolderList] = useState([]);
+  const [likedList, setLikedList] = useState([]);
+  const [commentedList, setCommentedList] = useState([]);
   const createFolderToggle = useToggle();
 
   const CreateFolder = (name) => {
+    setFolderList([]);
     PostFolderAdd(name)
       .then((res) => {
         console.log(res);
+        setFolderList((prev) => [
+          ...prev,
+          {
+            id: res.data.result.id,
+            folderName: name,
+          },
+        ]);
       })
       .catch((err) => {
         console.log(err);
@@ -50,22 +61,34 @@ export default function ProfileView() {
   const handleChange = (event, newValue) => {
     setValue(newValue);
     if (newValue === 1) {
+      setFolderList([]);
       console.log('폴더 페이지로 이동');
       GetFolderList(userId).then((res) => {
-        console.log(res);
+        // console.log(res);
         console.log(res.data.result);
         setFolderList(res.data.result);
       });
     } else if (newValue === 2) {
-      console.log('활동 페이지로 이동');
+      setLikedList([]);
       GetLikeArticle(userId)
         .then((res) => {
-          console.log(res);
-          console.log(res.data.result.postList.content);
-          setLikedPosts(res.data.result.postList.content);
+          // console.log(res);
+          console.log('좋아요 누른 게시글', res.data.result);
+          setLikedList(res.data.result);
         })
         .catch((err) => {
           console.log(err);
+        });
+    } else if (newValue === 3) {
+      setCommentedList([]);
+      GetCommentedArticle(userId)
+        .then((res) => {
+          // console.log(res);
+          console.log('댓글 단 게시글', res.data.result);
+          setCommentedList(res.data.result);
+        })
+        .catch((err) => {
+          console.log('댓글 단 게시글 실패', err);
         });
     }
   };
@@ -103,17 +126,19 @@ export default function ProfileView() {
     if (userId) {
       GetPostsList(userId)
         .then((res) => {
-          console.log(res);
-          console.log(res.data.result.postList.content);
-          setPostList(res.data.result.postList.content);
-
-          console.log('게시글 목록', postList);
+          // console.log(res);
+          console.log('내 게시글 전체', res.data.result.editorPostResponseDTOS);
+          setPostList(res.data.result.editorPostResponseDTOS);
         })
         .catch((err) => {
           console.log(err);
         });
     }
   }, [userId]);
+
+  useEffect(() => {
+    setValue(0);
+  }, [isFolder]);
 
   return !isFolder ? (
     <div style={{ width: '80%', alignItems: 'center', justifyItems: 'center' }}>
@@ -136,7 +161,8 @@ export default function ProfileView() {
             >
               <Tab label="전체 게시글" {...a11yProps(0)} />
               <Tab label="폴더" {...a11yProps(1)} />
-              <Tab label="활동" {...a11yProps(2)} />
+              <Tab label="좋아요" {...a11yProps(2)} />
+              <Tab label="댓글" {...a11yProps(3)} />
             </Tabs>
           </Box>
           <CustomTabPanel value={value} index={0}>
@@ -150,17 +176,22 @@ export default function ProfileView() {
             >
               {postList.map((article) => (
                 <ProfileArticle
-                  key={article.post.id}
-                  id={article.post.id}
-                  imgurl={article.post.thumbnail}
-                  title={article.post.title}
-                  content={article.post.body}
-                  date={article.updated_at}
-                  // isLike={likedPosts.contains(article.id)}
-                  // likecnt={article.likecnt}
-                  // commentcnt={article.commentcnt}
-                  likecnt={0}
-                  commentcnt={0}
+                  key={article.postList.post.id}
+                  id={article.postList.post.id}
+                  thumbnail={
+                    article.postList.post.thumbnails[0] || {
+                      url: '/assets/not_thumbnail.png',
+                      type: 'IMAGE',
+                    }
+                  }
+                  title={article.postList.post.title}
+                  content={article.postList.post.body}
+                  date={article.postList.post.updated_at}
+                  isLike={likedPosts.some(
+                    (like) => like.likes.post_id === article.postList.post.id
+                  )}
+                  likecnt={article.likeCnt}
+                  commentcnt={article.commentCnt}
                 />
               ))}
             </div>
@@ -179,6 +210,7 @@ export default function ProfileView() {
             >
               {folderList.map((folder) => (
                 <ProfileFolder
+                  key={folder.id}
                   setId={setFolderId}
                   id={folder.id}
                   foldername={folder.folderName}
@@ -190,8 +222,8 @@ export default function ProfileView() {
                   style={{
                     flexDirection: 'column',
                     display: 'flex',
-                    width: '100%',
-                    height: '100%',
+                    width: 200,
+                    height: 180,
                     alignItems: 'center',
                     justifyContent: 'center',
                   }}
@@ -237,17 +269,53 @@ export default function ProfileView() {
                 display: 'flex',
               }}
             >
-              {likedPosts.map((article) => (
+              {likedList.map((article) => (
                 <ProfileArticle
-                  key={article.id}
-                  imgurl={article.imgurl}
-                  title={article.title}
-                  content={article.content}
-                  date={article.date}
-                  isLike={article.isLike}
-                  likecnt={article.likecnt}
-                  isComment={article.isComment}
-                  commentcnt={article.commentcnt}
+                  key={article.likes.post_id}
+                  id={article.likes.post_id}
+                  thumbnail={
+                    article.posts.thumbnails[0] || {
+                      url: '/assets/not_thumbnail.png',
+                      type: 'IMAGE',
+                    }
+                  }
+                  title={article.posts.title}
+                  content={article.posts.body}
+                  date={article.posts.updated_at}
+                  isLike={true}
+                  likecnt={article.likeCnt}
+                  commentcnt={article.commentCnt}
+                />
+              ))}
+            </div>
+          </CustomTabPanel>
+          <CustomTabPanel value={value} index={3}>
+            <div
+              style={{
+                width: '100%',
+                alignItems: 'center',
+                flexDirection: 'column',
+                display: 'flex',
+              }}
+            >
+              {commentedList.map((article) => (
+                <ProfileArticle
+                  key={article.comments.post_id}
+                  id={article.comments.post_id}
+                  thumbnail={
+                    article.posts.thumbnails[0] || {
+                      url: '/assets/not_thumbnail.png',
+                      type: 'IMAGE',
+                    }
+                  }
+                  title={article.posts.title}
+                  content={article.comments.body}
+                  date={article.comments.updated_at}
+                  isLike={likedPosts.some(
+                    (like) => like.likes.post_id === article.comments.post_id
+                  )}
+                  likecnt={article.likeCnt}
+                  commentcnt={article.commentCnt}
                 />
               ))}
             </div>

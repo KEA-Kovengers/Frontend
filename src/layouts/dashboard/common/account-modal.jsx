@@ -1,5 +1,7 @@
-import React,{ useState } from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
+import { useCookies } from 'react-cookie';
+
 
 // import IconButton from '@mui/material/IconButton';
 
@@ -16,10 +18,15 @@ import {
 import Iconify from 'src/components/iconify';
 
 import { colors } from 'src/theme/variableColors';
-
+import { useNavigate } from 'react-router-dom';
+import { PostWithdraw, PostWithdraw1 } from 'src/api/auth.api';
 export default function AccountModal({ rightButton, onClose, open, contents, subcontents }) {
   const [textField, setTextField] = useState('');
-
+  const [cookies, setCookie, removeCookie] = useCookies(['token', 'refreshToken', 'userId']);
+  const navigate = useNavigate();
+  const token = cookies.token;
+  const refreshToken = cookies.refreshToken;
+  const userId = cookies.userId;
   const modal_style = {
     position: 'absolute',
     top: '50%',
@@ -47,6 +54,34 @@ export default function AccountModal({ rightButton, onClose, open, contents, sub
       color: 'white',
       fontSize: '18px',
     },
+  };
+
+  const Logout = () => {
+    try {
+      removeCookie('token');
+      removeCookie('refreshToken');
+      removeCookie('userId');
+      navigate('/');
+      window.location.reload();
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+
+  const Withdrawal = () => {
+    PostWithdraw1()
+      .then((res) => {
+        console.log(res);
+        removeCookie('token');
+        removeCookie('refreshToken');
+        removeCookie('userId');
+        navigate('/');
+        window.location.reload();
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
   return (
@@ -78,52 +113,56 @@ export default function AccountModal({ rightButton, onClose, open, contents, sub
               }}
             >
               <div
-                  style={{
-                    height: '100%',
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    flexDirection: 'column'
+                style={{
+                  height: '100%',
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  flexDirection: 'column'
+                }}
+              >
+                <Typography
+                  id="modal-modal-description"
+                  color={colors.textGrey}
+                  sx={{
+                    fontSize: 20,
+                    textAlign: 'center',
                   }}
                 >
-                  <Typography
-                    id="modal-modal-description"
-                    color={colors.textGrey}
-                    sx={{
-                      fontSize: 20,
-                      textAlign: 'center',
-                    }}
-                  >
-                    {contents}                  
-                  </Typography>
+                  {contents}
+                </Typography>
 
-                  <Typography
-                    id="modal-modal-description2"
-                    color={colors.textGrey1}
-                    sx={{
-                      fontSize: 15,
-                      textAlign: 'center',
-                    }}
-                  >
-                    {subcontents} 
-                  </Typography>
+                <Typography
+                  id="modal-modal-description2"
+                  color={colors.textGrey1}
+                  sx={{
+                    fontSize: 15,
+                    textAlign: 'center',
+                  }}
+                >
+                  {subcontents}
+                </Typography>
 
-                </div>
+              </div>
 
             </Stack>
 
           </Box>
 
-          
-            <Stack direction="row" justifyContent="center" sx={{}}>
-              <Button onClick={onClose} sx={modal_style.left_button}>
-                취소
-              </Button>
-              <Button sx={modal_style.right_button}>
-                {rightButton}
-              </Button>
-            </Stack>
-          
+
+          <Stack direction="row" justifyContent="center" sx={{}}>
+            <Button onClick={onClose} sx={modal_style.left_button}>
+              취소
+            </Button>
+            {/* 버튼이 탈퇴이면? 탈퇴 함수 
+              버튼이 로그아웃? 로그아웃 함수 */}
+            <Button sx={modal_style.right_button}
+              onClick={rightButton === '탈퇴' ? Withdrawal : Logout}
+            >
+              {rightButton}
+            </Button>
+          </Stack>
+
         </Box>
       </Modal>
     )
