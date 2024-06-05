@@ -66,6 +66,30 @@ export default function MdEditorWithHeader({ postID, title, setTitle, tags, setT
 
   /*----------------------------------------------------------*/
 
+  const updateTitle = () => {
+      const titleContent = document.getElementById('title_update_text').value;
+      console.log(titleContent);
+      // 서버에 메세지 발행
+      stompClient.publish({
+          destination : `/app/updateTitle/${articleID}`,
+          body: JSON.stringify({
+              'uuid': 'testtest',
+              'userID': userID,
+              'dto': {
+                  'articleID' : articleID,
+                  'articleVersion': articleVersion,
+                  'operationType': 'INSERT',
+                  'entityType': 'TITLE',
+                  'position': 0,
+                  'content': titleContent,
+                  'updated_by': {
+                      'updater_id': userID,
+                      'updated_at': new Date().toISOString()
+                  }
+              }
+          })
+      });
+  }
   // 제목 입력창의 너비를 동적으로 조절하는 함수
   const handleTitleChange = (event) => {
     const newTitle = event.target.value;
@@ -103,7 +127,9 @@ export default function MdEditorWithHeader({ postID, title, setTitle, tags, setT
         setTagInput('');
       }
 
-      updateHashtag();
+      // updateHashtag();
+      console.log('태그 내용: ', tagInput);
+      updateHashtag(tagInput);
     }
   };
 
@@ -114,7 +140,7 @@ export default function MdEditorWithHeader({ postID, title, setTitle, tags, setT
     setTags(updatedTags);
     onChangeContents({ title, tags: updatedTags });
 
-    console.log('tags', tags);
+    console.log('tags', updatedTags);
   };
 
 
@@ -151,6 +177,8 @@ export default function MdEditorWithHeader({ postID, title, setTitle, tags, setT
   const [stompClient, setStompClient] = useState(null);
   const [blockIds, setBlockIds] = useState([]);
   const [blockContents, setBlockContents] = useState([]);
+  const [articleTitle, setArticleTitle] = useState('');
+  const [hastagsList, setHashtagsList] = useState([]);
   const [blockList, setBlockList] = useState([]);
   // const articleID = 5;
 
@@ -161,8 +189,10 @@ export default function MdEditorWithHeader({ postID, title, setTitle, tags, setT
       const json = response.data;
       console.log('json', json);
       if (json.isSuccess) {
+        setArticleTitle(json.result.title);
         setArticleVersion(json.result.articleVersion);
         storeBlockData(json.result.blockList);
+        setHashtagsList(json.result.hashtags);
       } else {
         throw new Error('API response was not successful');
       }
@@ -250,24 +280,26 @@ export default function MdEditorWithHeader({ postID, title, setTitle, tags, setT
 
 
   // 해시태그 업데이트 요청 정의
-  const updateHashtag = () => {
+  const updateHashtag = (tagInput) => {
     // const hashtagContent = document.getElementById('hashtag_text').value;
-
     
+    console.log('해시태그 업데이트 요청: ', tagInput);
 
-    console.log(hashtagContent);
+    setHashtagsList(prev => [...prev, tagInput]);
+    // console.log('해시태그 리스트: ', hastagsList);
+    
     // 서버에 메세지 발행
     stompClient.publish({
-        destination : `/app/updateHashtags/${articleID}`,
+        destination : `/app/updateHashtags/${postID}`,
         body: JSON.stringify({
             'uuid': 'testtest',
             'userID': userID,
             'dto': {
-                'articleID' : articleID,
+                'articleID' : postID,
                 'articleVersion': articleVersion,
-                'operationType': 'DELETE',  //또는 DELETE
+                'operationType': 'INSERT',  //또는 DELETE
                 'entityType': 'HASHTAG',
-                'tagName': hashtagContent,
+                'tagName': tagInput,
                 'updated_by': {
                     'updater_id': userID,
                     'updated_at': new Date().toISOString()
@@ -336,8 +368,8 @@ export default function MdEditorWithHeader({ postID, title, setTitle, tags, setT
     // setBlockIds(dto.blockDTO.id);
   };
 
-  console.log('생성된 블럭 아이디: ',blockIds);
-  console.log('생성된 블럭 내용: ',blockContents);
+  // console.log('생성된 블럭 아이디: ',blockIds);
+  // console.log('생성된 블럭 내용: ',blockContents);
 
 
   // 블럭 내용 업데이트 요청 정의
@@ -504,6 +536,16 @@ export default function MdEditorWithHeader({ postID, title, setTitle, tags, setT
     setBlockContents(prev => prev.filter((_, index) => index !== blockIds.indexOf(dto.blockId)));
   };
 
+
+  const receiveUpdateTitle = (dto) => {
+      console.log('receiveDeleteBlock:', dto);
+      setArticleVersion(dto.articleVersion);
+      setArticleTitle(prev => {
+          var newTitle = (prev || '') + dto.content;
+          return newTitle;
+      });
+  };
+
   /*----------------------------------------------------------*/
 
   // 저장 버튼 클릭 시 실행되는 함수
@@ -610,6 +652,7 @@ export default function MdEditorWithHeader({ postID, title, setTitle, tags, setT
         type="text"
         placeholder="제목을 입력하세요"
         value={title}
+        // value = {{articleTitle}}
         onChange={handleTitleChange}
         style={{
           marginBottom: '10px',
@@ -623,9 +666,17 @@ export default function MdEditorWithHeader({ postID, title, setTitle, tags, setT
       />
       <hr style={{ width: '5%', margin: '6px 0', borderTop: '3px solid black', marginLeft: '0.8%' }} />
       <div style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
-        {tags.map((tag, index) => (
+        
+
+        {/* {hastagsList.map(tag => (
+            <div key={tag} className="tag">
+                <p>{tag}</p>
+            </div>
+        ))} 
+        */}
+        {hastagsList.map((hashtag, index) => (
           <div
-            key={index}
+            key={hashtag}
             style={{
               height: 35,
               border: '2px solid #E3E6FF',
@@ -641,9 +692,10 @@ export default function MdEditorWithHeader({ postID, title, setTitle, tags, setT
             }}
             onClick={() => handleTagClick(index)}
           >
-            {tag}
+            {hashtag}
           </div>
         ))}
+
         <input
           type="text"
           placeholder="태그를 입력하세요"
