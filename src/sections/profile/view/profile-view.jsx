@@ -79,18 +79,38 @@ export default function ProfileView() {
         .catch((err) => {
           console.log(err);
         });
-    } else if (newValue === 3) {
+    }
+    // else if (newValue === 3) {
+    //   setCommentedList([]);
+    //   GetCommentedArticle(userId)
+    //     .then((res) => {
+    //       // console.log(res);
+    //       console.log('댓글 단 게시글', res.data.result);
+    //       setCommentedList(res.data.result);
+    //     })
+    //     .catch((err) => {
+    //       console.log('댓글 단 게시글 실패', err);
+    //     });
+    // }
+    else if (newValue === 3) {
       setCommentedList([]);
       GetCommentedArticle(userId)
         .then((res) => {
-          // console.log(res);
           console.log('댓글 단 게시글', res.data.result);
-          setCommentedList(res.data.result);
+          // Remove duplicates from the result
+          const uniqueResults = Array.from(new Set(res.data.result.map(article => article.id)))
+            .map(id => {
+              return res.data.result.find(article => article.id === id);
+            });
+
+          // Update the state with the unique list
+          setCommentedList(uniqueResults);
         })
         .catch((err) => {
           console.log('댓글 단 게시글 실패', err);
         });
     }
+
   };
   function a11yProps(index) {
     return {
@@ -109,7 +129,7 @@ export default function ProfileView() {
         aria-labelledby={`simple-tab-${index}`}
         {...other}
 
-        //style={{ alignItems: 'center', display: 'flex', flexDirection: 'column', width: '100%' }}
+      //style={{ alignItems: 'center', display: 'flex', flexDirection: 'column', width: '100%' }}
       >
         {value === index && (
           <Box sx={{ p: 3, display: 'flex' }}>
@@ -214,7 +234,7 @@ export default function ProfileView() {
                   setId={setFolderId}
                   id={folder.id}
                   foldername={folder.folderName}
-                  // articlecnt={folder.articlecnt}
+                // articlecnt={folder.articlecnt}
                 />
               ))}
               {accountInfo.id === userId && (
