@@ -15,7 +15,9 @@ import '@toast-ui/editor-plugin-color-syntax/dist/toastui-editor-plugin-color-sy
 import colorSyntax from '@toast-ui/editor-plugin-color-syntax';
 import { toolbar } from './md-toolbar';
 
-import { PostGenerateHashtag , PostObjectUpload , SetUpWebSocket } from 'src/api/posts.api';
+import { PostGenerateHashtag } from 'src/api/ai.api';
+import { PostObjectUpload } from 'src/api/posts.api';
+import { SetUpWebSocket } from 'src/api/posts.api';
 
 import { GetPostID } from 'src/api/posts.api';
 
@@ -254,11 +256,14 @@ const handleTitleChange = (event) => {
 
       setBlockIds(ids);
       setBlockContents(contents);
+
+      console.log('블록 데이터의 아이디를 보여줍니다: ',blockIds);
+      console.log('블록 데이터의 내용을 보여줍니다: ',blockContents);
   };
 
   // 블럭 생성 요청 정의
   const createBlock = () => {
-
+    
     stompClient.publish({
       destination: `/app/createBlock/${postID}`,
       body: JSON.stringify({
@@ -268,7 +273,8 @@ const handleTitleChange = (event) => {
               'articleVersion': articleVersion,
               'blockType': 'testBlockType',
               'position': blockIds.length,
-              'content': blockContents.toString(), // array to string 필요
+              'content': blockContents.join(', '), // 배열의 요소를 문자열로 변환
+              // 'content': blockContents.toString(), // array to string 필요
               'blockParent': {
                   'type': 'testType',
                   'page_id': 'testPageId'
@@ -282,12 +288,26 @@ const handleTitleChange = (event) => {
     });
   };
 
+  // 블럭 생성 메세지 수신
+  const receiveCreateBlock = (dto) => {
+    console.log('receiveCreateBlock:', dto);
+
+    setBlockIds(prev => [...prev.slice(0, dto.position), dto.blockDTO.id, ...prev.slice(dto.position)]);
+    setBlockContents(prev => [...prev.slice(0, dto.position), dto.blockDTO.content, ...prev.slice(dto.position)]);
+    setArticleVersion(dto.articleVersion);
+
+    // blockId 상태 변수 업데이트
+    setBlockId(dto.blockDTO.id);
+  };
+
+
   // 블럭 내용 업데이트 요청 정의
   const updateBlock = (operationType) => {
     // const blockId = document.getElementById('n_block1').value;
     // const blockContent = document.getElementById('block_content').value;
     // const textPosition = document.getElementById('text_position').value;
-
+    // blockId 상태 변수 사용
+    let entityId = blockId;
     let entityType = "";
     let operationType2 = "";
 
@@ -310,52 +330,78 @@ const handleTitleChange = (event) => {
     }
 
     // 서버에 메세지 발행
-    //URL과 DTO는 노션의 명세서 참고
+    //URL과 DTO는 노션의 명세서 참고  // blockIds 배열의 첫 번째 ID만 업데이트
+    // const blockId = blockIds[0];
+    
+    console.log('blockIds: ',blockIds);
+
     stompClient.publish({
-        destination: `/app/updateBlock/${postID}`,
-        body: JSON.stringify({
-            'uuid': 'testtest',
-            'userID': userID,
-            'dto': {
-                'blockId': blockIds.toString(),
-                'articleVersion': articleVersion,
-                'entityType': entityType,
-                'operationType': operationType2,
-                'position': textPosition,
-                'content': blockContents.toString(),
-                'updated_by': {
-                    'updater_id': userID,
-                    'updated_at': new Date().toISOString()
-                }
-            }
-        })
+      destination: `/app/updateBlock/${postID}`,
+      body: JSON.stringify({
+        'uuid': 'testtest',
+        'userID': userID,
+        'dto': {
+          // 'blockId': blockId,
+          'blockId' : entityId,
+          'articleVersion': articleVersion,
+          'entityType': entityType,
+          'operationType': operationType2,
+          'position': 1,
+          'content' : editorHtml1, // 에디터의 내용을 content로 사용
+          'updated_by': {
+            'updater_id': userID,
+            'updated_at': new Date().toISOString()
+          }
+        }
+      })
     });
+    // console.log('업데이트 블록 속 blockId: ', blockId);
+
+    // // blockIds 배열의 각 ID를 개별적으로 업데이트
+    // blockIds.forEach((blockId) => {
+    //   stompClient.publish({
+    //     destination: `/app/updateBlock/${postID}`,
+    //     body: JSON.stringify({
+    //       'uuid': 'testtest',
+    //       'userID': userID,
+    //       'dto': {
+    //         'blockId': blockId, // 개별 블록 ID 사용
+    //         'articleVersion': articleVersion,
+    //         'entityType': entityType,
+    //         'operationType': operationType2,
+    //         'position': 1,
+    //         'content' : editorHtml1, // 에디터의 내용을 content로 사용
+    //         'updated_by': {
+    //           'updater_id': userID,
+    //           'updated_at': new Date().toISOString()
+    //         }
+    //       }
+    //     })
+    //   });
+    //   console.log('업데이트 블록 속 blockIds: ', blockIds);
+    //   console.log('업데이트 블록 속 blockId: ', blockId);
+    // });
+
+    // stompClient.publish({
+    //     destination: `/app/updateBlock/${postID}`,
+    //     body: JSON.stringify({
+    //         'uuid': 'testtest',
+    //         'userID': userID,
+    //         'dto': {
+    //             'blockId': blockIds.toString(),
+    //             'articleVersion': articleVersion,
+    //             'entityType': entityType,
+    //             'operationType': operationType2,
+    //             'position': 1,
+    //             'content': blockContents.toString(),
+    //             'updated_by': {
+    //                 'updater_id': userID,
+    //                 'updated_at': new Date().toISOString()
+    //             }
+    //         }
+    //     })
+    // });
   };  
-
-  // 블럭 삭제 요청 정의
-  const blockDelete = () => {
-    //const blockIds = document.getElementById('n_block3').value;
-
-    // 서버에 메세지 발행
-    //URL과 DTO는 노션의 명세서 참고
-    stompClient.publish({
-        destination: `/app/deleteBlock/${postID}`,
-        body: JSON.stringify({
-            'uuid': 'testtest',
-            'userID': userID,
-            'dto': blockIds.toString()
-        })
-    });
-  };
-
-  // 블럭 생성 메세지 수신
-  const receiveCreateBlock = (dto) => {
-    console.log('receiveCreateBlock:', dto);
-
-    setBlockIds(prev => [...prev.slice(0, dto.position), dto.blockDTO.id, ...prev.slice(dto.position)]);
-    setBlockContents(prev => [...prev.slice(0, dto.position), dto.blockDTO.content, ...prev.slice(dto.position)]);
-    setArticleVersion(dto.articleVersion);
-  };
 
   // 블럭 업데이트 메세지 수신 및 로직 정의
   const receiveUpdateBlock = (dto) => {
@@ -396,6 +442,22 @@ const handleTitleChange = (event) => {
     }
   };
 
+  // 블럭 삭제 요청 정의
+  const blockDelete = () => {
+    // const blockIds = document.getElementById('n_block3').value;
+
+    // 서버에 메세지 발행
+    // URL과 DTO는 노션의 명세서를 참고
+    stompClient.publish({
+        destination: `/app/deleteBlock/${postID}`,
+        body: JSON.stringify({
+            'uuid': 'testtest',
+            'userID': userID,
+            'dto': blockIds.toString()
+        })
+    });
+  };
+
   // 블럭 삭제 메세지 수신
   const receiveDeleteBlock = (dto) => {
     console.log('receiveDeleteBlock:', dto);
@@ -423,8 +485,8 @@ const handleTitleChange = (event) => {
       if (postID && stompClient && stompClient.connected && blockIds && blockContents) {
         console.log('useEffect createBlock');
         createBlock();
-        // updateBlock('INSERT');
       }
+      updateBlock('INSERT');
     };
 
     const handleDeleteButtonClick = () => { 
@@ -478,14 +540,18 @@ const handleTitleChange = (event) => {
     // 에디터에 작성하면 한 글자씩 마크다운이 적용되어 콘솔에 출력
     const onChange = () => {
       if (editorRef1.current) {
-        // editorHtml1 = editorRef1.current.getInstance().getMarkdown();
+        const editorHtml1 = editorRef1.current.getInstance().getMarkdown();
         updateEditorHtml1(editorRef1.current.getInstance().getMarkdown());
-        // console.log('editorHtml1:', editorHtml1);
+        console.log('editorHtml1:', editorHtml1);
+
+        // updateBlock('INSERT');
       }
       else if (editorRef2.current) {
-        // const editorHtml2 = editorRef2.current.getInstance().getMarkdown();
+        const editorHtml2 = editorRef2.current.getInstance().getMarkdown();
         updateEditorHtml2(editorRef2.current.getInstance().getMarkdown());
-        // console.log('editorHtml2: ',editorHtml2);
+        console.log('editorHtml2: ',editorHtml2);
+
+        // updateBlock('INSERT');
       }
     }
   
