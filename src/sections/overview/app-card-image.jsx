@@ -8,6 +8,8 @@ import { styled } from '@mui/material/styles';
 import { colors } from 'src/theme/variableColors';
 import Iconify from 'src/components/iconify';
 
+// ----------------------------------------------------------------------
+
 const cardStyle = {
   borderRadius: 0,
   bgcolor: 'background.default',
@@ -26,17 +28,19 @@ const CustomCardMedia = styled(CardMedia)({
 });
 
 export default function AppCardImage({ images }) {
-  const sliderRef = useRef(null);
-  const settings = {
-    arrows: true,
-    dots: true,
-    dotsClass: "slick-dots",
-    speed: 100,
-    slidesToShow: 1,
-    slidesToScroll: 1,
-    prevArrow: <CustomPrevArrow onClick={() => sliderRef.current.slickPrev()} />,
-    nextArrow: <CustomNextArrow onClick={() => sliderRef.current.slickNext()} />,
-  };
+
+    // 슬라이더 추가
+    const sliderRef = useRef(null);
+    const settings = {
+        arrows: true,
+        dots: true,
+        dotsClass: "slick-dots",
+        speed: 100,
+        slidesToShow: 1,
+        slidesToScroll: 1,
+        prevArrow: <CustomPrevArrow onClick={() => sliderRef.current.slickPrev()} />,
+        nextArrow: <CustomNextArrow onClick={() => sliderRef.current.slickNext()} />,
+    };
 
   return (
     <div>

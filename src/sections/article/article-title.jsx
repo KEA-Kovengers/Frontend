@@ -16,7 +16,7 @@ import { useNavigate } from 'react-router-dom';
 import ReportModal from 'src/sections/article/ReportModal';
 import DashboardModal from 'src/sections/article/DashboardModal';
 import { GetPostDetail } from 'src/api/posts.api';
-
+import { useAccountStore } from 'src/store/useAccountStore';
 export default function ArticleTitle({ editorList, title, user, setUser }) {
   const formatDate = (dateString) => {
     const date = new Date(dateString);
@@ -27,7 +27,7 @@ export default function ArticleTitle({ editorList, title, user, setUser }) {
   const postId = Number(params.id);
   const navigate = useNavigate();
   const { toggle, isOpen } = useToggle();
-
+  const { accountInfo } = useAccountStore();
   // let deleteArticleToggle, reportArticleToggle, reportToggle, alertToggle;
   const deleteArticleToggle = useToggle();
   const reportArticleToggle = useToggle();
@@ -107,7 +107,7 @@ export default function ArticleTitle({ editorList, title, user, setUser }) {
             </Tooltip>
             <DashboardModal open={dashboardToggle.isOpen} onClose={dashboardToggle.toggle} />
 
-            <IconButton onClick={handleOpenMenu}>
+            <IconButton onClick={handleOpenMenu} disabled={accountInfo.id === null ? true : false}>
               <Iconify icon="eva:more-vertical-fill" />
             </IconButton>
             <Popover

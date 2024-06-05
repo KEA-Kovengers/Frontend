@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { account } from 'src/_mock/account';
 import Avatar from '@mui/material/Avatar';
@@ -13,8 +13,13 @@ import Iconify from 'src/components/iconify';
 import OutlinedInput from '@mui/material/OutlinedInput';
 import InputAdornment from '@mui/material/InputAdornment';
 import { set } from 'lodash';
+import { useAccountStore } from 'src/store/useAccountStore';
 
 export default function ReComment({ content, time, exist, state }) {
+  const { accountInfo } = useAccountStore();
+  useEffect(() => {
+  }, []);
+  console.log('account', accountInfo.id);
   const navigate = useNavigate();
   const reportToggle = useToggle();
   const alertToggle = useToggle();
@@ -137,15 +142,30 @@ export default function ReComment({ content, time, exist, state }) {
           )}
         </div>
         {isTyping ? (
+          // <OutlinedInput
+          //   style={{ marginTop: '20px', width: '98%', height: '45px' }}
+          //   // value={filterName}
+          //   onChange={(e) => setContents(e.target.value)}
+          //   multiline
+          //   placeholder="댓글을 입력해주세요."
+          //   endAdornment={
+          //     <InputAdornment position="end" onClick={addRecomment}>
+          //       <Button disabled={contents === '' ? true : false} sx={right_button}>
+          //         등록
+          //       </Button>
+          //     </InputAdornment>
+          //   }
+
+          // />
           <OutlinedInput
             style={{ marginTop: '20px', width: '98%', height: '45px' }}
             // value={filterName}
             onChange={(e) => setContents(e.target.value)}
             multiline
-            placeholder="댓글을 입력해주세요."
+            placeholder={accountInfo.id === null ? "로그인 후 이용해주세요." : "댓글을 입력해주세요."}
             endAdornment={
               <InputAdornment position="end" onClick={addRecomment}>
-                <Button disabled={contents === '' ? true : false} sx={right_button}>
+                <Button disabled={contents === '' || accountInfo.id === null} sx={right_button}>
                   등록
                 </Button>
               </InputAdornment>

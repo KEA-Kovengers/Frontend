@@ -129,7 +129,7 @@ export default function ArticleCommunity({ views }) {
           width: 'auto',
         }}
       >
-        <IconButton onClick={handleLike}>
+        <IconButton onClick={handleLike} disabled={accountInfo.id === null}>
           <Iconify
             icon={like ? 'gridicons:heart' : 'ph:heart'}
             sx={{ width: '20px', height: '20px' }}
@@ -180,7 +180,7 @@ export default function ArticleCommunity({ views }) {
           value={content}
           onChange={(e) => setContent(e.target.value)}
           multiline
-          placeholder="댓글을 입력해주세요."
+          placeholder={accountInfo.id === null ? "로그인 후 이용해주세요." : "댓글을 입력해주세요."}
           disabled={accountInfo.id === null ? true : false}
           endAdornment={
             <InputAdornment position="end">
