@@ -16,6 +16,7 @@ import NotificationsList from './NotificationsList';
 import { GetUserInfo } from 'src/api/user.api';
 import { ViewNotice, ReadNotice } from 'src/api/notice.api';
 import { useNavigate } from 'react-router-dom';
+import connectWebSocket from 'src/api/connectWebSocket';
 
 export default function NotificationsPopover() {
   const [notifications, setNotifications] = useState([]);
@@ -37,20 +38,18 @@ export default function NotificationsPopover() {
         console.error('Error parsing token from cookie:', e);
       }
     }
+
+    connectWebSocket(userId);
   
     const fetchNotifications = async () => {
       try {
         if (userId) {
-          console.log('Calling ViewNotice with userId:', userId);
           const noticeResponse = await ViewNotice(userId);
-          console.log('ViewNotice response:', noticeResponse);
           if (noticeResponse.data.isSuccess) {
             const { result } = noticeResponse.data;
             const notifications = await Promise.all(
               result.map(async (notification) => {
-                console.log('Fetching user info for from_id:', notification.from_id);
                 const userResponse = await GetUserInfo(notification.from_id);
-                console.log('GetUserInfo response for from_id', notification.from_id, ':', userResponse);
                 if (userResponse.data.isSuccess) {
                   return {
                     ...notification,
@@ -61,7 +60,6 @@ export default function NotificationsPopover() {
                 return notification;
               })
             );
-            console.log('Fetched notifications with user info:', notifications);
             setNotifications(notifications);
           } else {
             console.error('ViewNotice call was not successful:', noticeResponse.data.message);
@@ -118,9 +116,6 @@ export default function NotificationsPopover() {
   if (loading) {
     return <div>Loading...</div>;
   }
-
-  console.log('Rendering NotificationsPopover');
-  console.log('Notifications:', notifications);
 
   return (
     <>

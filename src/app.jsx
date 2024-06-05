@@ -15,7 +15,6 @@ import { useAccountStore } from 'src/store/useAccountStore';
 import { useFriendStore } from './store/useFriendStore';
 import { GetLikeArticle } from './api/like.api';
 import { useLikedPostStore } from './store/useLikedPostStore';
-import { set } from 'lodash';
 
 // ----------------------------------------------------------------------
 
@@ -53,7 +52,6 @@ export default function App() {
       updateAccountInfo('id', userId);
       GetFriendList(userId)
         .then((res) => {
-          // console.log(res);
           console.log('나의 친구', res.data.result);
           updateAccountInfo('friendCount', res.data.result.length);
           setFriendsList(res.data.result);
@@ -67,15 +65,13 @@ export default function App() {
       });
       GetUserInfo(userId)
         .then((response) => {
-          // console.log(response);
-          // console.log(response.data.result);
           updateAccountInfo('status', response.data.result.status);
           updateAccountInfo('nickName', response.data.result.nickName);
           updateAccountInfo('blogName', response.data.result.blogName);
           updateAccountInfo('profileImg', response.data.result.profileImg);
           updateAccountInfo('bio', response.data.result.bio);
           updateAccountInfo('role', response.data.result.role);
-          if (res.data.result.status === 'new') {
+          if (response.data.result.status === 'new') {
             navigate('/membership');
           } else {
             navigate('/');
@@ -85,7 +81,7 @@ export default function App() {
           console.log(err);
         });
     }
-  }, []);
+  }, [updateAccountInfo, setFriendsList, setLikedPosts]);
 
   return (
     <ThemeProvider>

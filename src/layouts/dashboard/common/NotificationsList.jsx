@@ -33,10 +33,6 @@ export default function NotificationsList({ notifications, navigate }) {
     }
   );
 
-  console.log('Rendering NotificationsList');
-  console.log('New Notifications:', newNotifications);
-  console.log('Before That Notifications:', beforeThatNotifications);
-
   return (
     <>
       {newNotifications.length > 0 && (
