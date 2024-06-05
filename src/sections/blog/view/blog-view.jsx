@@ -57,11 +57,16 @@ export default function BlogView() {
   const createPostEdit = async () => {
     try {
       const requestBody = {
-        thumbnail: "",
+        thumbnail: [
+          {
+            "url": "",
+            "type": "IMAGE"
+          }
+        ],
         title: "",
-        // body: "",
+        body: "",
         hashtags: [],
-        status: 'EDIT',
+        // status: 'EDIT',
       };
 
       const response = await PostCreate(requestBody);
