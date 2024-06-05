@@ -1,6 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import Iconify from 'src/components/iconify';
 import IconButton from '@mui/material/IconButton';
+import { format } from 'date-fns';
+import { ko } from 'date-fns/locale';
 
 import MenuItem from '@mui/material/MenuItem';
 import Popover from '@mui/material/Popover';
@@ -16,19 +18,17 @@ import { useNavigate } from 'react-router-dom';
 import ReportModal from 'src/sections/article/ReportModal';
 import DashboardModal from 'src/sections/article/DashboardModal';
 import { GetPostDetail } from 'src/api/posts.api';
+import { useAccountStore } from 'src/store/useAccountStore';
 
-export default function ArticleTitle({ editorList, title, user, setUser }) {
-  const formatDate = (dateString) => {
-    const date = new Date(dateString);
-    return format(date, 'yyyy-MM-dd hh:mm', { locale: ko });
-  };
+export default function ArticleTitle({ editorList, title, user, setUser, time }) {
+  console.log('time', time);
 
   const params = useParams();
   const postId = Number(params.id);
   const navigate = useNavigate();
   const { toggle, isOpen } = useToggle();
+  const { accountInfo } = useAccountStore();
 
-  // let deleteArticleToggle, reportArticleToggle, reportToggle, alertToggle;
   const deleteArticleToggle = useToggle();
   const reportArticleToggle = useToggle();
   const reportToggle = useToggle();
@@ -36,6 +36,7 @@ export default function ArticleTitle({ editorList, title, user, setUser }) {
   const dashboardToggle = useToggle();
 
   const [open, setOpen] = useState(null);
+  const [reportContent, setReportContent] = useState('');
   const handleOpenMenu = (event) => {
     setOpen(event.currentTarget);
   };
@@ -55,6 +56,35 @@ export default function ArticleTitle({ editorList, title, user, setUser }) {
     }
   };
 
+  const handleDeleteArticle = () => {
+    console.log('게시글 삭제 누름');
+
+    DeleteArticle(postId, accountInfo.id)
+      .then((res) => {
+        console.log('게시글 삭제 성공', res);
+        navigate('/');
+      })
+      .catch((err) => {
+        console.log('게시글 삭제 실패', err);
+      });
+  };
+
+  const ReportArticle = () => {
+    ReportPost(postId, reportContent, accountInfo.id)
+      .then((res) => {
+        console.log('게시글 신고 성공', res);
+      })
+      .catch((err) => {
+        console.log('게시글 신고 실패', err);
+      });
+    reportToggle.toggle();
+  };
+
+  const formatDate = (time) => {
+    const date = new Date(time);
+    return format(date, 'yyyy-MM-dd hh:mm', { locale: ko });
+  };
+
   return (
     <div
       style={{
@@ -62,7 +92,7 @@ export default function ArticleTitle({ editorList, title, user, setUser }) {
         borderRadius: '1px 1px 0px 0px',
         display: 'flex',
         flexDirection: 'column',
-        backgroundColor: '#F9F9F9',
+        // backgroundColor: '#F9F9F9',
         marginLeft: '100px',
         marginRight: '100px',
       }}
@@ -79,7 +109,7 @@ export default function ArticleTitle({ editorList, title, user, setUser }) {
             alignItems: 'center',
           }}
         >
-          <div style={{ fontSize: '13px', color: '#637381' }}>2024. 03. 15 17:16 </div>
+          <div style={{ fontSize: '13px', color: '#637381' }}>{time}</div>
           <div style={{ flexDirection: 'row', display: 'flex' }}>
             <AvatarGroup max={editorList.length} spacing={10}>
               {editorList.map((acc) => (
@@ -120,47 +150,60 @@ export default function ArticleTitle({ editorList, title, user, setUser }) {
                 sx: { width: 140 },
               }}
             >
-              <MenuItem onClick={() => navigate('/blog')}>
-                <Iconify icon="eva:edit-fill" sx={{ mr: 2 }} />
-                Edit
-              </MenuItem>
-              <MenuItem onClick={() => deleteArticleToggle.toggle()} sx={{ color: 'error.main' }}>
-                <Iconify icon="eva:trash-2-outline" sx={{ mr: 2 }} />
-                Delete
-              </MenuItem>
-              <CustomModal
-                rightButton={'삭제'}
-                mode={'content'}
-                onClose={deleteArticleToggle.toggle}
-                contents={'게시글을 삭제하시겠습니까?'}
-                open={deleteArticleToggle.isOpen}
-                buttonAction={{ rightAction: null }}
-              />
-
-              <MenuItem onClick={() => reportArticleToggle.toggle()} sx={{ color: 'error.main' }}>
-                <Iconify icon="ph:siren-fill" sx={{ mr: 2 }} />
-                신고하기
-              </MenuItem>
-              <CustomModal
-                rightButton={'신고'}
-                mode={'content'}
-                onClose={reportArticleToggle.toggle}
-                contents={'신고하시겠습니까?'}
-                open={reportArticleToggle.isOpen}
-                buttonAction={{ rightAction: reportToggle.toggle }}
-              />
-              <ReportModal
-                open={reportToggle.isOpen}
-                onClose={reportToggle.toggle}
-                buttonAction={() => alertToggle.toggle()}
-              />
-              <CustomModal
-                mode={'alert'}
-                open={alertToggle.isOpen}
-                onClose={alertToggle.toggle}
-                title={'게시글 신고'}
-                contents={'신고 되었습니다.'}
-              />
+              {editorList.some((acc) => acc.id === accountInfo.id) ? (
+                <>
+                  <MenuItem onClick={() => navigate(`/edit/${postId}`)}>
+                    <Iconify icon="eva:edit-fill" sx={{ mr: 2 }} />
+                    Edit
+                  </MenuItem>
+                  <MenuItem
+                    onClick={() => deleteArticleToggle.toggle()}
+                    sx={{ color: 'error.main' }}
+                  >
+                    <Iconify icon="eva:trash-2-outline" sx={{ mr: 2 }} />
+                    Delete
+                  </MenuItem>
+                  <CustomModal
+                    rightButton={'삭제'}
+                    mode={'content'}
+                    onClose={deleteArticleToggle.toggle}
+                    contents={'게시글을 삭제하시겠습니까?'}
+                    open={deleteArticleToggle.isOpen}
+                    buttonAction={{ rightAction: handleDeleteArticle }}
+                  />
+                </>
+              ) : (
+                <>
+                  <MenuItem
+                    onClick={() => reportArticleToggle.toggle()}
+                    sx={{ color: 'error.main' }}
+                  >
+                    <Iconify icon="ph:siren-fill" sx={{ mr: 2 }} />
+                    신고하기
+                  </MenuItem>
+                  <CustomModal
+                    rightButton={'신고'}
+                    mode={'content'}
+                    onClose={reportArticleToggle.toggle}
+                    contents={'신고하시겠습니까?'}
+                    open={reportArticleToggle.isOpen}
+                    buttonAction={{ rightAction: ReportArticle }}
+                  />
+                  <ReportModal
+                    open={reportToggle.isOpen}
+                    onClose={reportToggle.toggle}
+                    buttonAction={() => alertToggle.toggle()}
+                    setReportContent={setReportContent}
+                  />
+                  <CustomModal
+                    mode={'alert'}
+                    open={alertToggle.isOpen}
+                    onClose={alertToggle.toggle}
+                    title={'게시글 신고'}
+                    contents={'신고 되었습니다.'}
+                  />
+                </>
+              )}
             </Popover>
           </div>
         </div>

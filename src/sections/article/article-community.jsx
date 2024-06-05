@@ -13,6 +13,7 @@ import { useParams } from 'react-router-dom';
 import { GetArticleComment, PostComment } from 'src/api/comment.api';
 import { useAccountStore } from 'src/store/useAccountStore';
 import { useLikedPostStore } from 'src/store/useLikedPostStore';
+import { set } from 'lodash';
 // import { Comment } from './Comment';
 
 export default function ArticleCommunity({ views }) {
@@ -28,7 +29,6 @@ export default function ArticleCommunity({ views }) {
 
   const [likeUser, setLikeUser] = useState([]);
   const [commentList, setCommentList] = useState([]);
-  const [reCommentList, setReCommentList] = useState([]);
   const [content, setContent] = useState('');
 
   useEffect(() => {
@@ -55,8 +55,6 @@ export default function ArticleCommunity({ views }) {
 
   //댓글 추가
   const handleAddComment = () => {
-    console.log('댓글 추가 누름');
-
     PostComment(postId, null, content)
       .then((res) => {
         console.log('댓글 추가', res);
@@ -71,8 +69,23 @@ export default function ArticleCommunity({ views }) {
     setContent('');
   };
   //대댓글 추가
-  const handleAddReComment = () => {
-    setReCommentList([...reCommentList, { state: true }]);
+  const handleAddReComment = (index, parentId) => {
+    console.log('대댓글 추가 누름');
+    console.log('parentId', parentId);
+    const prevComment = commentList.slice(0, index + 1);
+    const nextComment = commentList.slice(index + 1);
+    setCommentList([
+      ...prevComment,
+      {
+        user_id: accountInfo.id,
+        body: content,
+        id: null,
+        updated_at: new Date(),
+        comment_id: parentId,
+        isDeleted: false,
+      },
+      ...nextComment,
+    ]);
   };
 
   //좋아요 추가
@@ -185,7 +198,7 @@ export default function ArticleCommunity({ views }) {
           endAdornment={
             <InputAdornment position="end">
               <Button
-                disabled={content === '' ? true : false}
+                disabled={content === '' && accountInfo.id === null ? true : false}
                 sx={modal_style.right_button}
                 onClick={handleAddComment}
               >
@@ -196,35 +209,37 @@ export default function ArticleCommunity({ views }) {
         />
       </div>
 
-      {commentList.map((comment, index) => (
-        <>
-          <ArticleComment
-            key={index}
-            commentId={comment.id}
-            id={comment.user_id}
-            body={comment.body}
-            updated_at={comment.updated_at}
-            func={handleAddReComment}
-            isDeleted={comment.isDeleted}
-          />
-          <Divider style={{ margin: 1 }} />
-          {reCommentList.map((reComment, index) => (
-            <>
-              {reComment.state ? (
-                <ReComment state={reComment.state} />
-              ) : (
-                <ReComment
+      {commentList &&
+        commentList.map((comment, index) => (
+          <>
+            {comment.id === comment.comment_id ? (
+              <>
+                <ArticleComment
                   key={index}
-                  content={reComment.content}
-                  time={reComment.time}
-                  exist={reComment.exist}
+                  id={comment.id}
+                  commentId={comment.comment_id}
+                  userId={comment.user_id}
+                  body={comment.body}
+                  updated_at={comment.updated_at}
+                  func={() => handleAddReComment(index, comment.comment_id)}
+                  isDeleted={comment.isDeleted}
                 />
-              )}
-              <Divider style={{ margin: 1 }} />
-            </>
-          ))}
-        </>
-      ))}
+              </>
+            ) : (
+              <ReComment
+                key={index}
+                id={comment.id}
+                commentId={comment.comment_id}
+                userId={comment.user_id}
+                body={comment.body}
+                updated_at={comment.updated_at}
+                isDeleted={comment.isDeleted}
+                exist={comment.id === null ? false : true}
+              />
+            )}
+            <Divider style={{ margin: 1 }} />
+          </>
+        ))}
     </div>
   );
 }

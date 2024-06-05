@@ -33,7 +33,7 @@ const modal_style = {
   flexDirection: 'column',
 };
 
-export default function ReportModal({ open, onClose, buttonAction }) {
+export default function ReportModal({ open, onClose, buttonAction, setReportContent }) {
   const [selectedCaseIndex, setSelectedCaseIndex] = useState(null);
 
   const handleCheckboxChange = (index) => {
@@ -43,6 +43,7 @@ export default function ReportModal({ open, onClose, buttonAction }) {
       setSelectedCaseIndex(null); // Deselect if the same checkbox is clicked again
     } else {
       setSelectedCaseIndex(index); // Select the clicked checkbox
+      setReportContent(reportCases[index]);
     }
     console.log('selectedCaseIndex:', selectedCaseIndex);
   };

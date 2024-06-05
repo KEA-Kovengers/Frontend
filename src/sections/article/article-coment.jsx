@@ -16,13 +16,22 @@ import { ko } from 'date-fns/locale';
 import { DeleteComment } from 'src/api/comment.api';
 import { useAccountStore } from 'src/store/useAccountStore';
 
-export default function ArticleComment({ commentId, id, body, updated_at, func, isDeleted }) {
+export default function ArticleComment({
+  userId,
+  commentId,
+  id,
+  body,
+  updated_at,
+  func,
+  isDeleted,
+}) {
   const navigate = useNavigate();
   const reportToggle = useToggle();
   const alertToggle = useToggle();
   const { accountInfo } = useAccountStore();
 
   const [open, setOpen] = useState(null);
+  const [reportContent, setReportContent] = useState('');
 
   const handleOpenMenu = (event) => {
     setOpen(event.currentTarget);
@@ -31,7 +40,7 @@ export default function ArticleComment({ commentId, id, body, updated_at, func, 
   const [userInfo, setUserInfo] = useState({});
 
   useEffect(() => {
-    GetUserInfo(id).then((res) => {
+    GetUserInfo(userId).then((res) => {
       // console.log('유저 정보', res.data.result);
       setUserInfo(res.data.result);
     });
@@ -102,7 +111,7 @@ export default function ArticleComment({ commentId, id, body, updated_at, func, 
         >
           <div
             style={{ flexDirection: 'row', display: 'flex', cursor: 'pointer' }}
-            onClick={() => navigate(`/user/${id}`)}
+            onClick={() => navigate(`/user/${userId}`)}
           >
             <Avatar
               src={userInfo.profileImg}
@@ -122,7 +131,7 @@ export default function ArticleComment({ commentId, id, body, updated_at, func, 
             </div>
           </div>
           <div>
-            {id === accountInfo.id && (
+            {userId === accountInfo.id && !isDeleted && (
               <span
                 style={{ fontSize: '11px', cursor: 'pointer', marginRight: 8 }}
                 onClick={handleOpenModalClick}
@@ -130,7 +139,10 @@ export default function ArticleComment({ commentId, id, body, updated_at, func, 
                 삭제
               </span>
             )}
-            <span style={{ fontSize: '11px', cursor: 'pointer' }} onClick={handleAddReComment}>
+            <span
+              style={{ fontSize: '11px', cursor: 'pointer' }}
+              onClick={() => handleAddReComment()}
+            >
               답글
             </span>
           </div>
@@ -140,7 +152,7 @@ export default function ArticleComment({ commentId, id, body, updated_at, func, 
             onClose={handleCloseModal}
             contents={'댓글을 삭제하시겠습니까?'}
             open={isDelModalOpen}
-            buttonAction={{ rightAction: handleDeleteComment }}
+            buttonAction={{ rightAction: () => handleDeleteComment() }}
           />
         </div>
         <div
@@ -167,7 +179,7 @@ export default function ArticleComment({ commentId, id, body, updated_at, func, 
             <div style={{ fontSize: '12px', color: '#637381', marginRight: 13 }}>
               {formatDate(updated_at)}
             </div>
-            {id !== accountInfo.id && (
+            {userId !== accountInfo.id && (
               <>
                 <span
                   style={{
@@ -191,6 +203,7 @@ export default function ArticleComment({ commentId, id, body, updated_at, func, 
                   open={reportToggle.isOpen}
                   onClose={reportToggle.toggle}
                   buttonAction={() => alertToggle.toggle()}
+                  setReportContent={setReportContent}
                 />
                 <CustomModal
                   mode={'alert'}
