@@ -22,14 +22,17 @@ import { SetUpWebSocket } from 'src/api/posts.api';
 import { GetPostID } from 'src/api/posts.api';
 import { useAccountStore } from 'src/store/useAccountStore';
 
-// import { set } from 'lodash';
-import axios from 'axios';
-
 import { useEditStore } from 'src/store/useEditStore.js';
-import { set } from 'lodash';
 
 // 수정해야하는 부분: 블럭 삭제 버튼
-export default function MdEditorWithHeader({ postID, title, setTitle, tags, setTags, onChangeContents }) {
+export default function MdEditorWithHeader({
+  postID,
+  title,
+  setTitle,
+  tags,
+  setTags,
+  onChangeContents,
+}) {
   const { accountInfo } = useAccountStore();
   const userID = accountInfo.id;
 
@@ -42,17 +45,15 @@ export default function MdEditorWithHeader({ postID, title, setTitle, tags, setT
   const editorRef1 = useRef(null);
   const editorRef2 = useRef(null);
 
-  const {
-    editorHtml1, editorHtml2,
-    updateEditorHtml1, updateEditorHtml2,
-  } =
-    useEditStore((state) => ({
+  const { editorHtml1, editorHtml2, updateEditorHtml1, updateEditorHtml2 } = useEditStore(
+    (state) => ({
       editorHtml1: state.editInfo.editorHtml1,
       editorHtml2: state.editInfo.editorHtml2,
 
       updateEditorHtml1: state.updateEditInfo.bind(null, 'editorHtml1'),
       updateEditorHtml2: state.updateEditInfo.bind(null, 'editorHtml2'),
-    }));
+    })
+  );
 
   const { setEditorRef1, setEditorRef2 } = useEditStore();
 
@@ -114,7 +115,6 @@ export default function MdEditorWithHeader({ postID, title, setTitle, tags, setT
 
     console.log('tags', tags);
   };
-
 
   // ai 태그 생성 버튼 클릭 시 실행되는 함수
   const handleAiTagClick = () => {
@@ -182,7 +182,6 @@ export default function MdEditorWithHeader({ postID, title, setTitle, tags, setT
 
     // 웹소켓 연결 이벤트 정의
     client.onConnect = (frame) => {
-
       console.log('Connected: ' + frame);
 
       const destination = `/exchange/${postID}/fanout`;
@@ -213,7 +212,7 @@ export default function MdEditorWithHeader({ postID, title, setTitle, tags, setT
           receiveDeleteBlock(response.result);
         }
 
-        console.log("Received: " + greeting.body);
+        console.log('Received: ' + greeting.body);
       });
     };
 
@@ -238,14 +237,11 @@ export default function MdEditorWithHeader({ postID, title, setTitle, tags, setT
     setStompClient(client);
   }, [postID]);
 
-
   // contents 배열이 업데이트될 때마다 실행되는 useEffect
   useEffect(() => {
     console.log(contents.length);
     console.log('useEffect triggered with contents:', contents);
-
   }, [contents]);
-
 
   // 블록 데이터를 저장
   const storeBlockData = (blockList) => {
@@ -253,7 +249,7 @@ export default function MdEditorWithHeader({ postID, title, setTitle, tags, setT
     const ids = [];
     const contents = [];
 
-    blockList.forEach(block => {
+    blockList.forEach((block) => {
       ids.push(block.id);
       contents.push(block.content);
     });
@@ -267,7 +263,6 @@ export default function MdEditorWithHeader({ postID, title, setTitle, tags, setT
 
   // 블럭 생성 요청 정의
   const createBlock = () => {
-
     stompClient.publish({
       destination: `/app/createBlock/${postID}`,
       body: JSON.stringify({
@@ -281,14 +276,14 @@ export default function MdEditorWithHeader({ postID, title, setTitle, tags, setT
           // 'content': blockContents.toString(), // array to string 필요
           blockParent: {
             type: 'testType',
-            page_id: 'testPageId'
+            page_id: 'testPageId',
           },
           created_by: {
             creator_id: userID,
-            created_at: new Date().toISOString()
-          }
-        }
-      })
+            created_at: new Date().toISOString(),
+          },
+        },
+      }),
     });
   };
 
@@ -296,23 +291,30 @@ export default function MdEditorWithHeader({ postID, title, setTitle, tags, setT
   const receiveCreateBlock = (dto) => {
     console.log('receiveCreateBlock:', dto);
 
-    setBlockIds(prev => [...prev.slice(0, dto.position), dto.blockDTO.id, ...prev.slice(dto.position)]);
-    setBlockContents(prev => [...prev.slice(0, dto.position), dto.blockDTO.content, ...prev.slice(dto.position)]);
+    setBlockIds((prev) => [
+      ...prev.slice(0, dto.position),
+      dto.blockDTO.id,
+      ...prev.slice(dto.position),
+    ]);
+    setBlockContents((prev) => [
+      ...prev.slice(0, dto.position),
+      dto.blockDTO.content,
+      ...prev.slice(dto.position),
+    ]);
     setArticleVersion(dto.articleVersion);
 
     // blockId 상태 변수 업데이트
     // setBlockIds(dto.blockDTO.id);
   };
 
-
   // 블럭 내용 업데이트 요청 정의
-  const updateBlock = (operationType) => {
+  const updateBlock = (operationType, blockId, position, content) => {
     // const blockId = document.getElementById('n_block1').value;
     // const blockContent = document.getElementById('block_content').value;
     // const textPosition = document.getElementById('text_position').value;
     // blockId 상태 변수 사용
-    let entityType = "";
-    let operationType2 = "";
+    let entityType = '';
+    let operationType2 = '';
 
     // 텍스트 삽입, 삭제, 태그 명령에 따라 entityType와 operationType2를 정의
 
@@ -334,28 +336,28 @@ export default function MdEditorWithHeader({ postID, title, setTitle, tags, setT
 
     // 서버에 메세지 발행
     //URL과 DTO는 노션의 명세서 참고  // blockIds 배열의 첫 번째 ID만 업데이트
-    const blockId = blockIds[0];
+    // const blockId = blockId;
 
-    console.log('blockIds: ', blockIds);
+    // console.log('blockIds: ', blockIds);
 
     stompClient.publish({
       destination: `/app/updateBlock/${postID}`,
       body: JSON.stringify({
-        'uuid': 'testtest',
-        'userID': userID,
-        'dto': {
-          'blockId': blockId,
-          'articleVersion': articleVersion,
-          'entityType': entityType,
-          'operationType': operationType2,
-          'position': 1,
-          'content': editorHtml1, // 에디터의 내용을 content로 사용
-          'updated_by': {
-            'updater_id': userID,
-            'updated_at': new Date().toISOString()
-          }
-        }
-      })
+        uuid: 'testtest',
+        userID: userID,
+        dto: {
+          blockId: blockId,
+          articleVersion: articleVersion,
+          entityType: entityType,
+          operationType: operationType2,
+          position: 1,
+          content: content, // 에디터의 내용을 content로 사용
+          updated_by: {
+            updater_id: userID,
+            updated_at: new Date().toISOString(),
+          },
+        },
+      }),
     });
 
     // // blockIds 배열의 각 ID를 개별적으로 업데이트
@@ -404,8 +406,6 @@ export default function MdEditorWithHeader({ postID, title, setTitle, tags, setT
     // });
   };
 
-
-
   // 블럭 업데이트 메세지 수신 및 로직 정의
   const receiveUpdateBlock = (dto) => {
     console.log('receiveUpdateBlock:', dto);
@@ -418,7 +418,7 @@ export default function MdEditorWithHeader({ postID, title, setTitle, tags, setT
     // 업데이트 메소드에 따라 다른 작업 수행
     // TAG는 블록 내용을 완전히 교체함
     if (dto.entityType === 'TAG') {
-      setBlockContents(prev => {
+      setBlockContents((prev) => {
         const newContents = [...prev];
         newContents[index] = dto.content;
         return newContents;
@@ -428,7 +428,7 @@ export default function MdEditorWithHeader({ postID, title, setTitle, tags, setT
     // position변수는 충돌이 발생하면 서버에서 OT알고리즘으로 적절히 수정해주기때문에
     // position 위치에 content를 입력하면 된다.
     else if (dto.operationType === 'INSERT') {
-      setBlockContents(prev => {
+      setBlockContents((prev) => {
         const newContents = [...prev];
         newContents[index] = (newContents[index] || '') + dto.content;
         return newContents;
@@ -437,9 +437,11 @@ export default function MdEditorWithHeader({ postID, title, setTitle, tags, setT
     // DELTE는 블록 내용에서 삭제함
     // position위치로부터 content길이만큼 삭제하면 된다.
     else if (dto.operationType === 'DELETE') {
-      setBlockContents(prev => {
+      setBlockContents((prev) => {
         const newContents = [...prev];
-        newContents[index] = newContents[index].slice(0, dto.position) + newContents[index].slice(dto.position + dto.content.length);
+        newContents[index] =
+          newContents[index].slice(0, dto.position) +
+          newContents[index].slice(dto.position + dto.content.length);
         return newContents;
       });
     }
@@ -454,10 +456,10 @@ export default function MdEditorWithHeader({ postID, title, setTitle, tags, setT
     stompClient.publish({
       destination: `/app/deleteBlock/${postID}`,
       body: JSON.stringify({
-        'uuid': 'testtest',
-        'userID': userID,
-        'dto': id
-      })
+        uuid: 'testtest',
+        userID: userID,
+        dto: id,
+      }),
     });
   };
 
@@ -465,8 +467,8 @@ export default function MdEditorWithHeader({ postID, title, setTitle, tags, setT
   const receiveDeleteBlock = (dto) => {
     console.log('receiveDeleteBlock:', dto);
     setArticleVersion(dto.articleVersion);
-    setBlockIds(prev => prev.filter(id => id !== dto.blockId));
-    setBlockContents(prev => prev.filter((_, index) => index !== blockIds.indexOf(dto.blockId)));
+    setBlockIds((prev) => prev.filter((id) => id !== dto.blockId));
+    setBlockContents((prev) => prev.filter((_, index) => index !== blockIds.indexOf(dto.blockId)));
   };
 
   /*----------------------------------------------------------*/
@@ -490,7 +492,6 @@ export default function MdEditorWithHeader({ postID, title, setTitle, tags, setT
     editorInstance.setMarkdown('');
     setEditingIndex(null);
 
-
     // updateBlock('INSERT');
   };
 
@@ -502,8 +503,8 @@ export default function MdEditorWithHeader({ postID, title, setTitle, tags, setT
     // Remove the content from the contents array based on editingIndex
     // setContents(prevContents => prevContents.filter((_, idx) => idx !== editingIndex));
     setEditingIndex(null); // Reset the editing index
-    setBlockContents(prev => prev.filter((_, idx) => idx !== index));
-  }
+    setBlockContents((prev) => prev.filter((_, idx) => idx !== index));
+  };
 
   // 취소 버튼 클릭 시 실행되는 함수
   const handleCancelButtonClick = () => {
@@ -546,20 +547,88 @@ export default function MdEditorWithHeader({ postID, title, setTitle, tags, setT
   // 에디터에 작성하면 한 글자씩 마크다운이 적용되어 콘솔에 출력
   const onChange = () => {
     if (editorRef1.current) {
-      const editorHtml1 = editorRef1.current.getInstance().getMarkdown();
+      console.log('----------');
+      console.log('원래 editorHtml1:', editorHtml1);
+      const content = editorRef1.current.getInstance().getMarkdown();
+
+      // let eventType = '';
+      // window.onkeydown = (e) => {
+      //   eventType = e.key;
+      //   console.log('eventType:', eventType);
+      // };
+      // if (content.length === editorHtml1.length + 1) {
+      //   console.log('한 글자 추가');
+      //   if (eventType === 'ArrowRight') {
+      //     console.log('맨끝 한글자 추가', content[content.length - 1]);
+      //   } else {
+      //     const addedContent = content[editorHtml1.length - 1];
+      //     console.log('한글자:', addedContent);
+      //   }
+      // } else if (content.length > editorHtml1.length) {
+      //   // 새로운 글자가 추가되었을 때
+      //   console.log('새로운 글자 추가');
+      //   const addedContent = content.slice(editorHtml1.length);
+      //   console.log('addedContent:', addedContent);
+
+      //   updateBlock('INSERT');
+      // } else if (content.length < editorHtml1.length) {
+      //   // 글자가 삭제되었을 때
+      //   console.log('글자 삭제');
+      //   const deletedContent = editorHtml1.slice(content.length);
+      //   console.log('deletedContent:', deletedContent);
+
+      //   updateBlock('DELETE');
+      // }
       updateEditorHtml1(editorRef1.current.getInstance().getMarkdown());
-      console.log('editorHtml1:', editorHtml1);
+      // console.log('이후 editorHtml1: ', content);
 
       // updateBlock('INSERT');
-    }
-    else if (editorRef2.current) {
-      const editorHtml2 = editorRef2.current.getInstance().getMarkdown();
+    } else if (editorRef2.current) {
+      console.log('----------');
+      // console.log('원래 editorHtml2:', editorHtml2);
+      const after = editorRef2.current.getInstance().getMarkdown();
+
+      // window.onkeydown = (e) => {
+      //   // console.log(e.key);
+      //   if (e.key === 'ArrowRight') {
+      //     console.log('맨끝 한글자 추가', after[after.length - 1]);
+      //   }
+      // };
+      // if (after.length === editorHtml2.length + 1) {
+      //   if (editorHtml2.length !== 0) {
+      //     console.log('한 글자 추가');
+      //     const addedContent = after.slice(editorHtml2.length);
+      //     console.log('addedContent:', addedContent);
+      //   } else {
+      //     window.onkeydown = (e) => {
+      //       // console.log(e.key);
+      //       if (e.key === 'ArrowRight') {
+      //         console.log('맨끝 한글자 추가', after[after.length - 1]);
+      //       }
+      //     };
+      //   }
+      // } else if (after.length > editorHtml2.length && editorHtml2.length !== 0) {
+      //   // 새로운 글자가 추가되었을 때
+      //   console.log('새로운 글자 추가');
+      //   const addedContent = after.slice(editorHtml2.length);
+      //   console.log('addedContent:', addedContent);
+
+      //   updateBlock('INSERT');
+      // } else if (after.length < editorHtml2.length) {
+      //   // 글자가 삭제되었을 때
+      //   console.log('글자 삭제');
+      //   const deletedContent = editorHtml2.slice(after.length);
+      //   console.log('deletedContent:', deletedContent);
+
+      //   updateBlock('DELETE');
+      // }
+
       updateEditorHtml2(editorRef2.current.getInstance().getMarkdown());
-      console.log('editorHtml2: ', editorHtml2);
+      // console.log('이후 editorHtml2: ', editorHtml2);
 
       // updateBlock('INSERT');
     }
-  }
+  };
 
   /*----------------------------------------------------------*/
 
@@ -586,7 +655,9 @@ export default function MdEditorWithHeader({ postID, title, setTitle, tags, setT
           color: '#000',
         }}
       />
-      <hr style={{ width: '5%', margin: '6px 0', borderTop: '3px solid black', marginLeft: '0.8%' }} />
+      <hr
+        style={{ width: '5%', margin: '6px 0', borderTop: '3px solid black', marginLeft: '0.8%' }}
+      />
       <div style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
         {tags.map((tag, index) => (
           <div
@@ -635,14 +706,10 @@ export default function MdEditorWithHeader({ postID, title, setTitle, tags, setT
             fontSize: '18px',
             display: 'flex',
             gap: 1,
-          }}>
-          <Iconify
-            icon="fa6-solid:hashtag"
-            sx={{ width: '25px', height: '25px' }}
-          />
-          <Typography variant="body1">
-            AI 태그
-          </Typography>
+          }}
+        >
+          <Iconify icon="fa6-solid:hashtag" sx={{ width: '25px', height: '25px' }} />
+          <Typography variant="body1">AI 태그</Typography>
         </Button>
       </div>
 
@@ -658,7 +725,6 @@ export default function MdEditorWithHeader({ postID, title, setTitle, tags, setT
               <Editor
                 previewStyle="vertical"
                 initialValue={blockContents[index]}
-
                 toolbarItems={toolbar}
                 height="300px"
                 plugins={[colorSyntax, [codeSyntaxHighlight, { highlighter: Prism }]]}
@@ -683,7 +749,7 @@ export default function MdEditorWithHeader({ postID, title, setTitle, tags, setT
                     } catch (error) {
                       console.error('Failed to upload image', error);
                     }
-                  }
+                  },
                 }}
               />
               <Box sx={{ display: 'flex', justifyContent: 'center' }}>
@@ -736,109 +802,11 @@ export default function MdEditorWithHeader({ postID, title, setTitle, tags, setT
               </Box>
             </Stack>
           ) : (
-
             // 마크다운 형식으로 작성한 글 보기
             <Viewer initialValue={blockContents[index]} />
-
           )}
         </Box>
       ))}
-      {/* {contents.map((content, index) => (
-        <Box
-          key={index}
-          sx={{ marginBottom: '10px', position: 'relative', cursor: 'pointer' }}
-          onClick={() => index !== editingIndex && handleContentClick(index)} // 문장 클릭 시 편집 가능하도록 설정
-        >
-          {editingIndex === index ? (
-            <Stack>
-              <Editor
-                previewStyle="vertical"
-                initialValue={content}
-                placeholder="글을 작성해 주세요"
-                toolbarItems={toolbar}
-                height="300px"
-                plugins={[colorSyntax, [codeSyntaxHighlight, { highlighter: Prism }]]}
-                ref={editorRef2}
-                onChange={onChange}
-                hooks={{
-                  addImageBlobHook: async (blob, callback) => {
-                    console.log(blob);
-
-                    const formData = new FormData();
-                    formData.append('files', blob);
-
-                    console.log(callback);
-
-                    try {
-                      const response = await PostObjectUpload(formData);
-                      console.log('md-editor: ', response);
-
-                      const imageUrl = response.data;
-                      console.log('upload response: ', imageUrl);
-                      callback(imageUrl, 'Uploaded image');
-                    } catch (error) {
-                      console.error('Failed to upload image', error);
-                    }
-                  }
-                }}
-              />
-              <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-                <Button
-                  onClick={handleDeleteButtonClick}
-                  sx={{
-                    width: 20,
-                    height: 25,
-                    bgcolor: '#1A2CDD',
-                    borderRadius: 3,
-                    color: 'white',
-                    margin: '8px',
-                  }}
-                >
-                  <Typography variant="body1" sx={{ fontSize: '12px' }}>
-                    삭제
-                  </Typography>
-                </Button>
-                <Button
-                  onClick={handleCancelButtonClick}
-                  sx={{
-                    width: 20,
-                    height: 25,
-                    border: '2px solid #E3E6FF',
-                    borderRadius: 3,
-                    color: 'black',
-                    margin: '8px',
-                    marginRight: '3px',
-                  }}
-                >
-                  <Typography variant="body1" sx={{ fontSize: '12px' }}>
-                    취소
-                  </Typography>
-                </Button>
-                <Button
-                  onClick={() => handleEditComplete()}
-                  sx={{
-                    width: 20,
-                    height: 25,
-                    bgcolor: '#1A2CDD',
-                    borderRadius: 3,
-                    color: 'white',
-                    margin: '8px',
-                  }}
-                >
-                  <Typography variant="body1" sx={{ fontSize: '12px' }}>
-                    완료
-                  </Typography>
-                </Button>
-              </Box>
-            </Stack>
-          ) : (
-
-            // 마크다운 형식으로 작성한 글 보기
-            <Viewer initialValue={content} />
-
-          )}
-        </Box>
-      ))} */}
 
       {/* 편집할 때, 에디터 컴포넌트 (취소,완료 버튼 있는) */}
 
@@ -847,13 +815,11 @@ export default function MdEditorWithHeader({ postID, title, setTitle, tags, setT
           <Editor
             previewStyle="vertical"
             initialEditType="markdown"
-
             toolbarItems={toolbar}
             height="300px"
             plugins={[colorSyntax, [codeSyntaxHighlight, { highlighter: Prism }]]}
             ref={editorRef1}
             onChange={onChange}
-
             hooks={{
               addImageBlobHook: async (blob, callback) => {
                 console.log(blob);
@@ -873,11 +839,10 @@ export default function MdEditorWithHeader({ postID, title, setTitle, tags, setT
                 } catch (error) {
                   console.error('Failed to upload image', error);
                 }
-              }
+              },
             }}
           />
           <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-
             <Button
               onClick={() => {
                 handleCompleteButtonClick();
@@ -899,7 +864,6 @@ export default function MdEditorWithHeader({ postID, title, setTitle, tags, setT
           </Box>
         </>
       )}
-
     </div>
   );
 }
