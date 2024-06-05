@@ -151,7 +151,7 @@ export default function ArticleTitle({ editorList, title, user, setUser, time })
             >
               {editorList.some((acc) => acc.id === accountInfo.id) ? (
                 <>
-                  <MenuItem onClick={() => navigate(`/edit/${postId}`)}>
+                  <MenuItem onClick={() => navigate(`/createEditSession/${postId}`)}>
                     <Iconify icon="eva:edit-fill" sx={{ mr: 2 }} />
                     Edit
                   </MenuItem>
