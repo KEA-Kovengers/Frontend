@@ -355,7 +355,6 @@ const handleTitleChange = (event) => {
         }
       })
     });
-    // console.log('업데이트 블록 속 blockId: ', blockId);
 
     // // blockIds 배열의 각 ID를 개별적으로 업데이트
     // blockIds.forEach((blockId) => {
@@ -403,7 +402,7 @@ const handleTitleChange = (event) => {
     // });
   };  
 
-  
+
 
   // 블럭 업데이트 메세지 수신 및 로직 정의
   const receiveUpdateBlock = (dto) => {
