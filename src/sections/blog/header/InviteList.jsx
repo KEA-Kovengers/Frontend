@@ -70,15 +70,20 @@ import { Button } from '@mui/material';
 import Scrollbar from 'src/components/scrollbar';
 import { useParams } from 'react-router-dom';
 import { PostAddEditor } from 'src/api/editor.api';
+import { useNavigate } from 'react-router-dom';
 // ----------------------------------------------------------------------
 
-export default function InviteList({ friends }) {
+export default function InviteList({ friends, postID }) {
     const params = useParams();
-    const postId = Number(params.id);
-    const inviteUser = (postId, userID) => {
-        PostAddEditor(postId, userID).then((res) => {
+    // const postId = Number(params.id);
+    const navigate = useNavigate();
+    const inviteUser = (postID, userID) => {
+        console.log('postID:', postID);
+        console.log('userID:', userID);
+        PostAddEditor(postID, userID).then((res) => {
             console.log(res);
-            window.location.reload();
+            // window.location.reload();
+            navigate(`/createEditSession/${postID}`);
         }
         ).catch((err) => {
             console.log(err);
@@ -121,7 +126,7 @@ export default function InviteList({ friends }) {
                             />
                             <p style={{ width: '100px' }}>{friend.nickName}</p>
                         </div>
-                        <Button sx={invite_button} onClick={inviteUser(postId, friend.userID)}>초대</Button>
+                        <Button sx={invite_button} onClick={() => inviteUser(postID, friend.userID)}>초대</Button>
                     </div>
                 ))}
             </div>
