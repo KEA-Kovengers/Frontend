@@ -33,38 +33,33 @@ export default function BlogView2() {
 
     const headerHeight = HEADER.H_MOBILE;
     const globalTheme = useTheme();
-    const getDetail = () => {
-        GetPostDetail(postId).then((res) => {
-            console.log('getDetail', res);
-            setArticleTitle(res.data.result.title);
-            setHashtagsList(res.data.result.hashtags);
-            setBlockIds(res.data.result.blockList);
-        }
-        ).catch((err) => {
-            console.log(err);
-        })
-    }
-    const fetchData = async () => {
-        try {
-            const response = await axios.get(`http://localhost:8080/posts/${articleID}`,
-                {
-                    headers: {
-                        'Authorization': 'Bearer ' + accessToken,
-                    }
-                });
-            const json = response.data;
-            if (json.isSuccess) {
-                setArticleTitle(json.result.title);
-                setHashtagsList(json.result.hashtags);
-                setArticleVersion(json.result.articleVersion);
-                storeBlockData(json.result.blockList);
-            } else {
-                throw new Error('API response was not successful');
-            }
-        } catch (error) {
-            console.error('There has been a problem with your fetch operation:', error);
-        }
-    };
+    // const getDetail = () => {
+    //     return GetPostDetail(postId).then((res) => {
+    //         console.log('getDetail', res);
+    //         // setArticleTitle(res.data.result.title);
+    //         // setHashtagsList(res.data.result.hashtags);
+    //         // setBlockIds(res.data.result.blockList);
+    //     }
+    //     ).catch((err) => {
+    //         console.log(err);
+    //     })
+    // }
+    // const fetchData = async () => {
+    //     try {
+    //         const response = getDetail;
+    //         const json = response.data;
+    //         if (json.isSuccess) {
+    //             setArticleTitle(json.result.title);
+    //             setHashtagsList(json.result.hashtags);
+    //             setArticleVersion(json.result.articleVersion);
+    //             storeBlockData(json.result.blockList);
+    //         } else {
+    //             throw new Error('API response was not successful');
+    //         }
+    //     } catch (error) {
+    //         console.error('There has been a problem with your fetch operation:', error);
+    //     }
+    // };
     const lgUp = useResponsive('up', 'lg');
 
     // articleID 고정
@@ -143,6 +138,7 @@ export default function BlogView2() {
     useEffect(() => {
         // console.log('editpost');
         GetEditorlist();
+
     }, [postId]);
 
     const renderContent = (
