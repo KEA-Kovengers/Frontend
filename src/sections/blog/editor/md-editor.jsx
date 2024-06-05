@@ -25,7 +25,7 @@ import { GetPostID } from 'src/api/posts.api';
 import axios from 'axios';
 
 import { useEditStore } from 'src/store/useEditStore.js';
-import { set } from 'lodash';
+import { cond, set } from 'lodash';
 
 // 수정해야하는 부분: 블럭 삭제 버튼
 export default function MdEditorWithHeader({ userID, postID, title, setTitle, tags, setTags, onChangeContents }) {
@@ -297,8 +297,11 @@ const handleTitleChange = (event) => {
     setArticleVersion(dto.articleVersion);
 
     // blockId 상태 변수 업데이트
-    setBlockId(dto.blockDTO.id);
+    // setBlockId(dto.blockDTO.id);
   };
+
+  console.log('생성된 블럭 아이디: ',blockIds);
+  console.log('생성된 블럭 내용: ',blockContents);
 
 
   // 블럭 내용 업데이트 요청 정의
@@ -307,7 +310,7 @@ const handleTitleChange = (event) => {
     // const blockContent = document.getElementById('block_content').value;
     // const textPosition = document.getElementById('text_position').value;
     // blockId 상태 변수 사용
-    let entityId = blockId;
+    // let entityId = blockId;
     let entityType = "";
     let operationType2 = "";
 
@@ -331,7 +334,7 @@ const handleTitleChange = (event) => {
 
     // 서버에 메세지 발행
     //URL과 DTO는 노션의 명세서 참고  // blockIds 배열의 첫 번째 ID만 업데이트
-    // const blockId = blockIds[0];
+    const blockId = blockIds[0];
     
     console.log('blockIds: ',blockIds);
 
@@ -341,8 +344,7 @@ const handleTitleChange = (event) => {
         'uuid': 'testtest',
         'userID': userID,
         'dto': {
-          // 'blockId': blockId,
-          'blockId' : entityId,
+          'blockId': blockId,
           'articleVersion': articleVersion,
           'entityType': entityType,
           'operationType': operationType2,
@@ -355,51 +357,6 @@ const handleTitleChange = (event) => {
         }
       })
     });
-
-    // // blockIds 배열의 각 ID를 개별적으로 업데이트
-    // blockIds.forEach((blockId) => {
-    //   stompClient.publish({
-    //     destination: `/app/updateBlock/${postID}`,
-    //     body: JSON.stringify({
-    //       'uuid': 'testtest',
-    //       'userID': userID,
-    //       'dto': {
-    //         'blockId': blockId, // 개별 블록 ID 사용
-    //         'articleVersion': articleVersion,
-    //         'entityType': entityType,
-    //         'operationType': operationType2,
-    //         'position': 1,
-    //         'content' : editorHtml1, // 에디터의 내용을 content로 사용
-    //         'updated_by': {
-    //           'updater_id': userID,
-    //           'updated_at': new Date().toISOString()
-    //         }
-    //       }
-    //     })
-    //   });
-    //   console.log('업데이트 블록 속 blockIds: ', blockIds);
-    //   console.log('업데이트 블록 속 blockId: ', blockId);
-    // });
-
-    // stompClient.publish({
-    //     destination: `/app/updateBlock/${postID}`,
-    //     body: JSON.stringify({
-    //         'uuid': 'testtest',
-    //         'userID': userID,
-    //         'dto': {
-    //             'blockId': blockIds.toString(),
-    //             'articleVersion': articleVersion,
-    //             'entityType': entityType,
-    //             'operationType': operationType2,
-    //             'position': 1,
-    //             'content': blockContents.toString(),
-    //             'updated_by': {
-    //                 'updater_id': userID,
-    //                 'updated_at': new Date().toISOString()
-    //             }
-    //         }
-    //     })
-    // });
   };  
 
 
@@ -543,14 +500,14 @@ const handleTitleChange = (event) => {
       if (editorRef1.current) {
         const editorHtml1 = editorRef1.current.getInstance().getMarkdown();
         updateEditorHtml1(editorRef1.current.getInstance().getMarkdown());
-        console.log('editorHtml1:', editorHtml1);
+        // console.log('editorHtml1:', editorHtml1);
 
         // updateBlock('INSERT');
       }
       else if (editorRef2.current) {
         const editorHtml2 = editorRef2.current.getInstance().getMarkdown();
         updateEditorHtml2(editorRef2.current.getInstance().getMarkdown());
-        console.log('editorHtml2: ',editorHtml2);
+        // console.log('editorHtml2: ',editorHtml2);
 
         // updateBlock('INSERT');
       }

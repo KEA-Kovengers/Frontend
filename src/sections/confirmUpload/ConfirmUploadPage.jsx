@@ -49,13 +49,21 @@ export default function ConfirmUploadPage() {
     }
   }
 
+  console.log('컨펌 썸네일 링크: ',thumbnailUrl);
+  // setThumbnailUrl(thumbnailUrl);
+
   // POST
   // MdEditorWithHeader에서 받은 제목,내용,해시태그로 완료 버튼을 누르면 /posts/editPost API 요청
   const editPost = async () => {
     try{
       const requestBody ={
         id: postID,
-        thumbnail: `${thumbnailUrl}`,
+        thumbnail: [
+        {
+          "url": "string",
+          "type": location.state.type
+        }
+      ],
         title: title,
         // body: "",
         // hashtags: tags,
@@ -78,10 +86,14 @@ export default function ConfirmUploadPage() {
   };
   
 
-  const handleComplete = () => {
-    navigate('/');
-    editPost();
-  }
+  const handleComplete = async () => {
+    try {
+      await editPost(); // await를 사용하여 editPost가 완료되기를 기다립니다.
+      navigate('/'); // editPost가 완료된 후에 navigate를 호출합니다.
+    } catch (error) {
+      console.error("There was an error completing the post upload: ", error);
+    }
+  };
 
   const renderHeader = (
     <Box

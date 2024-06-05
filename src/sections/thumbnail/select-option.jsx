@@ -58,8 +58,11 @@ export default function SelectOptionView() {
   const imageConfirmModalToggle = useToggle();
   const videoConfirmModalToggle = useToggle();
 
+  const [type, setType] = useState(''); // [type]
+
   const handleOpenModalClick = (option) => {
     if (option === 'image') {
+      setType('IMAGE');
       const input = document.createElement('input');
       input.type = 'file';
       input.accept = 'image/*';
@@ -102,6 +105,8 @@ export default function SelectOptionView() {
       input.click();
     }
     if (option === 'video') {
+      setType('VIDEO');
+
       const input = document.createElement('input');
       input.type = 'file';
       input.accept = 'video/*';
@@ -139,7 +144,8 @@ export default function SelectOptionView() {
           tags,
           thumbnail,
           thumbnailUrl,
-          postID
+          postID,
+          type
           // articleID 
         } 
       }
@@ -153,7 +159,8 @@ export default function SelectOptionView() {
           tags,
           thumbnail,
           thumbnailUrl,
-          postID
+          postID,
+          type
           // articleID 
         } 
       }

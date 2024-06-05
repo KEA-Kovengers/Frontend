@@ -21,37 +21,13 @@ const ScrollContainer = styled('div')({
   '&::-webkit-scrollbar': {
     display: 'none'
   },
-<<<<<<< HEAD
   height: '100vh', 
 });
 
-=======
-  height: '100vh',
-});
->>>>>>> 0b5ab7848e8e900c704edd0decdc63c78217827d
 
 // AppFilter 속 AppPost: filter가 바뀜에 따라 보여지는 컴포넌트도 달라짐
 export default function AppPost({ filter }) {
 
-<<<<<<< HEAD
-  // 필터와 컴포넌트를 매핑하는 객체
-  const filterComponentMap = {
-    0: AppCard,
-    1: AppCard1,
-    2: AppCard2,
-    3: AppCard3,
-    // 추가된 필터에 맞는 컴포넌트를 추가
-    4: AppCard,
-    5: AppCard,
-    6: AppCard,
-  };
-
-  const Component = filterComponentMap[filter] || null;
-
-  return (
-    <ScrollContainer>
-        {Component && <Component />}
-=======
   useEffect(() => {
     console.log('filter', filter);
   }, []);
@@ -74,7 +50,6 @@ export default function AppPost({ filter }) {
   return (
     <ScrollContainer>
       {Component && <Component />}
->>>>>>> 0b5ab7848e8e900c704edd0decdc63c78217827d
     </ScrollContainer>
   );
 
