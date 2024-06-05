@@ -15,7 +15,12 @@ import AutoModal from '../modal/AutoModal';
 
 export const createIconElement = (iconSrc, iconWidth, onClick) => {
     const iconElement = document.createElement('span');
-    iconElement.style = 'cursor: pointer; vertical-align: top; ';
+    // iconElement.style = 'cursor: pointer; vertical-align: top; ';
+
+    iconElement.style.cursor = 'pointer';
+    iconElement.style.verticalAlign = 'top';
+    iconElement.style.padding = '18px'; // Add padding to the icon  
+
     const iconImg = document.createElement('img');
     iconImg.setAttribute('src', iconSrc);
     iconImg.setAttribute('width', iconWidth);

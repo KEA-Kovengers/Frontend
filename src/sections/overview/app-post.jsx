@@ -24,12 +24,6 @@ const ScrollContainer = styled('div')({
   height: '100vh', 
 });
 
-// AppPost 컴포넌트에 스타일을 적용
-const SnapElement = styled('div')({
-  scrollSnapAlign: 'center',
-  justifyContent: 'center', 
-  alignItems: 'center', 
-});
 
 // AppFilter 속 AppPost: filter가 바뀜에 따라 보여지는 컴포넌트도 달라짐
 export default function AppPost({ filter }) {
@@ -48,19 +42,9 @@ export default function AppPost({ filter }) {
 
   const Component = filterComponentMap[filter] || null;
 
-  const snapRef = useRef(null);
-
-  useEffect(() => {
-    if (snapRef.current) {
-      snapRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    }
-  }, [filter]);
-
   return (
     <ScrollContainer>
-      <SnapElement ref={snapRef}>
         {Component && <Component />}
-      </SnapElement>
     </ScrollContainer>
   );
 
