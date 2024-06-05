@@ -1,30 +1,16 @@
+// connectWebSocket.js
 import { Client } from '@stomp/stompjs';
-import Cookies from 'js-cookie';
 
-const connectWebSocket = (userId) => {
-    // // 쿠키에서 userId를 추출
-    // const tokenString = Cookies.get('token');
-    // let userId = null;
-    // if (tokenString) {
-    //   try {
-    //     const tokenData = JSON.parse(tokenString);
-    //     userId = tokenData.userId;
-    //     console.log('Extracted userId from cookie:', userId);
-    //   } catch (e) {
-    //     console.error('Error parsing token from cookie:', e);
-    //   }
-    // }
+const connectWebSocket = (userId, showModal) => {
   const client = new Client({
-    brokerURL: 'ws://newcord.kro.kr/notices/ws',
+    brokerURL: 'ws://newcord.kro.kr/notices/ws', // 로컬 개발 서버 주소 사용
   });
-
-  client.activate();
 
   client.onConnect = (frame) => {
     console.log('Connected: ' + frame);
-    client.subscribe(`/exchange/notice.exchange/notice.${userId}`, (notification) => {
-      console.log('Received notification:', notification);
-      showNotification(JSON.parse(notification.body));
+    client.subscribe(`/exchange/notice.exchange/notice.${userId}`, notification => {
+      const message = JSON.parse(notification.body);
+      showModal(message); // 메시지를 수신할 때 모달 창을 띄움
     });
   };
 
@@ -35,6 +21,8 @@ const connectWebSocket = (userId) => {
   client.onStompError = (frame) => {
     console.error('Broker connection error', frame);
   };
+
+  client.activate();
 };
 
 export default connectWebSocket;
