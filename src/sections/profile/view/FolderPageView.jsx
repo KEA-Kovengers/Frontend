@@ -159,7 +159,7 @@ export default function FolderPageView({ id, setId }) {
       )}
       {postList.map((article) => (
         <ProfileArticle
-          key={article.id}
+          id={article.id}
           thumbnail={article.thumbnail}
           title={article.title}
           content={article.body}
