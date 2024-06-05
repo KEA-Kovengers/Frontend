@@ -129,7 +129,7 @@ export default function ArticleCommunity({ views }) {
           width: 'auto',
         }}
       >
-        <IconButton onClick={handleLike}>
+        <IconButton onClick={handleLike} disabled={accountInfo.id === null}>
           <Iconify
             icon={like ? 'gridicons:heart' : 'ph:heart'}
             sx={{ width: '20px', height: '20px' }}
