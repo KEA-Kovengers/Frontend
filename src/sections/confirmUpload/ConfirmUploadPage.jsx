@@ -1,42 +1,32 @@
-import { useEffect,useState } from 'react';
-import PropTypes from "prop-types";
-
+import { useEffect, useState } from 'react';
 import Box from '@mui/material/Box';
-import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
-import IconButton from '@mui/material/IconButton';
 import Stack from '@mui/material/Stack';
-import AppCardImage from 'src/sections/overview/app-card-image';
-
 import Logo from 'src/components/logo';
-import Iconify from 'src/components/iconify';
-
 import { useNavigate, useLocation } from 'react-router-dom';
-
 import { useAccountStore } from 'src/store/useAccountStore';
-
 import UploadCardInfo from './UploadCardInfo';
 import { PostEdit } from "src/api/posts.api";
 
 // confirm/upload 페이지
 export default function ConfirmUploadPage() {
-
   const navigate = useNavigate();
-
   const location = useLocation();
+
   const [title, setTitle] = useState(location.state.title);
   const [tags, setTags] = useState(location.state.tags);
-  const [thumbnail, setThumbnail] = useState(location.state.thumbnail);
-  const [thumbnailUrl, setThumbnailUrl] = useState(location.state.thumbnailUrl);
-  const [ postID, setPostID ] = useState(location.state.postID);
+  const [thumbnailUrl, setThumbnailUrls] = useState(location.state.thumbnailUrl || []);
+  const [postID, setPostID] = useState(location.state.postID);
 
-  console.log('confirm-upload title: ',title);
-  console.log('confirm-upload tags: ',tags);
-  console.log('confirm-upload thumbnail Url: ',thumbnailUrl);
-  console.log('confirm-upload postID: ',postID);
 
+  // useEffect(() => {
+  //   console.log('confirm-upload title: ', title);
+  //   console.log('confirm-upload tags: ', tags);
+  //   console.log('confirm-upload thumbnail Urls: ', thumbnailUrl);
+  //   console.log('confirm-upload postID: ', postID);
+  // }, []);
   const { accountInfo } = useAccountStore();
 
   const item = {
@@ -45,43 +35,39 @@ export default function ConfirmUploadPage() {
       title: title,
       userName: accountInfo.blogName,
       hashtags: tags,
-      // date: '2024-03-15',
     }
-  }
+  };
 
-  // POST
-  // MdEditorWithHeader에서 받은 제목,내용,해시태그로 완료 버튼을 누르면 /posts/editPost API 요청
-  const editPost = async () => {
-    try{
-      const requestBody ={
+  const editPost = () => {
+
+    try {
+      const thumbnails = thumbnailUrl.map(url => ({ url, type: 'IMAGE' }));
+      console.log("===============");
+      console.log(postID);
+      const requestBody = {
         id: postID,
-        thumbnail: `${thumbnailUrl}`,
+        thumbnails: thumbnails,
         title: title,
-        // body: "",
-        // hashtags: tags,
         status: 'POST',
       };
-      const response = await PostEdit(requestBody);
+      const response = PostEdit(requestBody);
 
-      console.log('POST response: ',response);
-      console.log('confirm upload id: ',postID);
+      console.log('POST response: ', response);
+      console.log('confirm upload id: ', postID);
 
-      if(response.data && response.data.isSuccess) {
+      if (response.data) {
         console.log('Post created successfully');
-      }else {
-        console.error('API response was not successful');
-      } 
-    }
-    catch (error) {
+
+      }
+    } catch (error) {
       console.error("There has been a problem with your editPost fetch operation: ", error);
     }
   };
-  
 
   const handleComplete = () => {
-    navigate('/');
     editPost();
-  }
+    navigate('/');
+  };
 
   const renderHeader = (
     <Box
@@ -117,8 +103,22 @@ export default function ConfirmUploadPage() {
           }}
         >
           <div style={{ width: '55%', marginBottom: 20 }}>
-            {/* <img src={URL.createObjectURL(thumbnail)} alt="Thumbnail" /> */}
-            <img src={thumbnailUrl} alt="Thumbnail" />
+            {thumbnailUrl.length > 0 ? (
+              thumbnailUrl.map((url, index) => (
+                <img
+                  key={index}
+                  src={url}
+                  alt={`Thumbnail ${index + 1}`}
+                  style={{ width: '100%', marginBottom: 10 }}
+                  onError={(e) => {
+                    console.error(`Failed to load image at ${url}`);
+                    e.target.src = 'path/to/default-image.jpg'; // Fallback image
+                  }}
+                />
+              ))
+            ) : (
+              <Typography>No thumbnails available</Typography>
+            )}
             <UploadCardInfo info={[item.info]} />
           </div>
           <Typography sx={{ color: 'text.secondary' }}>위 게시물로 업로드 하겠습니까?</Typography>

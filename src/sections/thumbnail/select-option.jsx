@@ -29,7 +29,7 @@ export default function SelectOptionView() {
   const location = useLocation();
   const [title, setTitle] = useState(location.state.title);
   const [tags, setTags] = useState(location.state.tags);
-  const [postID, setPostID] = useState(location.state.postID);
+  const [postID, setPostID] = useState(location.state.postId);
 
   const [thumbnail, setThumbnail] = useState();
   const [thumbnailUrl, setThumbnailUrl] = useState([]);
@@ -146,6 +146,8 @@ export default function SelectOptionView() {
     );
   };
   const ConfirmFile = () => {
+
+
     navigate('/confirm-upload',
       {
         state: {
