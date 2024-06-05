@@ -47,6 +47,10 @@ export default function Router() {
       path: 'create-article',
       element: <BlogPage />,
     },
+    // {
+    //   path: `edit-article/:postID`,
+    //   element: <EditPage />,
+    // },
     {
       path: 'createEditSession/:id',
       element: <BlogPage2 />,

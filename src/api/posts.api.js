@@ -75,7 +75,7 @@ export const SetUpWebSocket = () => {
   }
 
   const client = new Client({
-    brokerURL: 'ws://newcord.kro.kr/ws',
+    brokerURL: 'ws://newcord.kro.kr/articles/ws',
     connectHeaders: {
       Authorization: `Bearer ${accessToken}`,
     },

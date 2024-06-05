@@ -31,8 +31,6 @@ export default function ConfirmUploadPage() {
   const [thumbnail, setThumbnail] = useState(location.state.thumbnail);
   const [thumbnailUrl, setThumbnailUrl] = useState(location.state.thumbnailUrl);
   const [ postID, setPostID ] = useState(location.state.postID);
-  // const postID = '1180';
-  // const articleID = '1';
 
   console.log('confirm-upload title: ',title);
   console.log('confirm-upload tags: ',tags);

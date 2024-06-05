@@ -26,6 +26,8 @@ import { styled } from 'styled-components';
 
 import { useEditStore } from 'src/store/useEditStore';
 
+import { PostObjectUpload } from 'src/api/posts.api';
+
 export default function CustomModalBig({
   leftButton,
   rightButton,
@@ -90,6 +92,34 @@ export default function CustomModalBig({
         });
     }
   };
+
+  // 이미지 url -> file 변환
+  // async function convertImgUrlToFile(imgUrl) {
+  //   const response = await fetch(imgUrl);
+  //   const blob = await response.blob();
+  //   const filename = imgUrl.substring(imgUrl.lastIndexOf('/') + 1);
+  //   const file = new File([blob], filename, { type: blob.type });
+  //   return file;
+  // }
+
+  // useEffect(() => {
+  //   if (imgUrl) {
+  //     convertImgUrlToFile(imgUrl)
+  //       .then((file) => {
+  //         console.log('Converted File:', file);
+  //         // 여기서 변환된 File 객체를 사용할 수 있습니다.
+
+  //         const response = PostObjectUpload(file);
+  //         console.log('response:', response);
+  //       })
+  //       .catch((error) => {
+  //         console.error('Error converting imgUrl to File:', error);
+  //       });
+    
+  // }
+
+  // }, [imgUrl]);
+
   //자동 완성 버튼
   const handleAutoComplete = () => {
     PostSummary(

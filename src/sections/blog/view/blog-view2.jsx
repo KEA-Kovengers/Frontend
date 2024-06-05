@@ -6,7 +6,7 @@ import { useResponsive } from 'src/hooks/use-responsive';
 import { HEADER } from '../../../layouts/dashboard/config-layout';
 import Logo from 'src/components/logo';
 import { useNavigate, useParams } from 'react-router-dom';
-
+import { GetPostDetail } from 'src/api/posts.api';
 import CollabProfile from '../header/collab-profile';
 import ModifyPopover from '../header/modify-popover';
 import InvitePopover from '../header/invite-popover';
@@ -21,12 +21,50 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { set } from 'lodash';
 
 export default function BlogView2() {
+
+    const [blockIds, setBlockIds] = useState([]);
+    const [blockContents, setBlockContents] = useState([]);
+    const [hastagsList, setHashtagsList] = useState([]);
+    const [stompClient, setStompClient] = useState(null);
+    const [articleTitle, setArticleTitle] = useState('title');
     const params = useParams();
     const postId = Number(params.id);
     const navigate = useNavigate();
 
     const headerHeight = HEADER.H_MOBILE;
     const globalTheme = useTheme();
+    const getDetail = () => {
+        GetPostDetail(postId).then((res) => {
+            console.log('getDetail', res);
+            setArticleTitle(res.data.result.title);
+            setHashtagsList(res.data.result.hashtags);
+            setBlockIds(res.data.result.blockList);
+        }
+        ).catch((err) => {
+            console.log(err);
+        })
+    }
+    const fetchData = async () => {
+        try {
+            const response = await axios.get(`http://localhost:8080/posts/${articleID}`,
+                {
+                    headers: {
+                        'Authorization': 'Bearer ' + accessToken,
+                    }
+                });
+            const json = response.data;
+            if (json.isSuccess) {
+                setArticleTitle(json.result.title);
+                setHashtagsList(json.result.hashtags);
+                setArticleVersion(json.result.articleVersion);
+                storeBlockData(json.result.blockList);
+            } else {
+                throw new Error('API response was not successful');
+            }
+        } catch (error) {
+            console.error('There has been a problem with your fetch operation:', error);
+        }
+    };
     const lgUp = useResponsive('up', 'lg');
 
     // articleID 고정
