@@ -73,7 +73,7 @@ export default function BlogView2() {
     const renderContent = (
         <Stack direction="row" alignItems="center" spacing={1}>
             <CollabProfile userInfo={userInfo} />
-            <InvitePopover />
+            <InvitePopover postID={postId} />
             <ModifyPopover />
         </Stack>
     );
