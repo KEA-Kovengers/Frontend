@@ -1,88 +1,77 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { fToNow } from 'src/utils/format-time';
-import { Typography, ListItemText, ListItemButton, ListItemAvatar, Avatar } from '@mui/material';
-import Iconify from 'src/components/iconify';
+import ListItem from '@mui/material/ListItem';
+import ListItemText from '@mui/material/ListItemText';
+import ListItemAvatar from '@mui/material/ListItemAvatar';
+import Avatar from '@mui/material/Avatar';
+import { ReadNotice } from 'src/api/notice.api';
 
-// 아바타, 알림 내용, 알림 생성 시간 형식 지정
-export default function NotificationsItem({ notification }) {
-
-    const { avatar, title } = renderContent(notification);
-
-    return (
-      <ListItemButton
-        sx={{
-          py: 1.5,
-          px: 2.5,
-          mt: '1px',
-          ...(notification.isUnRead && {
-            bgcolor: 'action.selected',
-          }),
-        }}
-      >
-        <ListItemAvatar>
-          <Avatar sx={{ bgcolor: 'background.neutral' }}>{avatar}</Avatar>
-        </ListItemAvatar>
-        <ListItemText
-          primary={title}
-          secondary={
-            <Typography
-              variant="caption"
-              sx={{
-                mt: 0.5,
-                display: 'flex',
-                alignItems: 'center',
-                color: 'text.disabled',
-              }}
-            >
-              <Iconify icon="eva:clock-outline" sx={{ mr: 0.5, width: 16, height: 16 }} />
-              {fToNow(notification.createdAt)}
-            </Typography>
-          }
-        />
-      </ListItemButton>
-    );
+function getMessage(notification) {
+  const { nickName, type } = notification;
+  switch (type) {
+    case 'INVITE':
+      return `${nickName}님이 공동작업자로 초대하였습니다.`;
+    case 'COMMENT':
+      return `${nickName}님이 댓글을 작성하였습니다.`;
+    case 'RECOMMENT':
+      return `${nickName}님이 대댓글을 작성하였습니다.`;
+    case 'LIKE':
+      return `${nickName}님이 좋아요를 눌렀습니다.`;
+    case 'FRIEND_REQUEST':
+      return `${nickName}님이 친구신청을 요청하였습니다.`;
+    case 'FREIEND_RESPONSE':
+      return `${nickName}님이 친구신청을 수락하였습니다.`;
+    default:
+      return '새로운 알림이 있습니다.';
+  }
 }
 
-// ----------------------------------------------------------------------
+export default function NotificationsItem({ notification, navigate }) {
+  const message = getMessage(notification);
 
-// 알림의 타입을 정의
-NotificationsItem.propTypes = {
-    notification: PropTypes.shape({
-      createdAt: PropTypes.instanceOf(Date),
-      id: PropTypes.string,
-      isUnRead: PropTypes.bool,
-      title: PropTypes.string,
-      description: PropTypes.string,
-      type: PropTypes.string,
-      avatar: PropTypes.any,
-    }),
+  const handleClick = async () => {
+    try {
+      if (notification.status === "NOT_READ") {
+        await ReadNotice(notification.id);
+      }
+      switch (notification.type) {
+        case 'INVITE':
+        case 'COMMENT':
+        case 'RECOMMENT':
+        case 'LIKE':
+          navigate(`/article/${notification.post_id}`);
+          break;
+        case 'FRIEND_REQUEST':
+        case 'FREIEND_RESPONSE':
+          navigate(`/user/${notification.from_id}`);
+          break;
+        default:
+          break;
+      }
+    } catch (error) {
+      console.error("Failed to handle notification click", error);
+    }
   };
-  
-// ----------------------------------------------------------------------
 
-function renderContent(notification) {
-// description 문자열의 최대 길이
-const maxLength = 35;
-
-// description 문자열이 최대 길이보다 길면 생략 부호를 추가하여 자름
-const truncatedDescription = notification.description.length > maxLength
-    ? notification.description.slice(0, maxLength) + '...' 
-    : notification.description;
-
-const title = (
-    <Typography variant="subtitle2">
-    {notification.title}
-    <Typography component="span" variant="body2" sx={{ color: 'text.secondary' }}>
-        &nbsp; {truncatedDescription}
-    </Typography>
-    </Typography>
-);
-
-
-return {
-    avatar: notification.avatar ? <img alt={notification.title} src={notification.avatar} /> : null,
-    title,
-};
+  return (
+    <ListItem button onClick={handleClick} sx={{ opacity: notification.status === "READ" ? 0.5 : 1 }}>
+      <ListItemAvatar>
+        <Avatar src={notification.profileImg} />
+      </ListItemAvatar>
+      <ListItemText primary={message} secondary={new Date(notification.created_at).toLocaleString()} />
+    </ListItem>
+  );
 }
-  
+
+NotificationsItem.propTypes = {
+  notification: PropTypes.shape({
+    nickName: PropTypes.string.isRequired,
+    profileImg: PropTypes.string,
+    type: PropTypes.string.isRequired,
+    created_at: PropTypes.string.isRequired,
+    post_id: PropTypes.string,
+    from_id: PropTypes.string,
+    status: PropTypes.string.isRequired,
+  }).isRequired,
+  navigate: PropTypes.func.isRequired,
+};

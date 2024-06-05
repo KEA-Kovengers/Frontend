@@ -1,27 +1,83 @@
-import { useState } from 'react';
-
+import React, { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
+import Box from '@mui/material/Box';
 import Badge from '@mui/material/Badge';
-import Divider from '@mui/material/Divider';
 import Popover from '@mui/material/Popover';
+import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
-
-import Iconify from 'src/components/iconify';
+import Tooltip from '@mui/material/Tooltip';
+import Divider from '@mui/material/Divider';
+import Cookies from 'js-cookie';
+import List from '@mui/material/List';
+import ListSubheader from '@mui/material/ListSubheader';
 import Scrollbar from 'src/components/scrollbar';
-
-import NOTIFICATIONS from 'src/_mock/Notifications';
-
-import NotificationsMarkAllRead from './NotificationsMarkAllRead';
+import Iconify from 'src/components/iconify';
 import NotificationsList from './NotificationsList';
-// ----------------------------------------------------------------------
-
-// 친구 신청, 댓글 알림, 좋아요 알림
-// 알림을 클릭하면 해당 알림에 대한 상세 페이지로 이동하면 좋겠다
+import { GetUserInfo } from 'src/api/user.api';
+import { ViewNotice, ReadNotice } from 'src/api/notice.api';
+import { useNavigate } from 'react-router-dom';
 
 export default function NotificationsPopover() {
-  const [notifications, setNotifications] = useState(NOTIFICATIONS);
-
-  const totalUnRead = notifications.filter((item) => item.isUnRead === true).length;
+  const [notifications, setNotifications] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [open, setOpen] = useState(null);
+  const [userId, setUserId] = useState(null);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    // 쿠키에서 userId를 추출
+    const tokenString = Cookies.get('token');
+    let userId = null;
+    if (tokenString) {
+      try {
+        const tokenData = JSON.parse(tokenString);
+        userId = tokenData.userId;
+        console.log('Extracted userId from cookie:', userId);
+      } catch (e) {
+        console.error('Error parsing token from cookie:', e);
+      }
+    }
+  
+    const fetchNotifications = async () => {
+      try {
+        if (userId) {
+          console.log('Calling ViewNotice with userId:', userId);
+          const noticeResponse = await ViewNotice(userId);
+          console.log('ViewNotice response:', noticeResponse);
+          if (noticeResponse.data.isSuccess) {
+            const { result } = noticeResponse.data;
+            const notifications = await Promise.all(
+              result.map(async (notification) => {
+                console.log('Fetching user info for from_id:', notification.from_id);
+                const userResponse = await GetUserInfo(notification.from_id);
+                console.log('GetUserInfo response for from_id', notification.from_id, ':', userResponse);
+                if (userResponse.data.isSuccess) {
+                  return {
+                    ...notification,
+                    nickName: userResponse.data.result.nickName,
+                    profileImg: userResponse.data.result.profileImg,
+                  };
+                }
+                return notification;
+              })
+            );
+            console.log('Fetched notifications with user info:', notifications);
+            setNotifications(notifications);
+          } else {
+            console.error('ViewNotice call was not successful:', noticeResponse.data.message);
+          }
+        }
+      } catch (error) {
+        console.error("Failed to fetch notifications", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+  
+    fetchNotifications();
+  }, [userId]);
+
+  const totalUnRead = notifications.filter((item) => item.status === "NOT_READ").length;
 
   const handleOpen = (event) => {
     setOpen(event.currentTarget);
@@ -31,14 +87,40 @@ export default function NotificationsPopover() {
     setOpen(null);
   };
 
-  const handleMarkAllAsRead = () => {
-    setFriendRequests(
-      notifications.map((notification) => ({
-        ...notification,
-        isUnRead: false,
-      }))
-    );
+  const clickManager = () => {
+    handleClose();
   };
+
+  const handleMarkAllAsRead = async () => {
+    try {
+      await Promise.all(
+        notifications.map(async (notification) => {
+          if (notification.status === "NOT_READ") {
+            await ReadNotice(notification.id);
+          }
+          return {
+            ...notification,
+            status: "READ",
+          };
+        })
+      );
+      setNotifications(
+        notifications.map((notification) => ({
+          ...notification,
+          status: "READ",
+        }))
+      );
+    } catch (error) {
+      console.error("Failed to mark all notifications as read", error);
+    }
+  };
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  console.log('Rendering NotificationsPopover');
+  console.log('Notifications:', notifications);
 
   return (
     <>
@@ -60,17 +142,33 @@ export default function NotificationsPopover() {
             ml: 0.75,
             width: 360,
           },
+          onClick: clickManager
         }}
       >
+        <Box sx={{ display: 'flex', alignItems: 'center', py: 2, px: 2.5 }}>
+          <Box sx={{ flexGrow: 1 }}>
+            <Typography variant="subtitle1">Notifications</Typography>
+            <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+              You have {totalUnRead} unread messages
+            </Typography>
+          </Box>
 
-        <NotificationsMarkAllRead totalUnRead={totalUnRead} handleMarkAllAsRead={handleMarkAllAsRead} />
+          {totalUnRead > 0 && (
+            <Tooltip title="Mark all as read">
+              <IconButton color="primary" onClick={handleMarkAllAsRead}>
+                <Iconify icon="eva:done-all-fill" />
+              </IconButton>
+            </Tooltip>
+          )}
+        </Box>
 
         <Divider sx={{ borderStyle: 'dashed' }} />
 
         <Scrollbar sx={{ height: { xs: 340, sm: 'auto' } }}>
-          <NotificationsList notifications={notifications} />
+          <NotificationsList notifications={notifications} navigate={navigate} />
         </Scrollbar>
-        
+
+        <Divider sx={{ borderStyle: 'dashed' }} />
       </Popover>
     </>
   );

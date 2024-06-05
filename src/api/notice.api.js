@@ -34,6 +34,6 @@ export const ViewNotice = (userId) => {
 };
 
 // 알림 읽음 처리
-export const ReadNotice = (userId) => {
-    return httpApi.post(`/notices/status/${userId}`);
+export const ReadNotice = (noticeId) => {
+    return httpApi.post(`/notices/status/${noticeId}`);
 };
