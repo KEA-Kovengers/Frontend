@@ -6,6 +6,7 @@ import { Membership, MembershipProfile } from 'src/sections/login';
 
 export const IndexPage = lazy(() => import('src/pages/app'));
 export const BlogPage = lazy(() => import('src/pages/blog'));
+export const BlogPage2 = lazy(() => import('src/pages/Draft'));
 export const UserPage = lazy(() => import('src/pages/user'));
 export const LoginPage = lazy(() => import('src/pages/login'));
 export const LoginAuthPage = lazy(() => import('src/pages/login-auth'));
@@ -50,6 +51,10 @@ export default function Router() {
     //   path: `edit-article/:postID`,
     //   element: <EditPage />,
     // },
+    {
+      path: 'createEditSession/:id',
+      element: <BlogPage2 />,
+    },
     {
       path: '404',
       element: <Page404 />,

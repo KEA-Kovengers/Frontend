@@ -10,15 +10,15 @@ import MenuItem from '@mui/material/MenuItem';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 import { useToggle } from 'src/hooks/useToggle';
-
+import { GetEditorDraft } from 'src/api/editor.api';
 import ModifyModal from './ModifyModal';
-
+import { useEffect } from 'react';
 // ----------------------------------------------------------------------
 
-export default function ModifyPopover({reportCases}) {
+export default function ModifyPopover({ }) {
   const [open, setOpen] = useState(null);
   const [isModifyModalOpen, setIsModifyModalOpen] = useState(false);
-
+  const [reportCases, setReportCases] = useState([]);
   const handleOpen = () => {
     setIsModifyModalOpen(true);
   };
@@ -26,7 +26,20 @@ export default function ModifyPopover({reportCases}) {
   const handleClose = () => {
     setIsModifyModalOpen(false);
   };
+  const getDraft = () => {
+    GetEditorDraft().then((res) => {
+      setReportCases(res.data.result);
+      console.log('임시저장', res.data.result);
+    }
+    ).catch((err) => {
+      console.log(err);
+    }
+    );
+  }
 
+  useEffect(() => {
+    getDraft();
+  }, []);
 
   const [number, setNumber] = useState(1);
 
@@ -43,8 +56,8 @@ export default function ModifyPopover({reportCases}) {
           color: 'black',
           marginRight: '49px',
           fontSize: '18px',
-          position: 'relative', 
-          overflow: 'hidden', 
+          position: 'relative',
+          overflow: 'hidden',
         }}
       >
         <Typography variant="body1" sx={{ fontSize: '16px', marginRight: '20px' }}>편집 중</Typography>
@@ -58,11 +71,11 @@ export default function ModifyPopover({reportCases}) {
             transform: 'translateX(-50%)',
             backgroundColor: '#637381',
           }}
-          />
+        />
         <Typography variant="body1" sx={{ fontSize: '16px', zIndex: 1, marginLeft: '3px' }}>{number}</Typography>
       </IconButton>
 
-      <ModifyModal open={isModifyModalOpen} onClose={handleClose}  />
+      <ModifyModal open={isModifyModalOpen} onClose={handleClose} reportCases={reportCases} />
 
     </>
   );
