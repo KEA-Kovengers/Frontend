@@ -1,4 +1,4 @@
-import React,{ useState } from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 
 import {
@@ -17,7 +17,7 @@ import InviteList from './InviteList';
 
 // ----------------------------------------------------------------------
 
-export default function InviteModal({ friends, open, onClose}) {
+export default function InviteModal({ friends, open, onClose, postID }) {
 
   const [textField, setTextField] = useState('');
 
@@ -57,62 +57,62 @@ export default function InviteModal({ friends, open, onClose}) {
               <Iconify icon="eva:close-fill" sx={{ width: '25px', height: '25px' }} />
             </IconButton>
           </div>
-          
-        <Box
-            sx={{
-                justifyContent: 'center',
-                display: 'flex',
-                height: '100%',
-            }}
-        >
 
-        <Stack
+          <Box
             sx={{
-            width: '80%',
-            justifyContent: 'space-between', // 내부 요소를 가로 정렬하고 동시에 간격을 분배
+              justifyContent: 'center',
+              display: 'flex',
+              height: '100%',
             }}
-        >
-        
-        {/* 검색창에 검색했을 때 친구 이름 리스트가 뜨고, 검색된 단어에 해당되는 이름만 뜨게끔 */}
-        <Autocomplete
-            autoHighlight
-            popupIcon={null}
-            slotProps={{
-                paper: {
-                sx: {
-                    width: 320,
-                    [`& .${autocompleteClasses.option}`]: {
-                    typography: 'body2',
+          >
+
+            <Stack
+              sx={{
+                width: '80%',
+                justifyContent: 'space-between', // 내부 요소를 가로 정렬하고 동시에 간격을 분배
+              }}
+            >
+
+              {/* 검색창에 검색했을 때 친구 이름 리스트가 뜨고, 검색된 단어에 해당되는 이름만 뜨게끔 */}
+              <Autocomplete
+                autoHighlight
+                popupIcon={null}
+                slotProps={{
+                  paper: {
+                    sx: {
+                      width: 320,
+                      [`& .${autocompleteClasses.option}`]: {
+                        typography: 'body2',
+                      },
                     },
-                },
-                },
-            }}
-            options={friends}
-            getOptionLabel={(option) => option.name || " " }
-            isOptionEqualToValue={(option, value) => option.id === value.id}
-            renderInput={(params) => (
+                  },
+                }}
+                options={friends}
+                getOptionLabel={(option) => option.name || " "}
+                isOptionEqualToValue={(option, value) => option.id === value.id}
+                renderInput={(params) => (
 
-            <TextField
-            {...params}
-            placeholder="공유 작업을 할 친구의 이름을 검색하세요."
-            InputProps={{
-                ...params.InputProps,
-                endAdornment: (
-                <InputAdornment position="end">
-                    <IconButton>
-                        <Iconify icon="eva:search-fill" sx={{ width: 20, height: 20, color: 'text.disabled' }} />
-                    </IconButton>
-                </InputAdornment>
-                ),
-            }}
-            />
-        )}
-        />
+                  <TextField
+                    {...params}
+                    placeholder="공유 작업을 할 친구의 이름을 검색하세요."
+                    InputProps={{
+                      ...params.InputProps,
+                      endAdornment: (
+                        <InputAdornment position="end">
+                          <IconButton>
+                            <Iconify icon="eva:search-fill" sx={{ width: 20, height: 20, color: 'text.disabled' }} />
+                          </IconButton>
+                        </InputAdornment>
+                      ),
+                    }}
+                  />
+                )}
+              />
 
-        <InviteList friends={friends} />
+              <InviteList friends={friends} postID={postID} />
 
-        </Stack>
-        </Box>
+            </Stack>
+          </Box>
         </Box>
 
       </Modal>
@@ -121,7 +121,8 @@ export default function InviteModal({ friends, open, onClose}) {
 }
 
 InviteModal.propTypes = {
-    friends: PropTypes.array.isRequired,
-    open: PropTypes.bool,
-    onClose: PropTypes.func,
+  friends: PropTypes.array.isRequired,
+  open: PropTypes.bool,
+  onClose: PropTypes.func,
+  postID: PropTypes.number,
 };

@@ -71,7 +71,7 @@ export default function BlogView() {
         const postID = response.data.result.id;
         console.log('Post created with postID:', postID);
         setPostID(postID);
-        GetEditorlist(postID);
+        //  GetEditorlist(postID);
       } else {
         console.error('API response was not successful');
       }
@@ -79,18 +79,18 @@ export default function BlogView() {
       console.error("There has been a problem with your createPostEdit fetch operation: ", error);
     }
   };
-  const GetEditorlist = (postid) => {
-    GetEditorList(postid).then((res) => {
-      // console.log('GETEDITORLIST', res.data.result.userID);
-      { res.data.result.userID.map((userID) => Getuserinfo(userID)) }
-      // console.log('USERINFO', userInfo);
-      setAccounts(res.data.result);
-      // console.log('accounts', accounts);
-    }
-    ).catch((err) => {
-      console.log(err);
-    })
-  }
+  // const GetEditorlist = (postid) => {
+  //   GetEditorList(postid).then((res) => {
+  //     // console.log('GETEDITORLIST', res.data.result.userID);
+  //     { res.data.result.userID.map((userID) => Getuserinfo(userID)) }
+  //     // console.log('USERINFO', userInfo);
+  //     setAccounts(res.data.result);
+  //     // console.log('accounts', accounts);
+  //   }
+  //   ).catch((err) => {
+  //     console.log(err);
+  //   })
+  // }
   const [userInfo, setUserInfo] = useState([]);
   const Getuserinfo = (userID) => {
     GetUserInfo(userID).then((res) => {
@@ -110,7 +110,7 @@ export default function BlogView() {
   const renderContent = (
     <Stack direction="row" alignItems="center" spacing={1}>
       {/* <CollabProfile userInfo={userInfo} /> */}
-      <InvitePopover />
+      <InvitePopover postID={postID} />
       <ModifyPopover />
     </Stack>
   );
@@ -176,9 +176,9 @@ export default function BlogView() {
     </AppBar>
   );
 
-  // console.log('blog-view title: ', title);
-  // console.log('blog-view tags: ', tags);
-  // console.log('blog-view postID: ', postID);
+  console.log('blog-view title: ', title);
+  console.log('blog-view tags: ', tags);
+  console.log('blog-view postID: ', postID);
 
   return (
     <>
@@ -189,7 +189,7 @@ export default function BlogView() {
             <Box mt={9.5}>
               {/* <WebSocketProvider postID={postID}> */}
               <MdEditorWithHeader
-                userID={userID} postID={postID}
+                postID={postID}
                 title={title} setTitle={setTitle}
                 tags={tags} setTags={setTags}
                 onChangeContents={onChangeContents} />
