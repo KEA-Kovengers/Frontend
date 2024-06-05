@@ -1,32 +1,12 @@
-import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Grid, snackbarClasses } from '@mui/material';
-import AppCardImage from 'src/sections/overview/app-card-image';
+import { Grid } from '@mui/material';
+import AppCardImage2 from 'src/sections/overview/app-card-image2';
 import AppCardInfo2 from 'src/sections/overview/app-card-info2';
-import { GetSocialFeed } from 'src/api/posts.api';
+import useData from 'src/sections/overview/data/app-card-data'; // Adjust the import path as needed
 
 export default function ManagerMain() {
-  const [data, setData] = useState([]);
+  const [data, target] = useData();
   const navigate = useNavigate();
-  const [isRefreshed, setIsRefreshed] = useState(false);
-
-  useEffect(() => {
-    GetSocialFeed()
-      .then(response => {
-        if (response.data.isSuccess) {
-          setData(response.data.result.postsList.content);
-        } else {
-          console.error('Failed to fetch posts');
-        }
-      })
-      .catch(error => {
-        console.error('Error fetching posts:', error);
-      });
-  }, [isRefreshed]);
-
-  const handleRefresh = () => {
-    setIsRefreshed(!isRefreshed); // Toggle isRefreshed on button click
-  };
 
   return (
     <div
@@ -46,39 +26,30 @@ export default function ManagerMain() {
           paddingTop: '20px',
         }}
       >
-
         <Grid container spacing={3} style={{ flexGrow: 1 }}>
           {data.map((item, index) => (
             <Grid item xs={12} sm={6} md={4} key={index}>
-              <AppCardImage
-                images={
-                  item.thumbnails.length > 0
-                    ? item.thumbnails.map((thumbnail, idx) => ({
-                      src: String(thumbnail.url),
-                      id: idx,
-                      type: String(thumbnail.type),
-                    }))
-                    : [{ src: '/assets/not_thumbnail.png', id: 0 }]
-                }
-                key={item.id}
+              <AppCardImage2
+                  images={item.image.images}
               />
               <div>
                 <AppCardInfo2
-                  info={[{
-                    id: item.id,
-                    title: item.title,
-                    body: item.body,
-                    likeCnt: item.likeCnt, // Pass likeCnt
-                    commentCnt: item.commentCnt, // Pass commentCnt
-                    userImage: item.userImage, // Assuming you have userImage
-                    isLiked: false // Initial state can be true or false
-                  }]}
+                  id={item.info.id}
+                  title={item.info.title}
+                  body={item.info.body || ''}
+                  likeCnt={item.info.likeCnt}
+                  commentCnt={item.info.commentCnt}
+                  userName={item.info.userName || []}
+                  userImage={item.info.userImage || '/assets/not_thumbnail.png'}
+                  isLiked={false}
+                  date={item.info.date || ''}
                   onClick={() => navigate(`/article/${item.id}`)}
                 />
               </div>
             </Grid>
           ))}
         </Grid>
+        <div ref={target} style={{ height: '1px' }} />
       </div>
     </div>
   );
