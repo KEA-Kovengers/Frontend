@@ -12,12 +12,14 @@ import ModifyPopover from '../header/modify-popover';
 import InvitePopover from '../header/invite-popover';
 
 import MdEditorWithHeader from '../editor/md-editor';
+// import { WebSocketProvider } from '../websocket/WebSocketManager';
 
 // /posts/{postID} && /posts/createPost api 연결
 import { GetPostID,PostCreate } from 'src/api/posts.api';
 import { Client } from '@stomp/stompjs';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { set } from 'lodash';
+import { useAccountStore } from 'src/store/useAccountStore';
 
 export default function BlogView() {
   const navigate = useNavigate();
@@ -27,9 +29,10 @@ export default function BlogView() {
   const lgUp = useResponsive('up', 'lg');
 
   // articleID 고정
-  const userID = 3491829283;
-  const articleID = '1';
-  const [articleVersion, setArticleVersion] = useState('0.0');
+  // const userID = 3491829283;
+  const { accountInfo } = useAccountStore();
+  const userID = accountInfo.id;
+  const articleID = '3';
 
   const [title, setTitle] = useState('');
   const [tags, setTags] = useState([]);
@@ -147,6 +150,7 @@ export default function BlogView() {
     </AppBar>
   );
 
+  console.log('blog-view userID: ',userID);
   console.log('blog-view title: ',title);
   console.log('blog-view tags: ',tags);
   console.log('blog-view postID: ',postID);
@@ -158,11 +162,13 @@ export default function BlogView() {
         <Grid container spacing={3}>
           <Grid item xs={12}>
             <Box mt={9.5}>
-              <MdEditorWithHeader
-                postID={postID} articleVersion={articleVersion} 
-                title={title} setTitle={setTitle}
-                tags={tags} setTags={setTags} 
-                onChangeContents={onChangeContents} />
+              {/* <WebSocketProvider postID={postID}> */}
+                <MdEditorWithHeader
+                  userID={userID} postID={postID} 
+                  title={title} setTitle={setTitle}
+                  tags={tags} setTags={setTags} 
+                  onChangeContents={onChangeContents} />
+              {/* </WebSocketProvider> */}
             </Box>
           </Grid>
         </Grid>

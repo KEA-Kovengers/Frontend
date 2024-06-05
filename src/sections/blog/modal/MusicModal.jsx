@@ -19,6 +19,9 @@ import { colors } from 'src/theme/variableColors';
 
 import { useEditStore } from 'src/store/useEditStore';
 import { useEditMusicStore } from 'src/store/useEditMusicStore';
+
+// import { updateBlock } from 'src/sections/blog/editor/md-editor.jsx';
+
 // ----------------------------------------------------------------------
 
 const client_id = import.meta.env.VITE_SPOTIFY_CLIENT_ID;
@@ -48,6 +51,13 @@ export default function MusicModal(){
       editorRef1: state.editInfo.editorRef1,
       editorRef2: state.editInfo.editorRef2,
     }));
+
+    // // md-editor에서 TAG 정보 업뎃 뭐시기
+    // useEffect(() => {
+    //     if (isOpen) {
+    //       updateBlock('TAG', editorRef1, stompClient, postID, userID, blockIds, articleVersion, blockContents);
+    //     }
+    // }, [isOpen]);
 
 
     const resetState = () => {
@@ -157,12 +167,16 @@ export default function MusicModal(){
                 const currentText1 = editorInstance1.getHTML();
                 editorInstance1.setHTML(`${currentText1}\n${albumInfoHtml}`);
                 updateEditorHtml1(`${editorHtml1}\n${albumInfoHtml}`);
+
+                // updateBlock('TAG', editorRef1, stompClient, postID, userID, blockIds, articleVersion, blockContents);
             }
             else if (editorRef2 && editorRef2.current && editorRef2.current.getInstance()) {
                 const editorInstance2 = editorRef2.current.getInstance();
                 const currentText2 = editorInstance2.getHTML();
                 editorInstance2.setHTML(`${currentText2}\n${albumInfoHtml}`);
                 updateEditorHtml2(`${editorHtml2}\n${albumInfoHtml}`);
+
+                // updateBlock('TAG', editorRef2, stompClient, postID, userID, blockIds, articleVersion, blockContents);
             }
         })}
         else {
