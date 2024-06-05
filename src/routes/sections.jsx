@@ -56,6 +56,10 @@ export default function Router() {
       element: <BlogPage2 />,
     },
     {
+      path: 'edit-article/:id',
+      element: <BlogPage />,
+    },
+    {
       path: '404',
       element: <Page404 />,
     },

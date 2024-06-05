@@ -1,10 +1,76 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Modal, Typography, Box, IconButton } from '@mui/material';
 import Iconify from 'src/components/iconify';
 import PieChart from './PieChart';
 import HorizontalBarChart from './HorizontalBarChart';
+import { useParams } from 'react-router-dom';
+import { GetUserBlocks, GetParticipatedBlocks } from 'src/api/analysis.api';
+import { GetUserInfo } from 'src/api/user.api';
 
 export default function DashboardModal({ open, onClose }) {
+  const params = useParams();
+  const postId = Number(params.id);
+
+  const [block, setBlock] = useState([]);
+  const [participatedBlock, setParticipatedBlock] = useState([]);
+
+  useEffect(() => {
+    setBlock([]);
+    setParticipatedBlock([]);
+    GetUserBlocks(postId)
+      .then((res) => {
+        console.log('블록 생성', res.data.result);
+        res.data.result.forEach((block) => {
+          if (block.blockId.length !== 0) {
+            GetUserInfo(block.creatorId).then((res) => {
+              console.log('label', res.data.result.nickName, 'value', block.blockId.length);
+              setBlock((prevBlocks) => [
+                ...prevBlocks,
+                { label: res.data.result.nickName, value: block.blockId.length },
+              ]);
+            });
+          }
+        });
+      })
+      .catch((err) => {
+        console.log('블록 정보 에러', err);
+      });
+
+    GetParticipatedBlocks(postId)
+      .then((res) => {
+        const data = res.data.result.editorLogResponseDTOS; // editorLogResponseDTOS가 배열인지 확인
+        // console.log('참여한 블록', data);
+
+        // userID를 기준으로 blockId의 개수를 그룹화
+        const groupedData = data.reduce((acc, item) => {
+          acc[item.userID] = (acc[item.userID] || 0) + 1;
+          return acc;
+        }, {});
+
+        // 그룹화된 데이터를 리스트 형식으로 변환
+        const groupedDataList = Object.keys(groupedData).map((userID) => ({
+          userID: parseInt(userID, 10), // userID를 숫자로 변환
+          value: groupedData[userID],
+        }));
+
+        console.log('참여한 블록 (리스트 형식):', groupedDataList);
+
+        // 각 userID에 대해 GetUserInfo를 호출
+        groupedDataList.forEach((group) => {
+          GetUserInfo(group.userID).then((res) => {
+            console.log(res.data.result);
+            setParticipatedBlock((prevBlocks) => [
+              ...prevBlocks,
+              { label: res.data.result.nickName, value: group.value },
+            ]);
+          });
+        });
+      })
+      .catch((err) => {
+        console.log('참여한 블록 정보 에러', err);
+      });
+  }, [postId]);
+
   return (
     open && (
       <Modal open={open} onClose={onClose}>
@@ -15,7 +81,6 @@ export default function DashboardModal({ open, onClose }) {
               justifyContent: 'space-between',
               zIndex: 2,
               marginBottom: '10px',
-              //   backgroundColor: 'pink',
             }}
           >
             <Typography variant="h5" sx={{ mt: '13px', ml: '13px' }}>
@@ -35,32 +100,32 @@ export default function DashboardModal({ open, onClose }) {
             }}
           >
             <PieChart
-              title="Current Visits"
+              title="유저 별 블럭 생성 비율"
               chart={{
-                series: [
-                  { label: 'America', value: 2 },
-                  { label: 'Asia', value: 5 },
-                  { label: 'Europe', value: 4 },
-                  { label: 'Africa', value: 1 },
-                ],
+                series: block,
+                // series: [
+                //   { label: 'Korea', value: 5 },
+                //   { label: 'Japan', value: 1 },
+                // ],
               }}
             />
             <HorizontalBarChart
-              title="Conversion Rates"
+              title="유저 별 참여한 블럭 수"
               subheader="(+43%) than last year"
               chart={{
-                series: [
-                  { label: 'Italy', value: 5 },
-                  { label: 'Japan', value: 5 },
-                  { label: 'China', value: 15 },
-                  { label: 'Canada', value: 2 },
-                  { label: 'France', value: 6 },
-                  { label: 'Germany', value: 13 },
-                  { label: 'South Korea', value: 30 },
-                  { label: 'Netherlands', value: 1 },
-                  { label: 'United States', value: 18 },
-                  { label: 'United Kingdom', value: 40 },
-                ],
+                // series: [
+                //   { label: 'Italy', value: 5 },
+                //   { label: 'Japan', value: 5 },
+                //   { label: 'China', value: 15 },
+                //   { label: 'Canada', value: 2 },
+                //   { label: 'France', value: 6 },
+                //   { label: 'Germany', value: 13 },
+                //   { label: 'South Korea', value: 30 },
+                //   { label: 'Netherlands', value: 1 },
+                //   { label: 'United States', value: 18 },
+                //   { label: 'United Kingdom', value: 40 },
+                // ],
+                series: participatedBlock,
               }}
             />
           </div>
