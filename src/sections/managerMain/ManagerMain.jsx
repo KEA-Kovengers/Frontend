@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { Grid } from '@mui/material';
-import AppCardImage from 'src/sections/overview/app-card-image';
+import AppCardImage2 from 'src/sections/overview/app-card-image2';
 import AppCardInfo2 from 'src/sections/overview/app-card-info2';
 import useData from 'src/sections/overview/data/app-card-data'; // Adjust the import path as needed
 
@@ -29,7 +29,7 @@ export default function ManagerMain() {
         <Grid container spacing={3} style={{ flexGrow: 1 }}>
           {data.map((item, index) => (
             <Grid item xs={12} sm={6} md={4} key={index}>
-              <AppCardImage
+              <AppCardImage2
                   images={item.image.images}
               />
               <div>
