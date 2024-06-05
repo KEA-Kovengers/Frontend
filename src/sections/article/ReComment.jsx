@@ -196,6 +196,7 @@ export default function ReComment({ userId, commentId, id, body, updated_at, isD
             placeholder={
               accountInfo.id === null ? '로그인 후 이용해주세요.' : '댓글을 입력해주세요.'
             }
+            disabled={accountInfo.id === null ? true : false}
             endAdornment={
               <InputAdornment position="end" onClick={addRecomment}>
                 <Button disabled={contents === '' || accountInfo.id === null} sx={right_button}>
