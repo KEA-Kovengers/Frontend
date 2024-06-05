@@ -236,7 +236,7 @@ export default function NotificationsPopover() {
         onClose={() => setModalOpen(false)}
         title="New Notification"
         contents={modalMessage.notificationMessage}
-        rightButton="Confirm"
+        rightButton="확인"
         buttonAction={{
           leftAction: () => setModalOpen(false),
           rightAction: handleModalConfirm,
