@@ -10,7 +10,7 @@ import InviteModal from './InviteModal';
 // ----------------------------------------------------------------------
 
 
-export default function InvitePopover() {
+export default function InvitePopover({ postID }) {
 
   const [open, setOpen] = useState(null);
   const [isInviteModalOpen, setIsInviteModalOpen] = useState(false);
@@ -34,6 +34,7 @@ export default function InvitePopover() {
         open={isInviteModalOpen}
         onClose={handleClose}
         buttonAction={{ leftAction: handleClose, rightAction: handleClose }}
+        postID={postID}
       />
 
     </>

@@ -69,7 +69,7 @@ export default function BlogView2() {
 
     const [title, setTitle] = useState('');
     const [tags, setTags] = useState([]);
-    // const [postID, setPostID] = useState('');
+    const [postID, setPostID] = useState('');
     const [accounts, setAccounts] = useState([]);
     const onChangeContents = useCallback((value) => {
         setTitle(value.title);
@@ -221,7 +221,7 @@ export default function BlogView2() {
                     <Grid item xs={12}>
                         <Box mt={9.5}>
                             <MdEditorWithHeader
-                                postID={postId} articleVersion={articleVersion}
+                                postID={postId}
                                 title={title} setTitle={setTitle}
                                 tags={tags} setTags={setTags}
                                 onChangeContents={onChangeContents} />
