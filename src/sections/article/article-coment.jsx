@@ -179,7 +179,7 @@ export default function ArticleComment({
             <div style={{ fontSize: '12px', color: '#637381', marginRight: 13 }}>
               {formatDate(updated_at)}
             </div>
-            {userId !== accountInfo.id && (
+            {accountInfo.id !== null && id !== accountInfo.id && (
               <>
                 <span
                   style={{

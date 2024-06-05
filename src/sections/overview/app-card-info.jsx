@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import { DeleteLike, PostLike } from 'src/api/like.api';
 import {
@@ -19,17 +18,17 @@ import { useAccountStore } from 'src/store/useAccountStore';
 import Iconify from 'src/components/iconify';
 import { useLikedPostStore } from 'src/store/useLikedPostStore';
 import { Avatar, AvatarGroup, Icon, Tooltip } from '@mui/material';
+
 // ----------------------------------------------------------------------
 
 export default function AppCardInfo({ info }) {
+  const { accountInfo } = useAccountStore();
   const navigate = useNavigate();
   const card_style = {
     borderRadius: 0,
     bgcolor: 'background.default',
   };
-  useEffect(() => {
-    console.log('info', info[0].userName);
-  }, []);
+
 
   const Userimage = (
     // <img
@@ -110,7 +109,7 @@ export default function AppCardInfo({ info }) {
       {info[0].date}
     </Typography>
   );
-  const { accountInfo } = useAccountStore();
+
 
   const { likedPosts } = useLikedPostStore();
 
@@ -153,7 +152,7 @@ export default function AppCardInfo({ info }) {
   const CommunityInformation = (
     <Stack flexDirection="row">
       <Stack direction="row">
-        <IconButton onClick={handleLike} color={like ? '#FF5631' : '#637381'}>
+        <IconButton onClick={handleLike} color={like ? '#FF5631' : '#637381'} disabled={accountInfo.id === null}>
           <Iconify
             icon={like ? 'flat-color-icons:like' : 'icon-park-outline:like'}
             sx={{ display: 'flex', mr: 0.5 }}

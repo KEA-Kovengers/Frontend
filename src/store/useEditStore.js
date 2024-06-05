@@ -1,13 +1,14 @@
 import { create } from 'zustand';
 import { PostGenerateText } from '../api/ai.api';
 import { th } from 'date-fns/locale';
+import { update } from 'lodash';
 
 export const useEditStore = create((set) => ({
   editInfo: {
     editorHtml1: '',
     editorHtml2: '',
-    // updateEditorHtml1: (value) => set({ editorHtml1: value }),
-    // updateEditorHtml2: (value) => set({ editorHtml2: value }),
+    updateEditorHtml1: (value) => set({ editorHtml1: value }),
+    updateEditorHtml2: (value) => set({ editorHtml2: value }),
 
     editorRef1: null,
     editorRef2: null,
@@ -21,6 +22,18 @@ export const useEditStore = create((set) => ({
           ...state.editInfo,
           [field]: value,
           },
+  })),
+  updateEditorHtml1: (value) => set((state) => ({
+    editInfo: {
+      ...state.editInfo,
+      editorHtml1: value,
+    },
+  })),
+  updateEditorHtml2: (value) => set((state) => ({
+    editInfo: {
+      ...state.editInfo,
+      editorHtml2: value,
+    },
   })),
   // 자동 완성 텍스트 생성
   handleAiText: async (text) => {

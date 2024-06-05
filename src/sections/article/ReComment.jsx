@@ -173,15 +173,32 @@ export default function ReComment({ userId, commentId, id, body, updated_at, isD
           )}
         </div>
         {isTyping ? (
+          // <OutlinedInput
+          //   style={{ marginTop: '20px', width: '98%', height: '45px' }}
+          //   // value={filterName}
+          //   onChange={(e) => setContents(e.target.value)}
+          //   multiline
+          //   placeholder="댓글을 입력해주세요."
+          //   endAdornment={
+          //     <InputAdornment position="end" onClick={addRecomment}>
+          //       <Button disabled={contents === '' ? true : false} sx={right_button}>
+          //         등록
+          //       </Button>
+          //     </InputAdornment>
+          //   }
+
+          // />
           <OutlinedInput
             style={{ marginTop: '20px', width: '98%', height: '45px' }}
             // value={filterName}
             onChange={(e) => setContents(e.target.value)}
             multiline
-            placeholder="댓글을 입력해주세요."
+            placeholder={
+              accountInfo.id === null ? '로그인 후 이용해주세요.' : '댓글을 입력해주세요.'
+            }
             endAdornment={
-              <InputAdornment position="end" onClick={() => addRecomment()}>
-                <Button disabled={contents === '' ? true : false} sx={right_button}>
+              <InputAdornment position="end" onClick={addRecomment}>
+                <Button disabled={contents === '' || accountInfo.id === null} sx={right_button}>
                   등록
                 </Button>
               </InputAdornment>

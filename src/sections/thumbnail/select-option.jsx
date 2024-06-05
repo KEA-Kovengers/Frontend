@@ -33,9 +33,9 @@ export default function SelectOptionView() {
 
   const [ thumbnail, setThumbnail ] = useState('');
   const [ thumbnailUrl, setThumbnailUrl ] = useState('');
-  const [ id, setId ] = useState(''); // [id]
+  // const [ id, setId ] = useState(''); // [id]
 
-  const articleID = '1';
+  // const articleID = '1';
 
   console.log('select-option title: ',title);
   console.log('select-option tags: ',tags);

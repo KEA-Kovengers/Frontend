@@ -28,7 +28,6 @@ export default function ArticleTitle({ editorList, title, user, setUser, time })
   const navigate = useNavigate();
   const { toggle, isOpen } = useToggle();
   const { accountInfo } = useAccountStore();
-
   const deleteArticleToggle = useToggle();
   const reportArticleToggle = useToggle();
   const reportToggle = useToggle();
@@ -137,7 +136,7 @@ export default function ArticleTitle({ editorList, title, user, setUser, time })
             </Tooltip>
             <DashboardModal open={dashboardToggle.isOpen} onClose={dashboardToggle.toggle} />
 
-            <IconButton onClick={handleOpenMenu}>
+            <IconButton onClick={handleOpenMenu} disabled={accountInfo.id === null ? true : false}>
               <Iconify icon="eva:more-vertical-fill" />
             </IconButton>
             <Popover
