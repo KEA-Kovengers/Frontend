@@ -1,6 +1,5 @@
-import { useEffect, useState } from 'react';
+import { useState, useEffect } from 'react';
 
-import { account } from 'src/_mock/account';
 import Avatar from '@mui/material/Avatar';
 import CustomModal from 'src/components/CustomModal/CustomModal';
 import { useNavigate } from 'react-router-dom';
@@ -12,28 +11,47 @@ import { IconButton, Button } from '@mui/material';
 import Iconify from 'src/components/iconify';
 import OutlinedInput from '@mui/material/OutlinedInput';
 import InputAdornment from '@mui/material/InputAdornment';
-import { set } from 'lodash';
+import { format } from 'date-fns';
+import { ko } from 'date-fns/locale';
+import { GetUserInfo } from 'src/api/user.api';
+import { DeleteComment, PostComment } from 'src/api/comment.api';
 import { useAccountStore } from 'src/store/useAccountStore';
+import { useUserInfo } from '../profile/UserInfo';
+import { useParams } from 'react-router-dom';
 
-export default function ReComment({ content, time, exist, state }) {
-  const { accountInfo } = useAccountStore();
-  useEffect(() => {
-  }, []);
-  console.log('account', accountInfo.id);
+export default function ReComment({ userId, commentId, id, body, updated_at, isDeleted, exist }) {
   const navigate = useNavigate();
+  const clickReportToggle = useToggle();
   const reportToggle = useToggle();
   const alertToggle = useToggle();
 
-  const [isTyping, setIsTyping] = useState(state);
+  const [isTyping, setIsTyping] = useState(!exist);
   const [contents, setContents] = useState('');
   const [createdTime, setCreatedTime] = useState();
 
   const [open, setOpen] = useState(null);
-  const displayName = account.displayName || '';
-  const bio = account.bio || '';
+  const { accountInfo } = useAccountStore();
+
+  const params = useParams();
+  const postId = Number(params.id);
+
   const handleOpenMenu = (event) => {
     setOpen(event.currentTarget);
   };
+
+  const [userInfo, setUserInfo] = useState({});
+
+  useEffect(() => {
+    console.log('userId', userId);
+    GetUserInfo(userId)
+      .then((res) => {
+        console.log('유저 정보', res.data.result);
+        setUserInfo(res.data.result);
+      })
+      .catch((err) => {
+        console.log('유저 정보 에러', err);
+      });
+  }, []);
 
   const handleCloseMenu = () => {
     setOpen(null);
@@ -55,24 +73,37 @@ export default function ReComment({ content, time, exist, state }) {
     setIsReModalOpen(true);
   };
 
-  const handleCloseReModal = () => {
-    setIsReModalOpen(false);
-  };
-
   const addRecomment = () => {
     setIsTyping(false);
-    setCreatedTime(formatTime(new Date()));
-    //대댓글 post API
-  };
-  function formatTime(date) {
-    const year = date.getFullYear();
-    const month = (date.getMonth() + 1).toString().padStart(2, '0');
-    const day = date.getDate().toString().padStart(2, '0');
-    const hours = date.getHours().toString().padStart(2, '0');
-    const minutes = date.getMinutes().toString().padStart(2, '0');
+    setCreatedTime(formatDate(new Date()));
 
-    return `${year}. ${month}. ${day} ${hours}:${minutes}`;
-  }
+    console.log('postId', postId);
+    console.log('commentId', commentId);
+    //대댓글 post API
+    PostComment(postId, commentId, contents)
+      .then((res) => {
+        console.log('대댓글 추가', res);
+      })
+      .catch((err) => {
+        console.log('대댓글 추가 에러', err);
+      });
+  };
+
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    return format(date, 'yyyy-MM-dd hh:mm', { locale: ko });
+  };
+
+  const handleDeleteComment = () => {
+    DeleteComment(commentId)
+      .then((res) => {
+        console.log('댓글 삭제', res);
+        // window.location.reload();
+      })
+      .catch((err) => {
+        console.log('댓글 삭제 에러', err);
+      });
+  };
 
   return (
     <div
@@ -106,9 +137,9 @@ export default function ReComment({ content, time, exist, state }) {
         >
           <div
             style={{ flexDirection: 'row', display: 'flex', cursor: 'pointer' }}
-            onClick={() => navigate('/user')}
+            onClick={() => navigate(`/user/${userId}`)}
           >
-            <Avatar src={account.photoURL} alt="photoURL" sx={{ width: 40, height: 40 }} />
+            <Avatar src={userInfo.profileImg} alt="photoURL" sx={{ width: 40, height: 40 }} />
             <div
               style={{
                 marginLeft: '20px',
@@ -117,11 +148,11 @@ export default function ReComment({ content, time, exist, state }) {
                 textAlign: 'start',
               }}
             >
-              <span style={{ fontSize: '14px', fontWeight: 'bold' }}>{displayName}</span>
-              <span style={{ fontSize: '10px' }}>{bio}</span>
+              <span style={{ fontSize: '14px', fontWeight: 'bold' }}>{userInfo.nickName}</span>
+              <span style={{ fontSize: '10px' }}>{userInfo.blogName}</span>
             </div>
           </div>
-          {!isTyping && (
+          {!isTyping && userId === accountInfo.id && !isDeleted && (
             <>
               <div>
                 <span
@@ -162,7 +193,9 @@ export default function ReComment({ content, time, exist, state }) {
             // value={filterName}
             onChange={(e) => setContents(e.target.value)}
             multiline
-            placeholder={accountInfo.id === null ? "로그인 후 이용해주세요." : "댓글을 입력해주세요."}
+            placeholder={
+              accountInfo.id === null ? '로그인 후 이용해주세요.' : '댓글을 입력해주세요.'
+            }
             endAdornment={
               <InputAdornment position="end" onClick={addRecomment}>
                 <Button disabled={contents === '' || accountInfo.id === null} sx={right_button}>
@@ -189,7 +222,7 @@ export default function ReComment({ content, time, exist, state }) {
                 textAlign: 'start',
               }}
             >
-              {exist ? content : contents}
+              {exist ? (isDeleted ? '삭제된 댓글입니다.' : body) : contents}
             </div>
 
             <div
@@ -199,38 +232,42 @@ export default function ReComment({ content, time, exist, state }) {
               }}
             >
               <div style={{ fontSize: '12px', color: '#637381', marginRight: 13 }}>
-                {exist ? time : createdTime}
+                {exist ? formatDate(updated_at) : formatDate(new Date())}
               </div>
-              <span
-                style={{
-                  fontSize: '11px',
-                  color: '#637381',
-                  cursor: 'pointer',
-                }}
-                onClick={handleOpenReModalClick}
-              >
-                신고
-              </span>
-              <CustomModal
-                rightButton={'신고'}
-                mode={'content'}
-                onClose={handleCloseReModal}
-                contents={'신고하시겠습니까?'}
-                open={isReModalOpen}
-                buttonAction={{ rightAction: reportToggle.toggle }}
-              />
-              <ReportModal
-                open={reportToggle.isOpen}
-                onClose={reportToggle.toggle}
-                buttonAction={() => alertToggle.toggle()}
-              />
-              <CustomModal
-                mode={'alert'}
-                open={alertToggle.isOpen}
-                onClose={alertToggle.toggle}
-                title={'댓글 신고'}
-                contents={'신고 되었습니다.'}
-              />
+              {userId !== accountInfo.id && (
+                <>
+                  <span
+                    style={{
+                      fontSize: '11px',
+                      color: '#637381',
+                      cursor: 'pointer',
+                    }}
+                    onClick={clickReportToggle.toggle}
+                  >
+                    신고
+                  </span>
+                  <CustomModal
+                    rightButton={'신고'}
+                    mode={'content'}
+                    onClose={clickReportToggle.toggle}
+                    contents={'신고하시겠습니까?'}
+                    open={clickReportToggle.isOpen}
+                    buttonAction={{ rightAction: reportToggle.toggle }}
+                  />
+                  <ReportModal
+                    open={reportToggle.isOpen}
+                    onClose={reportToggle.toggle}
+                    buttonAction={() => alertToggle.toggle()}
+                  />
+                  <CustomModal
+                    mode={'alert'}
+                    open={alertToggle.isOpen}
+                    onClose={alertToggle.toggle}
+                    title={'댓글 신고'}
+                    contents={'신고 되었습니다.'}
+                  />
+                </>
+              )}
             </div>
           </div>
         )}

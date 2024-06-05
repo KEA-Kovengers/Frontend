@@ -21,9 +21,14 @@ const ScrollContainer = styled('div')({
   '&::-webkit-scrollbar': {
     display: 'none'
   },
+<<<<<<< HEAD
   height: '100vh', 
 });
 
+=======
+  height: '100vh',
+});
+>>>>>>> 0b5ab7848e8e900c704edd0decdc63c78217827d
 
 // AppFilter 속 AppPost: filter가 바뀜에 따라 보여지는 컴포넌트도 달라짐
 export default function AppPost({ filter }) {

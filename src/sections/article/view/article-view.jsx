@@ -23,9 +23,9 @@ export default function ArticleView() {
   useEffect(() => {
     GetPostDetail(postId)
       .then((res) => {
-        console.log('게시글 상세', res);
+        console.log('게시글 상세', res.data.result);
         setPost(res.data.result);
-        console.log(post);
+        console.log('게시글 날짜', res.data.result.updated);
       })
       .catch((err) => {
         console.log('게시글 상세 에러', err);
@@ -102,6 +102,7 @@ export default function ArticleView() {
           title={post.title}
           user={selectedUser}
           setUser={setSelectedUser}
+          time={post.updated}
         />
         <ArticleContent post={post} user={selectedUser} />
         <AiWidget post={post} />

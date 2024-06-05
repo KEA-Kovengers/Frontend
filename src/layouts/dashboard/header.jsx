@@ -38,7 +38,7 @@ export default function Header({ onOpenNav }) {
       <Box sx={{ flexGrow: 1 }} />
 
       <Stack direction="row" alignItems="center" spacing={1}>
-        {accountInfo.id!==null && <NotificationsPopover />}
+        {accountInfo.id !== null && <NotificationsPopover />}
         <AccountPopover />
       </Stack>
     </>
