@@ -21,10 +21,9 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { set } from 'lodash';
 
 export default function BlogView2() {
-
     const [blockIds, setBlockIds] = useState([]);
     const [blockContents, setBlockContents] = useState([]);
-    const [hastagsList, setHashtagsList] = useState([]);
+    const [hashtagsList, setHashtagsList] = useState([]);
     const [stompClient, setStompClient] = useState(null);
     const [articleTitle, setArticleTitle] = useState('title');
     const params = useParams();
@@ -33,36 +32,8 @@ export default function BlogView2() {
 
     const headerHeight = HEADER.H_MOBILE;
     const globalTheme = useTheme();
-    // const getDetail = () => {
-    //     return GetPostDetail(postId).then((res) => {
-    //         console.log('getDetail', res);
-    //         // setArticleTitle(res.data.result.title);
-    //         // setHashtagsList(res.data.result.hashtags);
-    //         // setBlockIds(res.data.result.blockList);
-    //     }
-    //     ).catch((err) => {
-    //         console.log(err);
-    //     })
-    // }
-    // const fetchData = async () => {
-    //     try {
-    //         const response = getDetail;
-    //         const json = response.data;
-    //         if (json.isSuccess) {
-    //             setArticleTitle(json.result.title);
-    //             setHashtagsList(json.result.hashtags);
-    //             setArticleVersion(json.result.articleVersion);
-    //             storeBlockData(json.result.blockList);
-    //         } else {
-    //             throw new Error('API response was not successful');
-    //         }
-    //     } catch (error) {
-    //         console.error('There has been a problem with your fetch operation:', error);
-    //     }
-    // };
     const lgUp = useResponsive('up', 'lg');
 
-    // articleID 고정
     const userID = 3491829283;
     const articleID = '1';
     const [articleVersion, setArticleVersion] = useState('0.0');
@@ -71,80 +42,38 @@ export default function BlogView2() {
     const [tags, setTags] = useState([]);
     const [postID, setPostID] = useState('');
     const [accounts, setAccounts] = useState([]);
+    const [userInfo, setUserInfo] = useState([]);
+
     const onChangeContents = useCallback((value) => {
         setTitle(value.title);
         setTags(value.tags);
     }, []);
 
-    // get postid로 articleVersion 가져오고
-    // 웹소켓 연결
-    // createPost API 요청 → 상태는 edit으로 변경
-    // 근데 GetPostID로 가져오면 상태가 이미 edit임!
-
-    // 사이드 바에서 글쓰기 버튼을 누르면 createPost API 요청
-    // 상태는 edit으로 변경
-    // 글쓰기 페이지로 이동
-
-    // EDIT
-    // const createPostEdit = async () => {
-    //     try {
-    //         const requestBody = {
-    //             thumbnail: "",
-    //             title: "",
-    //             // body: "",
-    //             hashtags: [],
-    //             status: 'EDIT',
-    //         };
-
-    //         const response = await PostCreate(requestBody);
-    //         console.log('EDIT Response:', response);
-
-    //         if (response.data && response.data.isSuccess) {
-    //             const postID = response.data.result.id;
-    //             console.log('Post created with postID:', postID);
-    //             setPostID(postID);
-    //             GetEditorlist(postID);
-    //         } else {
-    //             console.error('API response was not successful');
-    //         }
-    //     } catch (error) {
-    //         console.error("There has been a problem with your createPostEdit fetch operation: ", error);
-    //     }
-    // };
-    const GetEditorlist = () => {
-        GetEditorList(postId).then((res) => {
+    const GetEditorlist = async () => {
+        try {
+            const res = await GetEditorList(postId);
             console.log('GETEDITORLIST', res.data.result.userID);
-            { res.data.result.userID.map((userID) => Getuserinfo(userID)) }
 
-            setAccounts(res.data.result);
-            // console.log('accounts', accounts);
-        }
-        ).catch((err) => {
+            const userIDs = res.data.result.userID;
+            const userInfoPromises = userIDs.map((userID) => GetUserInfo(userID));
+            const userInfoResponses = await Promise.all(userInfoPromises);
+
+            const userInfoData = userInfoResponses.map(res => res.data.result);
+            setUserInfo(userInfoData);
+
+        } catch (err) {
             console.log(err);
-        })
-    }
-    const [userInfo, setUserInfo] = useState([]);
-    const Getuserinfo = (userID) => {
-        GetUserInfo(userID).then((res) => {
-
-            setUserInfo([...userInfo, res.data.result]);
         }
-        ).catch((err) => {
-            console.log(err);
-        })
-
-    }
+    };
 
     useEffect(() => {
-        // console.log('editpost');
         GetEditorlist();
-
     }, [postId]);
 
     const renderContent = (
         <Stack direction="row" alignItems="center" spacing={1}>
             <CollabProfile userInfo={userInfo} />
-            <InvitePopover />
+            <InvitePopover postID={postId} />
             <ModifyPopover />
         </Stack>
     );
@@ -199,7 +128,6 @@ export default function BlogView2() {
                             margin: '13px',
                         }}
                     >
-                        {/* 완료 버튼을 누르면 createPost api status POST로 */}
                         <Typography variant="body1" sx={{ fontSize: '16px' }}>
                             완료
                         </Typography>
@@ -208,10 +136,6 @@ export default function BlogView2() {
             </Box>
         </AppBar>
     );
-
-    // console.log('blog-view title: ', title);
-    // console.log('blog-view tags: ', tags);
-    // console.log('blog-view postID: ', postID);
 
     return (
         <>
