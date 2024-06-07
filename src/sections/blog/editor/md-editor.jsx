@@ -67,22 +67,23 @@ export default function MdEditorWithHeader({
 
   /*----------------------------------------------------------*/
 
-  const updateTitle = () => {
-    const titleContent = document.getElementById('title_update_text').value;
-    console.log(titleContent);
+  const updateTitle = (title) => {
+    // const titleContent = document.getElementById('title_update_text').value;
+    // console.log(titleContent);
+
     // 서버에 메세지 발행
     stompClient.publish({
-      destination: `/app/updateTitle/${articleID}`,
+      destination: `/app/updateTitle/${postID}`,
       body: JSON.stringify({
         uuid: 'testtest',
         userID: userID,
         dto: {
-          articleID: articleID,
+          articleID: postID,
           articleVersion: articleVersion,
           operationType: 'INSERT',
           entityType: 'TITLE',
           position: 0,
-          content: titleContent,
+          content: title,
           updated_by: {
             updater_id: userID,
             updated_at: new Date().toISOString(),
@@ -93,8 +94,14 @@ export default function MdEditorWithHeader({
   };
   // 제목 입력창의 너비를 동적으로 조절하는 함수
   const handleTitleChange = (event) => {
+    console.log('title', title);
     const newTitle = event.target.value;
-    setTitle(newTitle);
+    console.log('newTitle', newTitle);
+    if (title.length + 1 === newTitle.length && title.length !== 0) {
+      console.log('새로 추가', title.slice(title.length - 1));
+      updateTitle(title.slice(title.length - 1));
+    }
+    // setTitle(newTitle);
     onChangeContents({ title: newTitle, tags });
   };
 
@@ -242,6 +249,10 @@ export default function MdEditorWithHeader({
           //     receiveUpdateBlockSequence(response.result);
         } else if (dests[1] === 'deleteBlock') {
           receiveDeleteBlock(response.result);
+        } else if (dests[1] === 'updateTitle') {
+          receiveUpdateTitle(response.result);
+        } else if (dests[1] === 'updateHashtags') {
+          receiveUpdateHashtags(response.result);
         }
 
         console.log('Received: ' + greeting.body);
@@ -274,6 +285,36 @@ export default function MdEditorWithHeader({
     console.log(contents.length);
     console.log('useEffect triggered with contents:', contents);
   }, [contents]);
+
+  // 해시태그 업데이트 요청 정의
+  const updateHashtag = (tagInput) => {
+    // const hashtagContent = document.getElementById('hashtag_text').value;
+
+    console.log('해시태그 업데이트 요청: ', tagInput);
+
+    // setHashtagsList(prev => [...prev, tagInput]);
+    // console.log('해시태그 리스트: ', hastagsList);
+
+    // 서버에 메세지 발행
+    stompClient.publish({
+      destination: `/app/updateHashtags/${postID}`,
+      body: JSON.stringify({
+        uuid: 'testtest',
+        userID: userID,
+        dto: {
+          articleID: postID,
+          articleVersion: articleVersion,
+          operationType: 'INSERT', //또는 DELETE
+          entityType: 'HASHTAG',
+          tagName: tagInput,
+          updated_by: {
+            updater_id: userID,
+            updated_at: new Date().toISOString(),
+          },
+        },
+      }),
+    });
+  };
 
   // 블록 데이터를 저장
   const storeBlockData = (blockList) => {
@@ -512,6 +553,14 @@ export default function MdEditorWithHeader({
       var newTitle = (prev || '') + dto.content;
       return newTitle;
     });
+  };
+
+  const receiveUpdateHashtags = (dto) => {
+    console.log('receiveDeleteBlock:', dto);
+    setArticleVersion(dto.articleVersion);
+    // hastagsList.push(dto.tagName);
+    setHashtagsList([...hastagsList, dto.tagName]);
+    // setHashtagsList(prev => [...prev, dto.tagName]);
   };
 
   /*----------------------------------------------------------*/
