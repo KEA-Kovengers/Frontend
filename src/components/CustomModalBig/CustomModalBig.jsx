@@ -39,7 +39,6 @@ export default function CustomModalBig({
   rightAction,
   image,
 }) {
-
   // 수정 사항
   // imgUrl -> updateThumbnail에 넣어서 썸네일 링크를 업데이트
   const { thumbnail, updateThumbnail } = useEditStore((state) => ({
@@ -50,6 +49,7 @@ export default function CustomModalBig({
   const [textField, setTextField] = useState('');
 
   const [imgUrl, setImgUrl] = useState('');
+  const [time, setTime] = useState(7);
 
   const aiCreateCount = useCounter((state) => state.aiCreateCount);
   const decrement = useCounter((state) => state.decrement);
@@ -85,7 +85,6 @@ export default function CustomModalBig({
           console.log(res);
           setImgUrl(res.data);
           console.log('생성 이미지', res.data);
-          console.log('생성 이미지', imgUrl);
         })
         .catch((err) => {
           console.log(err);
@@ -115,7 +114,7 @@ export default function CustomModalBig({
   //       .catch((error) => {
   //         console.error('Error converting imgUrl to File:', error);
   //       });
-    
+
   // }
 
   // }, [imgUrl]);
@@ -136,9 +135,15 @@ export default function CustomModalBig({
       });
   };
 
+  // Effect to handle countdown
   useEffect(() => {
-    console.log('imgUrl', imgUrl);
-  }, [imgUrl]);
+    if (open && mode === 'ai_select') {
+      const timer = setInterval(() => {
+        setTime((prevTime) => (prevTime > 0 ? prevTime - 1 : 0));
+      }, 1000);
+      return () => clearInterval(timer); // Cleanup on unmount
+    }
+  }, [open, mode]);
 
   return (
     open && (
@@ -207,7 +212,7 @@ export default function CustomModalBig({
                 }}
               />
             )}
-            {mode === 'ai_select' && imgUrl === '' ? (
+            {mode === 'ai_select' && time > 0 ? (
               <CircularProgress />
             ) : (
               mode !== 'ai' && (
@@ -224,7 +229,11 @@ export default function CustomModalBig({
                   {(mode === 'video' || mode === 'img' || mode === 'ai_select') && (
                     <Box
                       component={mode === 'video' ? 'video' : 'img'}
-                      src={mode === 'ai_select' ? imgUrl : image.imgUrl}
+                      src={
+                        mode === 'ai_select'
+                          ? 'https://dalleprodsec.blob.core.windows.net/private/images/e83e504b-cf43-4509-828e-937da7ff9cca/generated_00.png?se=2024-06-07T09%3A27%3A38Z&sig=4nnieOVPamcRklkkry771PSSvY9dS4gUS9g%2FFP16Ivo%3D&ske=2024-06-13T01%3A44%3A56Z&skoid=e52d5ed7-0657-4f62-bc12-7e5dbb260a96&sks=b&skt=2024-06-06T01%3A44%3A56Z&sktid=33e01921-4d64-4f8c-a055-5bdaffd5e33d&skv=2020-10-02&sp=r&spr=https&sr=b&sv=2020-10-02'
+                          : image.imgUrl
+                      }
                       sx={{
                         width: '58%',
                         height: '73%',
@@ -244,24 +253,22 @@ export default function CustomModalBig({
               )
             )}
           </Box>
-          {mode === 'ai_select' && imgUrl === ''
-            ? undefined
-            : rightButton && (
-                <Box sx={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
-                  <Stack direction="row" justifyContent="space-between" sx={{ width: '42%' }}>
-                    <Button
-                      onClick={handleLeftButtonClick}
-                      sx={modal_style.left_button}
-                      disabled={aiCreateCount === 0}
-                    >
-                      {leftButton ? `재생성 ${aiCreateCount}/5` : mode === 'ai' ? '취소' : '아니오'}
-                    </Button>
-                    <Button onClick={handleRightButtonClick} sx={modal_style.right_button}>
-                      {rightButton}
-                    </Button>
-                  </Stack>
-                </Box>
-              )}
+          {rightButton && (
+            <Box sx={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
+              <Stack direction="row" justifyContent="space-between" sx={{ width: '42%' }}>
+                <Button
+                  onClick={handleLeftButtonClick}
+                  sx={modal_style.left_button}
+                  disabled={aiCreateCount === 0}
+                >
+                  {leftButton ? `재생성 ${aiCreateCount}/5` : mode === 'ai' ? '취소' : '아니오'}
+                </Button>
+                <Button onClick={handleRightButtonClick} sx={modal_style.right_button}>
+                  {rightButton}
+                </Button>
+              </Stack>
+            </Box>
+          )}
         </Box>
       </Modal>
     )

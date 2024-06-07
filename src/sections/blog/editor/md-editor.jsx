@@ -514,15 +514,6 @@ export default function MdEditorWithHeader({
     });
   };
 
-  const receiveUpdateTitle = (dto) => {
-    console.log('receiveDeleteBlock:', dto);
-    setArticleVersion(dto.articleVersion);
-    setArticleTitle((prev) => {
-      var newTitle = (prev || '') + dto.content;
-      return newTitle;
-    });
-  };
-
   /*----------------------------------------------------------*/
 
   // 저장 버튼 클릭 시 실행되는 함수
