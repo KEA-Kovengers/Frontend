@@ -15,14 +15,14 @@ import Iconify from 'src/components/iconify';
 import CustomModal from 'src/components/CustomModal/CustomModal';
 import { useToggle } from 'src/hooks/useToggle';
 import { PostFriendRequest } from 'src/api/friend.api';
-
+import { useNavigate } from 'react-router-dom';
 import { colors } from 'src/theme/variableColors';
 // ----------------------------------------------------------------------
 
 export default function LikeRow({ id, name, avatarUrl, company, isFriend }) {
   const [open, setOpen] = useState(null);
   const { toggle, isOpen } = useToggle();
-
+  const navigate = useNavigate();
   const RequestFriend = (id) => {
     console.log('친구 신청');
     PostFriendRequest(id)
@@ -42,9 +42,10 @@ export default function LikeRow({ id, name, avatarUrl, company, isFriend }) {
           <Stack direction="row" alignItems="center" spacing={2}>
             <Avatar alt={name} src={avatarUrl} />
             <Typography
+              onClick={() => { navigate(`/user/${id}`) }}
               variant="subtitle2"
-              component={Link}
-              to="/user"
+              // component={Link}
+              // to="/user"
               sx={{
                 color: '#000000',
                 textDecoration: 'none',
@@ -61,8 +62,8 @@ export default function LikeRow({ id, name, avatarUrl, company, isFriend }) {
         <TableCell>
           <Typography
             variant="body"
-            component={Link}
-            to="/user"
+            // component={Link}
+            // to="/user"
             sx={{
               color: '#000000',
               textDecoration: 'none',
