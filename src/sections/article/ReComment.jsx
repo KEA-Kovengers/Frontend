@@ -15,6 +15,7 @@ import { format } from 'date-fns';
 import { ko } from 'date-fns/locale';
 import { GetUserInfo } from 'src/api/user.api';
 import { DeleteComment, PostComment } from 'src/api/comment.api';
+import { PostReport } from 'src/api/report.api';
 import { useAccountStore } from 'src/store/useAccountStore';
 import { useUserInfo } from '../profile/UserInfo';
 import { useParams } from 'react-router-dom';
@@ -28,6 +29,7 @@ export default function ReComment({ userId, commentId, id, body, updated_at, isD
   const [isTyping, setIsTyping] = useState(!exist);
   const [contents, setContents] = useState('');
   const [createdTime, setCreatedTime] = useState();
+  const [reportContent, setReportContent] = useState('');
 
   const [open, setOpen] = useState(null);
   const { accountInfo } = useAccountStore();
@@ -53,6 +55,18 @@ export default function ReComment({ userId, commentId, id, body, updated_at, isD
       });
   }, []);
 
+  const ReportArticle = () => {
+    PostReport(id, reportContent, "COMMENT")
+      .then((res) => {
+        console.log('댓글 신고 성공', res);
+        console.log(reportContent);
+      })
+      .catch((err) => {
+        console.log('댓글 신고 실패', err);
+      });
+    reportToggle.toggle();
+  };
+
   const handleCloseMenu = () => {
     setOpen(null);
   };
@@ -69,9 +83,15 @@ export default function ReComment({ userId, commentId, id, body, updated_at, isD
     setIsModalOpen(false);
   };
 
+
+  const handleCloseReModal = () => {
+    setIsReModalOpen(false);
+  };
+
   const handleOpenReModalClick = () => {
     setIsReModalOpen(true);
   };
+
 
   const addRecomment = () => {
     setIsTyping(false);
@@ -243,22 +263,26 @@ export default function ReComment({ userId, commentId, id, body, updated_at, isD
                       color: '#637381',
                       cursor: 'pointer',
                     }}
-                    onClick={clickReportToggle.toggle}
+                    onClick={handleOpenReModalClick}
                   >
                     신고
                   </span>
                   <CustomModal
                     rightButton={'신고'}
                     mode={'content'}
-                    onClose={clickReportToggle.toggle}
+                    onClose={handleCloseReModal}
                     contents={'신고하시겠습니까?'}
-                    open={clickReportToggle.isOpen}
+                    open={isReModalOpen}
                     buttonAction={{ rightAction: reportToggle.toggle }}
                   />
                   <ReportModal
                     open={reportToggle.isOpen}
                     onClose={reportToggle.toggle}
-                    buttonAction={() => alertToggle.toggle()}
+                    buttonAction={() => {
+                      ReportArticle(); 
+                      alertToggle.toggle(); 
+                    }}
+                    setReportContent={setReportContent}
                   />
                   <CustomModal
                     mode={'alert'}

@@ -41,6 +41,7 @@ export default function ReportModal({ open, onClose, buttonAction, setReportCont
     console.log('index:', index);
     if (index === selectedCaseIndex) {
       setSelectedCaseIndex(null); // Deselect if the same checkbox is clicked again
+      setReportContent(''); // Clear report content
     } else {
       setSelectedCaseIndex(index); // Select the clicked checkbox
       setReportContent(reportCases[index]);
@@ -103,7 +104,10 @@ export default function ReportModal({ open, onClose, buttonAction, setReportCont
             <ButtonStyled
               disabled={selectedCaseIndex === null ? true : false}
               sx={{ backgroundColor: selectedCaseIndex === null ? 'lightGrey' : '#1a2cdd' }}
-              onClick={buttonClick}
+              onClick={() => {
+                buttonAction(); // 여기서 전달된 함수 호출
+                onClose();
+              }}
             >
               신고
             </ButtonStyled>

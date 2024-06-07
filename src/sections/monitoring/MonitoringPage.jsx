@@ -13,10 +13,10 @@ import TablePagination from '@mui/material/TablePagination';
 import Iconify from 'src/components/iconify';
 import Scrollbar from 'src/components/scrollbar';
 
-import UserTableRow from './user-table-row';
-import UserTableHead from './user-table-head';
-import TableEmptyRows from './table-empty-rows';
-import UserTableToolbar from './user-table-toolbar';
+import UserTableRow from './UserTableRow';
+import UserTableHead from './UserTableHead';
+import TableEmptyRows from './TableEmptyRows';
+import UserTableToolbar from './UserTableToolbar';
 import { emptyRows, applyFilter, getComparator } from './utils';
 
 import { GetTypeReportList } from 'src/api/report.api';
