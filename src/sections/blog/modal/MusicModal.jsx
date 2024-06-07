@@ -153,11 +153,11 @@ export default function MusicModal(){
             // albumInfoHtml 변수는 선택된 앨범의 정보를 포함하는 HTML 문자열을 생성합니다. 
             // 이 문자열에는 앨범명, 가수, 발매 날짜, 앨범 이미지가 포함되어 있습니다. 
             const albumInfoHtml = `
-            <div style=" padding: 10px; max-width: 300px; margin-bottom: 20px;">
-            <img src="${selectedAlbum.images[2].url}" alt="${selectedAlbum.name} 앨범 커버" style="max-width: 100%; border-radius: 10px;">
-            <h3 style="margin: 10px 0;">${selectedAlbum.name}</h3>
-            <p>가수: ${selectedAlbum.artists[0].name}</p>
-            <p>발매 날짜: ${selectedAlbum.release_date}</p>
+            <div style="padding: 10px; max-width: 300px; margin-bottom: 20px; border: 1px solid #ddd; border-radius: 10px;">
+                <img src="${selectedAlbum.images[2].url}" alt="${selectedAlbum.name} 앨범 커버" style="max-width: 100%; border-radius: 10px;">
+                <h3 style="margin: 10px 0;">${selectedAlbum.name}</h3>
+                <p>가수: ${selectedAlbum.artists[0].name}</p>
+                <p>발매 날짜: ${selectedAlbum.release_date}</p>
             </div>
             `;
             console.log(`[${selectedAlbum}] ${albumInfoHtml}:`);    

@@ -153,7 +153,8 @@ export default function MdEditorWithHeader({ postID, title, setTitle, tags, setT
 
   // ai 태그 생성 버튼 클릭 시 실행되는 함수
   const handleAiTagClick = () => {
-    const text = contents.join(' ');
+    console.log('AI 태그 생성 버튼 클릭');
+    const text = blockContents.join(' ');
     console.log('text', text);
     PostGenerateHashtag(text)
       .then((res) => {
@@ -163,7 +164,7 @@ export default function MdEditorWithHeader({ postID, title, setTitle, tags, setT
         inputStringList.forEach((inputString) => {
           const tagsToAdd = inputString.split(' ');
           tagsToAdd.forEach((tag) => {
-            setTags((prevTags) => [...prevTags, tag]);
+            setHashtagsList((prevTags) => [...prevTags, tag]);
           });
         });
       })
@@ -733,7 +734,7 @@ export default function MdEditorWithHeader({ postID, title, setTitle, tags, setT
         />
 
         <Button
-          onClick={contents.length > 0 ? handleAiTagClick : null}
+          onClick={blockContents.length > 0 ? handleAiTagClick : null}
           sx={{
             bgcolor: '#8A94EF',
             borderRadius: 3,
