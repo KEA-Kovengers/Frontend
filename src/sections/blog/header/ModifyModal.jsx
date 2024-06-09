@@ -23,7 +23,6 @@ export default function ModifyModal({ open, onClose, reportCases }) {
 
   // 쿠키에서 userId를 가져옵니다.
   const tokenString = Cookies.get('token');
-  console.log(`delete post ${tokenString}`);
   let userId = null;
   if (tokenString) {
     try {
@@ -50,8 +49,7 @@ export default function ModifyModal({ open, onClose, reportCases }) {
     for (const index of selectedIndex) {
       const postId = parseInt(reportCases.drafts[index].postId, 10); // postId를 숫자로 변환
       try {
-        console.log(`delete post ${userId}`);
-        console.log(`delete post ${postId}`);
+        console.log(`Attempting to delete post with userId: ${userId} and postId: ${postId}`);
         await DeleteEditor(userId, postId);
         console.log(`Deleted post ${postId}`);
       } catch (error) {
