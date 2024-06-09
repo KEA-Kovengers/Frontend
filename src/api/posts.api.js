@@ -110,3 +110,12 @@ export const PostObjectUpload = (data) => {
     },
   });
 }
+
+// 편집자 삭제
+export const DeleteEditor = (userId, postId) => {
+  return httpApi({
+    method: 'delete',
+    url: `/articles/editor/deleteUser`,
+    data: { postId: postId, userID: userId },
+  });
+};
