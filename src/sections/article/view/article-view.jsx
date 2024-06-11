@@ -25,7 +25,6 @@ export default function ArticleView() {
       .then((res) => {
         console.log('게시글 상세', res.data.result);
         setPost(res.data.result);
-        console.log('게시글 날짜', res.data.result.updated);
       })
       .catch((err) => {
         console.log('게시글 상세 에러', err);
