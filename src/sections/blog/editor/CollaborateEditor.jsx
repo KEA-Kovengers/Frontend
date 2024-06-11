@@ -211,12 +211,25 @@ export default function CollaborateEditor({
         inputStringList.forEach((inputString) => {
           const tagsToAdd = inputString.split(' ');
           tagsToAdd.forEach((tag) => {
-            setHashtagsList((prevTags) => [...prevTags, tag]);
+            // setHashtagsList((prevTags) => [...prevTags, tag]);
+            updateHashtag(tag, 'INSERT');
           });
         });
       })
       .catch((err) => {
         console.log('err', err);
+        PostGenerateHashtag(text).then((res) => {
+          console.log('res', res);
+
+          const inputStringList = res.data;
+          inputStringList.forEach((inputString) => {
+            const tagsToAdd = inputString.split(' ');
+            tagsToAdd.forEach((tag) => {
+              // setHashtagsList((prevTags) => [...prevTags, tag]);
+              updateHashtag(tag, 'INSERT');
+            });
+          });
+        });
       });
   };
 
