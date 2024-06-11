@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import {
   Modal,
   Table,
@@ -11,52 +11,53 @@ import {
   IconButton,
   Button,
 } from '@mui/material';
-
 import Iconify from 'src/components/iconify';
 import { styled } from 'styled-components';
-
 import { useNavigate } from 'react-router-dom';
-// const reportCases = [
-//   ['내일은 만우절', '2021-10-01'],
-//   ['오늘은 만우절.', '2021-10-02'],
-//   ['세비 스페인 광장', '2021-10-03'],
-//   ['LA 가고싶다', '2021-10-04'],
-//   ['LA 가고싶다', '2021-10-05'],
-//   ['LA 가고싶다', '2021-10-06'],
-// ];
+import { DeleteEditor } from 'src/api/posts.api'; // 필요한 API 가져오기
+import Cookies from 'js-cookie'; // 쿠키에서 userId를 가져오기 위해 추가
 
 export default function ModifyModal({ open, onClose, reportCases }) {
-  // const [reportCases, setReportCases] = useState([]);
-
   const [selectedIndex, setSelectedIndex] = useState([]);
   const navigate = useNavigate();
+
+  // 쿠키에서 userId를 가져옵니다.
+  const tokenString = Cookies.get('token');
+  let userId = null;
+  if (tokenString) {
+    try {
+      const tokenData = JSON.parse(tokenString);
+      userId = tokenData.userId;
+    } catch (e) {
+      console.error('Error parsing token from cookie:', e);
+    }
+  }
+
   const handleCheckboxChange = (index) => {
     if (selectedIndex.includes(index)) {
-      // If the checkbox is already selected, remove it from selectedIndex
       setSelectedIndex(selectedIndex.filter((selectedIndexIndex) => selectedIndexIndex !== index));
     } else {
-      // If the checkbox is not selected, add it to selectedIndex
       setSelectedIndex([...selectedIndex, index]);
     }
   };
 
-  const buttonClick = () => {
-    onClose();
+  const handleDelete = async () => {
+    if (!userId) {
+      console.error('User ID not found.');
+      return;
+    }
+    for (const index of selectedIndex) {
+      const postId = parseInt(reportCases.drafts[index].postId, 10); // postId를 숫자로 변환
+      try {
+        console.log(`Attempting to delete post with userId: ${userId} and postId: ${postId}`);
+        await DeleteEditor(userId, postId);
+        console.log(`Deleted post ${postId}`);
+      } catch (error) {
+        console.error(`Failed to delete post ${postId}`, error);
+      }
+    }
+    onClose(); // 모달을 닫습니다.
   };
-  // const getDraft = () => {
-  //   GetEditorDraft().then((res) => {
-  //     setReportCases(res.data.result);
-  //     console.log('임시저장', res.data.result);
-  //   }
-  //   ).catch((err) => {
-  //     console.log(err);
-  //   }
-  //   );
-  // }
-
-  // useEffect(() => {
-  //   getDraft();
-  // }, []);
 
   return (
     open && (
@@ -77,17 +78,10 @@ export default function ModifyModal({ open, onClose, reportCases }) {
               <Iconify icon="eva:close-fill" sx={{ width: '25px', height: '25px' }} />
             </IconButton>
           </div>
-          <div
-            style={{
-              flexDirection: 'row',
-              display: 'flex',
-              margin: '0 3%',
-            }}
-          >
+          <div style={{ flexDirection: 'row', display: 'flex', margin: '0 3%' }}>
             <Typography sx={{ mt: '13px', ml: '13px', color: 'grey', fontSize: '14px' }}>
               총 {selectedIndex.length}개
             </Typography>
-
             <div
               style={{
                 display: 'flex',
@@ -97,39 +91,27 @@ export default function ModifyModal({ open, onClose, reportCases }) {
               }}
             >
               <ButtonStyled
-                disabled={selectedIndex === null ? true : false}
-                sx={{
-                  backgroundColor: selectedIndex === null ? 'lightGrey' : '#1a2cdd',
-                }}
-                onClick={buttonClick}
+                disabled={selectedIndex.length === 0}
+                sx={{ backgroundColor: selectedIndex.length === 0 ? 'lightGrey' : '#1a2cdd' }}
+                onClick={handleDelete}
               >
                 삭제
               </ButtonStyled>
-
-              <ButtonStyled
-                disabled={selectedIndex === null ? true : false}
-                sx={{
-                  backgroundColor: selectedIndex === null ? 'lightGrey' : '#1a2cdd',
-                }}
-                onClick={buttonClick}
-              >
-                완료
-              </ButtonStyled>
             </div>
           </div>
-
           <div style={{ maxHeight: '300px', overflowY: 'auto' }}>
             <Table>
               <TableBody>
-                {reportCases.drafts.map((reportCase, index) => (
+                {reportCases?.drafts?.map((reportCase, index) => (
                   <TableRow
                     hover
                     tabIndex={-1}
                     role="checkbox"
                     key={index}
-                    sx={{ display: 'flex', flexDirection: 'row', cursor: 'pointer' }}
-                    // onClick={() => navigate(`/article/${reportCase.postId}`)}
-                    onClick={() => navigate(`/createEditSession/${reportCase.postId}`)}
+                    sx={{ display: 'flex', flexDirection: 'row' }}
+                    onClick={() =>
+                      navigate(`/createEditSession/${parseInt(reportCase.postId, 10)}`)
+                    } // postId를 숫자로 변환
                   >
                     <TableCell
                       padding="none"

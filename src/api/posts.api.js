@@ -110,3 +110,31 @@ export const PostObjectUpload = (data) => {
     },
   });
 }
+
+// 편집자 삭제
+// 편집자 삭제 함수
+export const DeleteEditor = (userId, postId) => {
+  // 쿠키에서 accessToken 가져오기
+  const tokenString = Cookies.get('token');
+  let accessToken = null;
+
+  if (tokenString) {
+    try {
+      const tokenData = JSON.parse(tokenString);
+      accessToken = tokenData.token;
+    } catch (e) {
+      console.error('Error parsing token from cookie:', e);
+    }
+  }
+
+  return httpApi({
+    method: 'delete',
+    url: `/articles/editor/deleteUser`,
+    data: { postId: postId, userID: userId },
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${accessToken}`,
+    },
+  });
+};
+

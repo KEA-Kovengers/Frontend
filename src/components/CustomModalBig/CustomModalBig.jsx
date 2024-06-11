@@ -347,13 +347,6 @@ export default function CustomModalBig({
   rightAction,
   image,
 }) {
-  // 수정 사항
-  // imgUrl -> updateThumbnail에 넣어서 썸네일 링크를 업데이트
-  const { thumbnail, updateThumbnail } = useEditStore((state) => ({
-    thumbnail: state.editInfo.thumbnail,
-    updateThumbnail: state.updateEditInfo.bind(null, 'thumbnail'),
-  }));
-
   // // imgUrl -> updateThumbnail에 넣어서 썸네일 링크를 업데이트
   // const { thumbnail, updateThumbnail } = useEditStore((state) => ({
   //   thumbnail: state.editInfo.thumbnail,
@@ -362,7 +355,7 @@ export default function CustomModalBig({
 
   const [textField, setTextField] = useState('');
   const [imgUrl, setImgUrl] = useState('');
-  const [time, setTime] = useState(7);
+  const [imgFile, setImgFile] = useState(null); // State to store the image file
 
   const aiCreateCount = useCounter((state) => state.aiCreateCount);
   const decrement = useCounter((state) => state.decrement);
@@ -405,33 +398,6 @@ export default function CustomModalBig({
     }
   };
 
-  // 이미지 url -> file 변환
-  // async function convertImgUrlToFile(imgUrl) {
-  //   const response = await fetch(imgUrl);
-  //   const blob = await response.blob();
-  //   const filename = imgUrl.substring(imgUrl.lastIndexOf('/') + 1);
-  //   const file = new File([blob], filename, { type: blob.type });
-  //   return file;
-  // }
-
-  // useEffect(() => {
-  //   if (imgUrl) {
-  //     convertImgUrlToFile(imgUrl)
-  //       .then((file) => {
-  //         console.log('Converted File:', file);
-  //         // 여기서 변환된 File 객체를 사용할 수 있습니다.
-
-  //         const response = PostObjectUpload(file);
-  //         console.log('response:', response);
-  //       })
-  //       .catch((error) => {
-  //         console.error('Error converting imgUrl to File:', error);
-  //       });
-
-  // }
-
-  // }, [imgUrl]);
-
   //자동 완성 버튼
   const handleAutoComplete = () => {
     PostSummary(
@@ -444,16 +410,6 @@ export default function CustomModalBig({
         console.log(err);
       });
   };
-
-  // Effect to handle countdown
-  useEffect(() => {
-    if (open && mode === 'ai_select') {
-      const timer = setInterval(() => {
-        setTime((prevTime) => (prevTime > 0 ? prevTime - 1 : 0));
-      }, 1000);
-      return () => clearInterval(timer); // Cleanup on unmount
-    }
-  }, [open, mode]);
 
   return (
     open && (
@@ -522,63 +478,39 @@ export default function CustomModalBig({
                 }}
               />
             )}
-            {mode === 'ai_select' && time > 0 ? (
-              <CircularProgress />
-            ) : (
-              mode !== 'ai' && (
-                <Box
-                  sx={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    width: '90%',
-                    height: '100%',
-                  }}
+            {mode !== 'ai' && (
+              <Box
+                sx={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  width: '90%',
+                  height: '100%',
+                }}
+              >
+                {(mode === 'video' || mode === 'img' || mode === 'ai_select') && (
+                  <Box
+                    component={mode === 'video' ? 'video' : 'img'}
+                    src={mode === 'ai_select' ? imgUrl : image.imgUrl}
+                    sx={{
+                      width: '58%',
+                      height: '73%',
+                      objectFit: 'contain',
+                      backgroundColor: colors.divider2,
+                    }}
+                  />
+                )}
+                <Typography
+                  id="ai-image-description"
+                  variant="body1"
+                  sx={{ mt: '10px', fontSize: '25px' }}
                 >
-                  {(mode === 'video' || mode === 'img' || mode === 'ai_select') && (
-                    <Box
-                      component={mode === 'video' ? 'video' : 'img'}
-                      src={
-                        mode === 'ai_select'
-                          ? 'https://dalleprodsec.blob.core.windows.net/private/images/e83e504b-cf43-4509-828e-937da7ff9cca/generated_00.png?se=2024-06-07T09%3A27%3A38Z&sig=4nnieOVPamcRklkkry771PSSvY9dS4gUS9g%2FFP16Ivo%3D&ske=2024-06-13T01%3A44%3A56Z&skoid=e52d5ed7-0657-4f62-bc12-7e5dbb260a96&sks=b&skt=2024-06-06T01%3A44%3A56Z&sktid=33e01921-4d64-4f8c-a055-5bdaffd5e33d&skv=2020-10-02&sp=r&spr=https&sr=b&sv=2020-10-02'
-                          : image.imgUrl
-                      }
-                      sx={{
-                        width: '58%',
-                        height: '73%',
-                        objectFit: 'contain',
-                        backgroundColor: colors.divider2,
-                      }}
-                    />
-                  )}
-                  <Typography
-                    id="ai-image-description"
-                    variant="body1"
-                    sx={{ mt: '10px', fontSize: '25px' }}
-                  >
-                    {contents}
-                  </Typography>
-                </Box>
-              )
+                  {contents}
+                </Typography>
+              </Box>
             )}
           </Box>
-          {rightButton && (
-            <Box sx={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
-              <Stack direction="row" justifyContent="space-between" sx={{ width: '42%' }}>
-                <Button
-                  onClick={handleLeftButtonClick}
-                  sx={modal_style.left_button}
-                  disabled={aiCreateCount === 0}
-                >
-                  {leftButton ? `재생성 ${aiCreateCount}/5` : mode === 'ai' ? '취소' : '아니오'}
-                </Button>
-                <Button onClick={handleRightButtonClick} sx={modal_style.right_button}>
-                  {rightButton}
-                </Button>
-              </Stack>
-            </Box>
-          )}
           {rightButton && (
             <Box sx={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
               <Stack direction="row" justifyContent="space-between" sx={{ width: '42%' }}>
