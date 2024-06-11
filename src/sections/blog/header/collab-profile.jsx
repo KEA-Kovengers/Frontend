@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from 'react';
 
 import IconButton from '@mui/material/IconButton';
 import Popover from '@mui/material/Popover';
@@ -9,7 +9,6 @@ import { GetEditorList } from 'src/api/editor.api';
 import { Avatar, AvatarGroup, Icon, Tooltip } from '@mui/material';
 
 export default function CollabProfile({ userInfo }) {
-  console.log('콜라보프로필', userInfo);
   const [anchorEl, setAnchorEl] = useState(null);
   const [selectedAccount, setSelectedAccount] = useState(null);
 
@@ -36,7 +35,15 @@ export default function CollabProfile({ userInfo }) {
       ) : (
         <AvatarGroup max={userInfo.length} spacing={10}>
           {userInfo.map((acc, index) => (
-            <div key={acc.nickName} style={{ position: 'relative', display: 'inline-block', marginRight: `${(userInfo.length - 1) * -8}px`, zIndex: userInfo.length - index }}>
+            <div
+              key={acc.nickName}
+              style={{
+                position: 'relative',
+                display: 'inline-block',
+                marginRight: `${(userInfo.length - 1) * -8}px`,
+                zIndex: userInfo.length - index,
+              }}
+            >
               {/* <IconButton
                 onClick={(event) => handleOpen(event, acc)}
                 sx={{
@@ -57,7 +64,6 @@ export default function CollabProfile({ userInfo }) {
               <Tooltip title={acc.nickName} key={acc.id}>
                 <Avatar
                   src={acc.profileImg}
-
                   style={{
                     width: 30,
                     height: 30,
@@ -68,7 +74,6 @@ export default function CollabProfile({ userInfo }) {
                 />
               </Tooltip>
             </div>
-
           ))}
         </AvatarGroup>
       )}

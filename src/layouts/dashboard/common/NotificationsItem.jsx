@@ -37,6 +37,8 @@ export default function NotificationsItem({ notification, navigate }) {
       }
       switch (notification.type) {
         case 'INVITE':
+          navigate(`/createEditSession/${notification.post_id}`);
+          break;
         case 'COMMENT':
         case 'RECOMMENT':
         case 'LIKE':

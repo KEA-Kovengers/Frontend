@@ -94,7 +94,8 @@ export default function ModifyModal({ open, onClose, reportCases }) {
                 justifyContent: 'flex-end',
                 marginRight: '13px',
                 flexGrow: 1,
-              }}>
+              }}
+            >
               <ButtonStyled
                 disabled={selectedIndex === null ? true : false}
                 sx={{
@@ -115,19 +116,18 @@ export default function ModifyModal({ open, onClose, reportCases }) {
                 완료
               </ButtonStyled>
             </div>
-
           </div>
 
           <div style={{ maxHeight: '300px', overflowY: 'auto' }}>
             <Table>
-              <TableBody >
+              <TableBody>
                 {reportCases.drafts.map((reportCase, index) => (
                   <TableRow
                     hover
                     tabIndex={-1}
                     role="checkbox"
                     key={index}
-                    sx={{ display: 'flex', flexDirection: 'row' }}
+                    sx={{ display: 'flex', flexDirection: 'row', cursor: 'pointer' }}
                     // onClick={() => navigate(`/article/${reportCase.postId}`)}
                     onClick={() => navigate(`/createEditSession/${reportCase.postId}`)}
                   >
@@ -147,7 +147,7 @@ export default function ModifyModal({ open, onClose, reportCases }) {
                         onChange={() => handleCheckboxChange(index)}
                         sx={{ marginRight: '10px' }}
                       />
-                      <div >
+                      <div>
                         <Typography sx={{ fontSize: '14px' }}>{reportCase.title}</Typography>
                         <Typography sx={{ fontSize: '11px', color: 'grey' }}>
                           {reportCase.updatedAt}
@@ -158,7 +158,6 @@ export default function ModifyModal({ open, onClose, reportCases }) {
                 ))}
               </TableBody>
             </Table>
-
           </div>
         </Box>
       </Modal>
@@ -180,15 +179,14 @@ const modal_style = {
 };
 
 export const ButtonStyled = styled(Button)`
-    width: 50px;
-    height: 30px;
-    border-radius: 7px;
-    color: white;
-    font-size: 15px;
-    font-weight: 300;
-    margin-right: 13px;
-    margin-bottom: 13px;
-    margin-top: 13px;
-    border-radius: 15px;
-
-  `;
+  width: 50px;
+  height: 30px;
+  border-radius: 7px;
+  color: white;
+  font-size: 15px;
+  font-weight: 300;
+  margin-right: 13px;
+  margin-bottom: 13px;
+  margin-top: 13px;
+  border-radius: 15px;
+`;

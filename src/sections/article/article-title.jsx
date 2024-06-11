@@ -18,6 +18,7 @@ import { useNavigate } from 'react-router-dom';
 import ReportModal from 'src/sections/article/ReportModal';
 import DashboardModal from 'src/sections/article/DashboardModal';
 import { GetPostDetail } from 'src/api/posts.api';
+import { PostReport } from 'src/api/report.api';
 import { useAccountStore } from 'src/store/useAccountStore';
 
 export default function ArticleTitle({ editorList, title, user, setUser, time }) {
@@ -69,9 +70,10 @@ export default function ArticleTitle({ editorList, title, user, setUser, time })
   };
 
   const ReportArticle = () => {
-    ReportPost(postId, reportContent, accountInfo.id)
+    PostReport(postId, reportContent, "POST")
       .then((res) => {
         console.log('게시글 신고 성공', res);
+        console.log(reportContent);
       })
       .catch((err) => {
         console.log('게시글 신고 실패', err);
@@ -186,21 +188,28 @@ export default function ArticleTitle({ editorList, title, user, setUser, time })
                     onClose={reportArticleToggle.toggle}
                     contents={'신고하시겠습니까?'}
                     open={reportArticleToggle.isOpen}
-                    buttonAction={{ rightAction: ReportArticle }}
+                    buttonAction={{
+                      leftAction: reportArticleToggle.toggle, 
+                      rightAction: reportToggle.toggle, 
+                    }}
                   />
                   <ReportModal
                     open={reportToggle.isOpen}
-                    onClose={reportToggle.toggle}
-                    buttonAction={() => alertToggle.toggle()}
-                    setReportContent={setReportContent}
+                    onClose={reportToggle.toggle} 
+                    buttonAction={() => {
+                      ReportArticle(); 
+                      alertToggle.toggle(); 
+                    }}
+                    setReportContent={setReportContent} 
                   />
                   <CustomModal
                     mode={'alert'}
-                    open={alertToggle.isOpen}
-                    onClose={alertToggle.toggle}
+                    open={alertToggle.isOpen} 
+                    onClose={alertToggle.toggle} 
                     title={'게시글 신고'}
                     contents={'신고 되었습니다.'}
                   />
+
                 </>
               )}
             </Popover>

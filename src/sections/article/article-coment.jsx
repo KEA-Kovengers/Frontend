@@ -14,6 +14,7 @@ import { GetUserInfo } from 'src/api/user.api';
 import { format } from 'date-fns';
 import { ko } from 'date-fns/locale';
 import { DeleteComment } from 'src/api/comment.api';
+import { PostReport } from 'src/api/report.api';
 import { useAccountStore } from 'src/store/useAccountStore';
 
 export default function ArticleComment({
@@ -45,6 +46,18 @@ export default function ArticleComment({
       setUserInfo(res.data.result);
     });
   }, []);
+
+  const ReportArticle = () => {
+    PostReport(commentId, reportContent, "COMMENT")
+      .then((res) => {
+        console.log('댓글 신고 성공', res);
+        console.log(reportContent);
+      })
+      .catch((err) => {
+        console.log('댓글 신고 실패', err);
+      });
+    reportToggle.toggle();
+  };
 
   const handleCloseMenu = () => {
     setOpen(null);
@@ -202,7 +215,10 @@ export default function ArticleComment({
                 <ReportModal
                   open={reportToggle.isOpen}
                   onClose={reportToggle.toggle}
-                  buttonAction={() => alertToggle.toggle()}
+                  buttonAction={() => {
+                    ReportArticle(); 
+                    alertToggle.toggle(); 
+                  }}
                   setReportContent={setReportContent}
                 />
                 <CustomModal

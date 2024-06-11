@@ -74,6 +74,8 @@ export default function NotificationsPopover() {
     
     switch (type) {
       case 'INVITE':
+        navigate(`/createEditSession/${post_id}`);
+        break;
       case 'COMMENT':
       case 'RECOMMENT':
       case 'LIKE':
