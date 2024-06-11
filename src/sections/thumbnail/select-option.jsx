@@ -1,64 +1,43 @@
-import React, { useEffect, useState } from "react";
-
-import PropTypes from "prop-types";
-
+import React, { useState } from "react";
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
-import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
-
 import Logo from 'src/components/logo';
 import Iconify from 'src/components/iconify';
-
 import { colors } from 'src/theme/variableColors';
 import CustomModalBig from 'src/components/CustomModalBig/CustomModalBig';
+import CustomModalBig2 from "src/components/CustomModalBig/CustomModalBig2";
+import CustomModalBig3 from "src/components/CustomModalBig/CustomModalBig3";
 import { useNavigate, useLocation } from 'react-router-dom';
-
 import { useToggle } from 'src/hooks/useToggle';
-
 import { useCounter } from 'src/hooks/useCount';
 import { PostObjectUpload } from "src/api/posts.api";
 
-
-// 어떤 형식의 썸네일을 첨부할건지 선택하는 페이지
-// /select-thumbnail
 export default function SelectOptionView() {
-
   const location = useLocation();
   const [title, setTitle] = useState(location.state.title);
   const [tags, setTags] = useState(location.state.tags);
   const [postID, setPostID] = useState(location.state.postId);
-
   const [thumbnail, setThumbnail] = useState();
   const [thumbnailUrl, setThumbnailUrl] = useState([]);
-  // const [ id, setId ] = useState(''); // [id]
-
-  // const articleID = '1';
-
-  console.log('select-option title: ', title);
-  console.log('select-option tags: ', tags);
-  console.log('select-option postID: ', postID);
-
+  // const [uploadedImgUrl, setUploadedImgUrl] = useState('');
   const [isSelected, setIsSelected] = useState(null);
-  const [imageUrl, setImageUrl] = useState(null); // State to store the image URL
-  const [imgFile, setImgFile] = useState(null); // State to store the image file
-
+  const [imageUrl, setImageUrl] = useState(null);
+  const [imgFile, setImgFile] = useState(null);
   const count = useCounter((state) => state.count);
-  const decrement = useCounter((state) => state.decrement);
   const reset = useCounter((state) => state.reset);
 
   const navigate = useNavigate();
-
-  // Define toggle hooks for modals
   const aiModalToggle = useToggle();
   const aiSelectModalToggle = useToggle();
   const aiCreatingModalToggle = useToggle();
   const imageConfirmModalToggle = useToggle();
   const videoConfirmModalToggle = useToggle();
-
-  const [type, setType] = useState(''); // [type]
+  const aiModalToggle2 = useToggle();
+  const aiModalToggle3 = useToggle();
+  const [type, setType] = useState('');
 
   const handleOpenModalClick = (option) => {
     if (option === 'image') {
@@ -67,106 +46,91 @@ export default function SelectOptionView() {
       input.type = 'file';
       input.accept = 'image/*';
       input.onchange = async function (event) {
-
         const file = event.target.files[0];
         const imgUrl = URL.createObjectURL(file);
-        const thumbnail = file;
-        // const thumbnailUrl = imgUrl;
-        // const thumbnailUrl = PostObjectUpload(file);
         const formData = new FormData();
         formData.append('files', file);
         try {
           const response = await PostObjectUpload(formData);
-          console.log('select-option: ', response);
-
           const thumbnailUrl = response.data;
-          console.log('upload response: ', thumbnailUrl);
-
           setImgFile(file);
           setImageUrl(imgUrl);
-          setThumbnail(thumbnail);
+          setThumbnail(file);
           setThumbnailUrl(thumbnailUrl);
-          // callback(imageUthumbnailUrlrl, 'Uploaded image');
-
-          // const id = response.result.id;
-          // setId(id);
         } catch (error) {
           console.error('Failed to upload image', error);
         }
-
-        // console.log('imgUrl', imgUrl);
-        console.log('img file: ', file);
-        console.log('img thumbnail Url: ', thumbnailUrl);
-
         if (file) {
           imageConfirmModalToggle.toggle();
         }
       };
       input.click();
-    }
-    if (option === 'video') {
+    } else if (option === 'video') {
       setType('VIDEO');
-
       const input = document.createElement('input');
       input.type = 'file';
       input.accept = 'video/*';
       input.onchange = function (event) {
         const file = event.target.files[0];
         const video = URL.createObjectURL(file);
-        console.log('video', video);
         setImageUrl(video);
         if (file) {
           videoConfirmModalToggle.toggle();
         }
       };
       input.click();
+    } else if (option === 'ai') {
+      setType('AI');
+      aiModalToggle2.toggle();
+    } else if (option === 'ai_select') {
+      setType('AI_SELECT');
+      aiModalToggle3.toggle();
     }
     setIsSelected(option);
-
-    if (option === 'ai') {
-      aiModalToggle.toggle();
-    }
   };
-  //rightAction 함수
+
   const CreateAiImage = () => {
-    console.log('CreateAiImage');
-    // aiCreatingModalToggle.toggle();
-
-    aiSelectModalToggle.toggle();
+    console.log('CreateAiImage function called');
+    handleOpenModalClick('ai_select');
   };
+
+  const [data, setData] = useState('');
+
+  // 자식 컴포넌트로부터 데이터를 받는 콜백 함수
+  const handleDataFromChild = (childData) => {
+    setData(childData);
+    setThumbnail(childData);
+    setThumbnailUrl(childData);
+    console.log('커스텀 모달 2로부터 받은 childData:', childData);
+  };
+  
+  console.log('SelectOptionView data:', data);
+
   const ConfirmAiImage = () => {
-    console.log('ConfirmAiImage');
     reset();
-    navigate('/confirm-upload',
-      {
-        state: {
-          title,
-          tags,
-          thumbnail,
-          thumbnailUrl,
-          postID,
-          type
-          // articleID 
-        }
+    navigate('/confirm-upload', {
+      state: {
+        title,
+        tags,
+        thumbnail,
+        thumbnailUrl,
+        postID,
+        type
       }
-    );
+    });
   };
+
   const ConfirmFile = () => {
-
-
-    navigate('/confirm-upload',
-      {
-        state: {
-          title,
-          tags,
-          thumbnail,
-          thumbnailUrl,
-          postID,
-          type
-          // articleID 
-        }
+    navigate('/confirm-upload', {
+      state: {
+        title,
+        tags,
+        thumbnail,
+        thumbnailUrl,
+        postID,
+        type
       }
-    );
+    });
   };
 
   const renderHeader = (
@@ -182,7 +146,6 @@ export default function SelectOptionView() {
       }}
     >
       <Logo />
-
       <CustomModalBig
         rightButton={'예'}
         mode={'img'}
@@ -203,32 +166,26 @@ export default function SelectOptionView() {
         rightAction={ConfirmFile}
         image={{ imgFile: imgFile, imgUrl: imageUrl }}
       />
-      <CustomModalBig
-        rightButton={'생성'}
-        mode={'ai'}
-        onClose={aiModalToggle.toggle}
-        title={'AI 생성 이미지'}
-        open={aiModalToggle.isOpen}
-        rightAction={CreateAiImage}
-      />
-      {/* <CustomModalBig
-        mode={'ai_creating'}
-        onClose={aiCreatingModalToggle.toggle}
-        title={'AI 생성 이미지'}
-        contents={'이미지를 생성 중입니다...'}
-        open={aiCreatingModalToggle.isOpen}
-        rightAction={aiSelectModalToggle.toggle}
-      /> */}
-      <CustomModalBig
-        rightButton={'예'}
-        mode={'ai_select'}
-        onClose={aiSelectModalToggle.toggle}
+      <CustomModalBig3
+        onClose={aiModalToggle3.toggle}
         title={'AI 생성 이미지'}
         contents={'해당 ai 이미지로 결정하시겠습니까?'}
-        open={aiSelectModalToggle.isOpen}
+        open={aiModalToggle3.isOpen}
         rightAction={ConfirmAiImage}
         leftButton={`재설정 ${count}/5`}
-        image={{ imgFile: imgFile, imgUrl: imageUrl }}
+        rightButton={'예'}
+        onformdata={data}
+      />
+      <CustomModalBig2
+        open={aiModalToggle2.isOpen}
+        onClose={aiModalToggle2.toggle}
+        rightButton={'생성'}
+        title={'AI 생성 이미지'}
+        rightAction={() => {
+          console.log('Right action button clicked');
+          aiModalToggle3.toggle(); // 'CustomModalBig3' 토글
+        }}
+        onformdata={handleDataFromChild}
       />
     </Box>
   );
@@ -253,11 +210,9 @@ export default function SelectOptionView() {
           <Typography variant="h3" sx={{ mb: 3 }}>
             Select Thumbnail
           </Typography>
-
           <Typography sx={{ color: 'text.secondary' }}>
             게시글을 대표할 썸네일의 형식을 선택해주세요!
           </Typography>
-
           <Box
             sx={{
               mx: 'auto',
@@ -272,12 +227,11 @@ export default function SelectOptionView() {
             <Grid
               container
               justifyContent="space-around"
-              //   spacing={1}
               sx={{ width: '100%' }}
             >
               <IconButton
                 sx={{ flexDirection: 'column', borderRadius: 2 }}
-                onClick={() => handleOpenModalClick('image')} // Use arrow function to pass a function reference
+                onClick={() => handleOpenModalClick('image')}
               >
                 <Iconify
                   icon="eva:image-2-fill"
@@ -291,7 +245,7 @@ export default function SelectOptionView() {
               </IconButton>
               <IconButton
                 sx={{ flexDirection: 'column', borderRadius: 2 }}
-                onClick={() => handleOpenModalClick('video')} // Use arrow function to pass a function reference
+                onClick={() => handleOpenModalClick('video')}
               >
                 <Iconify
                   icon="eva:video-fill"
@@ -305,21 +259,21 @@ export default function SelectOptionView() {
               </IconButton>
               <IconButton
                 sx={{ flexDirection: 'column', borderRadius: 2 }}
-                onClick={() => handleOpenModalClick('ai')} // Use arrow function to pass a function reference
+                onClick={() => handleOpenModalClick('ai')}
               >
                 <Iconify
                   icon="ri:robot-3-fill"
                   sx={{
                     width: 150,
                     height: 150,
-                    color: isSelected === 'ai' ? colors.second : colors.textGrey1,
+                    color: colors.textGrey1
                   }}
                 />
                 <div>AI 생성 이미지</div>
               </IconButton>
               <IconButton
                 sx={{ flexDirection: 'column', borderRadius: 2 }}
-                onClick={() => handleOpenModalClick('none')} // Use arrow function to pass a function reference
+                onClick={() => handleOpenModalClick('none')}
               >
                 <Box
                   component="img"

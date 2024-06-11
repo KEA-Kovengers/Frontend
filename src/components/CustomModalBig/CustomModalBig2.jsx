@@ -15,20 +15,12 @@ import {
 import Iconify from 'src/components/iconify';
 import { colors } from '../../theme/variableColors';
 
-import { secondary } from 'src/theme/palette';
-
 import { useCounter } from 'src/hooks/useCount';
 import { PostSummary, PostGenerateImage } from 'src/api/ai.api';
-
-import { styled } from 'styled-components';
-
-import { useEditStore } from 'src/store/useEditStore';
-
 import { PostObjectUpload } from 'src/api/posts.api';
 
-import { CircularProgress } from '@mui/material';
 
-export default function CustomModalBig({
+export default function CustomModalBig2({
   leftButton,
   rightButton,
   mode,
@@ -38,7 +30,7 @@ export default function CustomModalBig({
   contents,
   rightAction,
   image,
-  onUploadComplete
+  onformdata
 }) {
 
   const [textField, setTextField] = useState('');
@@ -51,38 +43,13 @@ export default function CustomModalBig({
   const decrement = useCounter((state) => state.decrement);
   const reset = useCounter((state) => state.reset);
 
-
-  // Left button click handler
-  const handleLeftButtonClick = () => {
-    onClose(); // Close the modal
-    if (mode === 'ai_select') {
-      decrement(); // count -1
-      console.log('aiCreateCount decrement', aiCreateCount);
-      console.log('textField:', textField);
-
-    if (textField.trim()) {
-      // Regenerate image
-      PostGenerateImage(textField)
-        .then((res) => {
-          // setImgUrl(res.data);
-          setGeneratedImgUrl(res.data);
-          setImageUrl(res.data);
-          console.log('Generated image', res.data);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    }
-    }
-  }
-
   // Right button click handler
   const handleRightButtonClick = () => {
     rightAction(); // Open 'ai_select' modal
     onClose(); // Close the modal
     console.log('textField:', textField);
 
-    if (mode === 'ai'&& textField.trim()) {
+    if (textField.trim()) {
       PostGenerateImage(textField)
         .then((res) => {
           // setImgUrl(res.data);
@@ -142,19 +109,17 @@ export default function CustomModalBig({
             setUploadedImgUrl(uploadedUrl);
             setImageUrl(uploadedUrl);
 
-            // Call the onUploadComplete callback with the uploadedUrl
-            if (onUploadComplete) {
-              onUploadComplete(uploadedUrl);
-            }
+            onformdata(uploadedUrl);
           }
         })
         .catch((error) => {
           console.error('Error uploading file:', error);
         });
     }
-  }, [generatedImgUrl,mode,onUploadComplete]);
+  }, [generatedImgUrl,mode]);
  
 
+  console.log('커스텀 모달2지롱')
 
   return (
     open && (
@@ -183,7 +148,6 @@ export default function CustomModalBig({
               {title}
             </Typography>
             <Stack direction="row" alignItems="center">
-              {mode === 'ai' && (
                 <Button
                   variant="contained"
                   sx={{ borderRadius: 30, height: '27px' }}
@@ -191,7 +155,6 @@ export default function CustomModalBig({
                 >
                   자동 완성
                 </Button>
-              )}
               <IconButton onClick={onClose}>
                 <Iconify icon="eva:close-fill" sx={{ width: '35px', height: '35px' }} />
               </IconButton>
@@ -204,9 +167,8 @@ export default function CustomModalBig({
               display: 'flex',
               height: '75%',
             }}
-          >
-            {mode === 'ai' && (
-              <TextField
+          >              
+          <TextField
                 id="outlined-basic"
                 value={textField}
                 onChange={(e) => setTextField(e.target.value)}
@@ -221,70 +183,35 @@ export default function CustomModalBig({
                   borderRadius: 2,
                   borderColor: colors.divider2,
                 }}
-              />
-            )}
-
-            {mode === 'ai_select' && !uploadedImgUrl ? (
-              <CircularProgress />  
-            ) : (
-              mode !== 'ai' && 
-              <Box
-                sx={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  width: '90%',
-                  height: '100%',
-                }}
-              >
-                {(mode === 'video' || mode === 'img' || mode === 'ai_select') && (
-                  <Box
-                    component={mode === 'video' ? 'video' : 'img'}
-                    src={mode === 'ai_select' ? uploadedImgUrl : image.imgUrl}
-                    // src={mode === 'ai_select' ? imgUrl  : image.imageUrl}
-                    // src={mode === 'ai_select' ? file : image.thumbnailUrl}
-                    sx={{
-                      width: '58%',
-                      height: '73%',
-                      objectFit: 'contain',
-                      backgroundColor: colors.divider2,
-                    }}
-                  />
-                )}
-                <Typography
-                  id="ai-image-description"
-                  variant="body1"
-                  sx={{ mt: '10px', fontSize: '25px' }}
-                >
-                  {contents}
-                </Typography>
-              </Box>
-            )}
+          />
+        </Box>
+        <Box
+          sx={{              
+            justifyContent: 'center',
+            alignItems: 'center',
+            display: 'flex',
+          }}
+        >
+          <Button
+            // onClick={handleLeftButtonClick}
+            sx={modal_style.left_button}
+          >
+            취소
+          </Button>
+          <Button
+            onClick={handleRightButtonClick}
+            sx={{...modal_style.right_button, ml: 5}}
+          >
+            {rightButton}
+          </Button>
           </Box>
-          {rightButton && (
-            <Box sx={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
-              <Stack direction="row" justifyContent="space-between" sx={{ width: '42%' }}>
-                <Button
-                  onClick={handleLeftButtonClick}
-                  sx={modal_style.left_button}
-                  disabled={aiCreateCount === 0}
-                >
-                  {leftButton ? `재생성 ${aiCreateCount}/5` : mode === 'ai' ? '취소' : '아니오'}
-                </Button>
-                <Button onClick={handleRightButtonClick} sx={modal_style.right_button}>
-                  {rightButton}
-                </Button>
-              </Stack>
-            </Box>
-          )}
         </Box>
       </Modal>
     )
   );
 }
 
-CustomModalBig.propTypes = {
+CustomModalBig2.propTypes = {
   mode: PropTypes.string,
   leftButton: PropTypes.string,
   rightButton: PropTypes.string,
@@ -297,7 +224,7 @@ CustomModalBig.propTypes = {
     imgUrl: PropTypes.string,
     imgFile: PropTypes.object,
   }),
-  onUploadComplete: PropTypes.func, 
+  onformdata: PropTypes.func,
 };
 
 const modal_style = {
