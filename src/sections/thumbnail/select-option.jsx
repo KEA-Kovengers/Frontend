@@ -228,6 +228,7 @@ export default function SelectOptionView() {
         open={aiSelectModalToggle.isOpen}
         rightAction={ConfirmAiImage}
         leftButton={`재설정 ${count}/5`}
+        image={{ imgFile: imgFile, imgUrl: imageUrl }}
       />
     </Box>
   );
@@ -318,7 +319,7 @@ export default function SelectOptionView() {
               </IconButton>
               <IconButton
                 sx={{ flexDirection: 'column', borderRadius: 2 }}
-                onClick={() => handleClick('none')} // Use arrow function to pass a function reference
+                onClick={() => handleOpenModalClick('none')} // Use arrow function to pass a function reference
               >
                 <Box
                   component="img"
