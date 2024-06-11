@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
 
 import Stack from '@mui/material/Stack';
 import Box from '@mui/material/Box';
@@ -15,7 +15,7 @@ import ModifyModal from './ModifyModal';
 import { useEffect } from 'react';
 // ----------------------------------------------------------------------
 
-export default function ModifyPopover({ }) {
+export default function ModifyPopover({}) {
   const [open, setOpen] = useState(null);
   const [isModifyModalOpen, setIsModifyModalOpen] = useState(false);
   const [reportCases, setReportCases] = useState([]);
@@ -27,22 +27,22 @@ export default function ModifyPopover({ }) {
     setIsModifyModalOpen(false);
   };
   const getDraft = () => {
-    GetEditorDraft().then((res) => {
-      setReportCases(res.data.result);
-      console.log('임시저장', res.data.result);
-    }
-    ).catch((err) => {
-      console.log(err);
-    }
-    );
-  }
+    GetEditorDraft()
+      .then((res) => {
+        setReportCases(res.data.result);
+        console.log('임시저장', res.data.result);
+        setNumber(res.data.result.drafts.length);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
 
   useEffect(() => {
     getDraft();
   }, []);
 
   const [number, setNumber] = useState(1);
-
 
   return (
     <>
@@ -60,7 +60,9 @@ export default function ModifyPopover({ }) {
           overflow: 'hidden',
         }}
       >
-        <Typography variant="body1" sx={{ fontSize: '16px', marginRight: '20px' }}>편집 중</Typography>
+        <Typography variant="body1" sx={{ fontSize: '16px', marginRight: '20px' }}>
+          편집 중
+        </Typography>
         <Box
           sx={{
             position: 'absolute',
@@ -72,11 +74,12 @@ export default function ModifyPopover({ }) {
             backgroundColor: '#637381',
           }}
         />
-        <Typography variant="body1" sx={{ fontSize: '16px', zIndex: 1, marginLeft: '3px' }}>{number}</Typography>
+        <Typography variant="body1" sx={{ fontSize: '16px', zIndex: 1, marginLeft: '3px' }}>
+          {number}
+        </Typography>
       </IconButton>
 
       <ModifyModal open={isModifyModalOpen} onClose={handleClose} reportCases={reportCases} />
-
     </>
   );
 }

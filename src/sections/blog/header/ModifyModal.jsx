@@ -33,7 +33,8 @@ export default function ModifyModal({ open, onClose, reportCases }) {
     }
   }
 
-  const handleCheckboxChange = (index) => {
+  const handleCheckboxChange = (event, index) => {
+    event.stopPropagation();
     if (selectedIndex.includes(index)) {
       setSelectedIndex(selectedIndex.filter((selectedIndexIndex) => selectedIndexIndex !== index));
     } else {
@@ -52,6 +53,8 @@ export default function ModifyModal({ open, onClose, reportCases }) {
         console.log(`Attempting to delete post with userId: ${userId} and postId: ${postId}`);
         await DeleteEditor(userId, postId);
         console.log(`Deleted post ${postId}`);
+        //새로고침
+        window.location.reload();
       } catch (error) {
         console.error(`Failed to delete post ${postId}`, error);
       }
@@ -63,7 +66,14 @@ export default function ModifyModal({ open, onClose, reportCases }) {
     open && (
       <Modal open={open} onClose={onClose}>
         <Box sx={modal_style}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', zIndex: 2, marginBottom: '10px' }}>
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              zIndex: 2,
+              marginBottom: '10px',
+            }}
+          >
             <Typography variant="h5" sx={{ mt: '18px', ml: '18px' }}>
               편집 중인 글
             </Typography>
@@ -75,7 +85,14 @@ export default function ModifyModal({ open, onClose, reportCases }) {
             <Typography sx={{ mt: '13px', ml: '13px', color: 'grey', fontSize: '14px' }}>
               총 {selectedIndex.length}개
             </Typography>
-            <div style={{ display: 'flex', justifyContent: 'flex-end', marginRight: '13px', flexGrow: 1 }}>
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'flex-end',
+                marginRight: '13px',
+                flexGrow: 1,
+              }}
+            >
               <ButtonStyled
                 disabled={selectedIndex.length === 0}
                 sx={{ backgroundColor: selectedIndex.length === 0 ? 'lightGrey' : '#1a2cdd' }}
@@ -94,17 +111,25 @@ export default function ModifyModal({ open, onClose, reportCases }) {
                     tabIndex={-1}
                     role="checkbox"
                     key={index}
-                    sx={{ display: 'flex', flexDirection: 'row' }}
-                    onClick={() => navigate(`/createEditSession/${parseInt(reportCase.postId, 10)}`)} // postId를 숫자로 변환
+                    sx={{ display: 'flex', flexDirection: 'row', cursor: 'pointer' }}
+                    onClick={() => {
+                      navigate(`/createEditSession/${parseInt(reportCase.postId, 10)}`);
+                    }} // postId를 숫자로 변환
                   >
                     <TableCell
                       padding="none"
-                      sx={{ width: '100%', padding: '7px', display: 'flex', flexDirection: 'row', alignItems: 'center' }}
+                      sx={{
+                        width: '100%',
+                        padding: '7px',
+                        display: 'flex',
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                      }}
                     >
                       <Checkbox
                         disableRipple
                         checked={selectedIndex.includes(index)}
-                        onChange={() => handleCheckboxChange(index)}
+                        onChange={(event) => handleCheckboxChange(event, index)}
                         sx={{ marginRight: '10px' }}
                       />
                       <div>
@@ -144,7 +169,7 @@ export const ButtonStyled = styled(Button)`
   border-radius: 7px;
   color: white;
   font-size: 15px;
-  font-weight: 300;
+  font-weight: 400;
   margin-right: 13px;
   margin-bottom: 13px;
   margin-top: 13px;

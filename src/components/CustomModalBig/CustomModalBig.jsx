@@ -112,7 +112,7 @@
 //   //       .catch((error) => {
 //   //         console.error('Error converting imgUrl to File:', error);
 //   //       });
-    
+
 //   // }
 
 //   // }, [imgUrl]);
@@ -347,7 +347,6 @@ export default function CustomModalBig({
   rightAction,
   image,
 }) {
-
   // // imgUrl -> updateThumbnail에 넣어서 썸네일 링크를 업데이트
   // const { thumbnail, updateThumbnail } = useEditStore((state) => ({
   //   thumbnail: state.editInfo.thumbnail,
@@ -392,7 +391,6 @@ export default function CustomModalBig({
           console.log(res);
           setImgUrl(res.data);
           console.log('생성 이미지', res.data);
-          console.log('생성 이미지', imgUrl);
         })
         .catch((err) => {
           console.log(err);
@@ -412,7 +410,6 @@ export default function CustomModalBig({
         console.log(err);
       });
   };
-
 
   return (
     open && (

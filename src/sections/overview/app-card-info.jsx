@@ -29,7 +29,6 @@ export default function AppCardInfo({ info }) {
     bgcolor: 'background.default',
   };
 
-
   const Userimage = (
     // <img
     //   src={info[0].userImage}
@@ -47,7 +46,6 @@ export default function AppCardInfo({ info }) {
         <Tooltip title={acc.nickName} key={acc.id}>
           <Avatar
             src={acc.profileImg}
-
             style={{
               width: 30,
               height: 30,
@@ -66,7 +64,7 @@ export default function AppCardInfo({ info }) {
       sx={{
         color: colors.blueBlack,
         fontSize: '20px',
-        maxWidth: '100px',
+        maxWidth: 200,
         textOverflow: 'ellipsis',
         overflow: 'hidden',
         whiteSpace: 'nowrap',
@@ -96,7 +94,6 @@ export default function AppCardInfo({ info }) {
     </Typography>
   );
 
-
   const Date = (
     <Typography
       variant="caption"
@@ -109,7 +106,6 @@ export default function AppCardInfo({ info }) {
       {info[0].date}
     </Typography>
   );
-
 
   const { likedPosts } = useLikedPostStore();
 
@@ -141,18 +137,20 @@ export default function AppCardInfo({ info }) {
   const handleLike = () => {
     setLike(!like);
     like ? removeLike() : addLike();
-
   };
 
   const handleLikeCountClick = () => {
     setShowLikeTable(!showLikeTable); // 토글
   };
 
-
   const CommunityInformation = (
     <Stack flexDirection="row">
       <Stack direction="row">
-        <IconButton onClick={handleLike} color={like ? '#FF5631' : '#637381'} disabled={accountInfo.id === null}>
+        <IconButton
+          onClick={handleLike}
+          color={like ? '#FF5631' : '#637381'}
+          disabled={accountInfo.id === null}
+        >
           <Iconify
             icon={like ? 'flat-color-icons:like' : 'icon-park-outline:like'}
             sx={{ display: 'flex', mr: 0.5 }}
@@ -204,7 +202,7 @@ export default function AppCardInfo({ info }) {
   return (
     <Card sx={{ ...card_style, marginBottom: '70px', paddingLeft: '10px' }}>
       <Grid container alignItems="center">
-        <Grid item xs={2}>
+        <Grid item xs={4}>
           <Box sx={{ display: 'flex', flexDirection: 'row' }}>{Title}</Box>
           <Box sx={{ display: 'flex' }}>
             {/* {UserName} */}
@@ -215,7 +213,7 @@ export default function AppCardInfo({ info }) {
           </Box> */}
         </Grid>
 
-        <Grid item xs={10}>
+        <Grid item xs={8}>
           <CardContent sx={{ display: 'flex', flexDirection: 'column' }}>
             {/* <Box sx={{ display: 'flex', flexDirection: 'row' }}>{Title}</Box> */}
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
