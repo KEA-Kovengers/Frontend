@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from 'react';
+
+import { useNavigate } from 'react-router-dom';
 import PropTypes from 'prop-types';
 
 import {
@@ -28,7 +30,7 @@ import { PostObjectUpload } from 'src/api/posts.api';
 
 import { CircularProgress } from '@mui/material';
 
-export default function CustomModalBig({
+export default function CustomModalBig2({
   leftButton,
   rightButton,
   mode,
@@ -38,7 +40,7 @@ export default function CustomModalBig({
   contents,
   rightAction,
   image,
-  onUploadComplete
+  onformdata
 }) {
 
   const [textField, setTextField] = useState('');
@@ -55,7 +57,6 @@ export default function CustomModalBig({
   // Left button click handler
   const handleLeftButtonClick = () => {
     onClose(); // Close the modal
-    if (mode === 'ai_select') {
       decrement(); // count -1
       console.log('aiCreateCount decrement', aiCreateCount);
       console.log('textField:', textField);
@@ -73,7 +74,6 @@ export default function CustomModalBig({
           console.log(err);
         });
     }
-    }
   }
 
   // Right button click handler
@@ -82,7 +82,7 @@ export default function CustomModalBig({
     onClose(); // Close the modal
     console.log('textField:', textField);
 
-    if (mode === 'ai'&& textField.trim()) {
+    if (textField.trim()) {
       PostGenerateImage(textField)
         .then((res) => {
           // setImgUrl(res.data);
@@ -141,20 +141,13 @@ export default function CustomModalBig({
             console.log('MODE: ', mode);
             setUploadedImgUrl(uploadedUrl);
             setImageUrl(uploadedUrl);
-
-            // Call the onUploadComplete callback with the uploadedUrl
-            if (onUploadComplete) {
-              onUploadComplete(uploadedUrl);
-            }
           }
         })
         .catch((error) => {
           console.error('Error uploading file:', error);
         });
     }
-  }, [generatedImgUrl,mode,onUploadComplete]);
- 
-
+  }, [generatedImgUrl,mode]);
 
   return (
     open && (
@@ -180,18 +173,9 @@ export default function CustomModalBig({
               component="h3"
               sx={{ marginLeft: '20px', marginTop: '20px', fontSize: 30 }}
             >
-              {title}
+              AI 생성 이미지
             </Typography>
             <Stack direction="row" alignItems="center">
-              {mode === 'ai' && (
-                <Button
-                  variant="contained"
-                  sx={{ borderRadius: 30, height: '27px' }}
-                  onClick={handleAutoComplete}
-                >
-                  자동 완성
-                </Button>
-              )}
               <IconButton onClick={onClose}>
                 <Iconify icon="eva:close-fill" sx={{ width: '35px', height: '35px' }} />
               </IconButton>
@@ -204,65 +188,40 @@ export default function CustomModalBig({
               display: 'flex',
               height: '75%',
             }}
-          >
-            {mode === 'ai' && (
-              <TextField
-                id="outlined-basic"
-                value={textField}
-                onChange={(e) => setTextField(e.target.value)}
-                variant="outlined"
-                placeholder="원하는 내용을 입력해주세요."
-                multiline
-                rows={10}
-                maxRows={10}
-                color="secondary"
-                sx={{
-                  width: '80%',
-                  borderRadius: 2,
-                  borderColor: colors.divider2,
+          >              
+            {onformdata ? (
+              <img
+                src={onformdata}
+                style={{
+                  width: '58%',
+                  height: '73%',
+                  objectFit: 'contain',
+                  backgroundColor: colors.divider2,
                 }}
               />
-            )}
-
-            {mode === 'ai_select' && !uploadedImgUrl ? (
-              <CircularProgress />  
             ) : (
-              mode !== 'ai' && 
-              <Box
-                sx={{
+              <div
+                style={{
+                  width: '58%',
+                  height: '73%',
                   display: 'flex',
-                  flexDirection: 'column',
                   justifyContent: 'center',
                   alignItems: 'center',
-                  width: '90%',
-                  height: '100%',
                 }}
               >
-                {(mode === 'video' || mode === 'img' || mode === 'ai_select') && (
-                  <Box
-                    component={mode === 'video' ? 'video' : 'img'}
-                    src={mode === 'ai_select' ? uploadedImgUrl : image.imgUrl}
-                    // src={mode === 'ai_select' ? imgUrl  : image.imageUrl}
-                    // src={mode === 'ai_select' ? file : image.thumbnailUrl}
-                    sx={{
-                      width: '58%',
-                      height: '73%',
-                      objectFit: 'contain',
-                      backgroundColor: colors.divider2,
-                    }}
-                  />
-                )}
-                <Typography
-                  id="ai-image-description"
-                  variant="body1"
-                  sx={{ mt: '10px', fontSize: '25px' }}
-                >
-                  {contents}
-                </Typography>
-              </Box>
+                <CircularProgress />
+              </div>
             )}
-          </Box>
-          {rightButton && (
+            </Box>
+            {/* <Box sx={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
+              <Typography
+                id="ai-image-description"
+                variant="body1"
+                sx={{fontSize: '25px' }}
+              >
+                해당 ai 이미지로 결정하시겠습니까?
+              </Typography>
+          </Box> */}
             <Box sx={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
               <Stack direction="row" justifyContent="space-between" sx={{ width: '42%' }}>
                 <Button
@@ -273,18 +232,17 @@ export default function CustomModalBig({
                   {leftButton ? `재생성 ${aiCreateCount}/5` : mode === 'ai' ? '취소' : '아니오'}
                 </Button>
                 <Button onClick={handleRightButtonClick} sx={modal_style.right_button}>
-                  {rightButton}
+                  예
                 </Button>
               </Stack>
             </Box>
-          )}
         </Box>
       </Modal>
     )
   );
 }
 
-CustomModalBig.propTypes = {
+CustomModalBig2.propTypes = {
   mode: PropTypes.string,
   leftButton: PropTypes.string,
   rightButton: PropTypes.string,
@@ -297,7 +255,7 @@ CustomModalBig.propTypes = {
     imgUrl: PropTypes.string,
     imgFile: PropTypes.object,
   }),
-  onUploadComplete: PropTypes.func, 
+  onformdata: PropTypes.func,
 };
 
 const modal_style = {
