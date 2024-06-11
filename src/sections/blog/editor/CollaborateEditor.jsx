@@ -24,7 +24,8 @@ import { useAccountStore } from 'src/store/useAccountStore';
 
 import { useEditStore } from 'src/store/useEditStore.js';
 import { ConnectingAirportsOutlined } from '@mui/icons-material';
-
+import { createRoot } from 'react-dom/client';
+import Markdown from 'react-markdown';
 // 수정해야하는 부분: 블럭 삭제 버튼
 export default function CollaborateEditor({
   postID,
@@ -510,7 +511,7 @@ export default function CollaborateEditor({
     else if (dto.operationType === 'INSERT') {
       setBlockContents((prev) => {
         const newContents = [...prev];
-        newContents[index] = (newContents[index] || '') + dto.content;
+        newContents[index] = newContents[index].slice(0, dto.position) + dto.content + newContents[index].slice(dto.position);
         return newContents;
       });
     }
@@ -867,7 +868,11 @@ export default function CollaborateEditor({
             </Stack>
           ) : (
             // 마크다운 형식으로 작성한 글 보기
-            <Viewer initialValue={blockContents[index]} />
+            // <Viewer initialValue={blockContents[index]} />
+            <Markdown
+              children={blockContents[index]}
+            // remarkPlugins={[remarkGfm]}
+            ></Markdown>
           )}
         </Box>
       ))}
