@@ -24,6 +24,9 @@ export default function AccountModal({ rightButton, onClose, open, contents, sub
   const [textField, setTextField] = useState('');
   const [cookies, setCookie, removeCookie] = useCookies(['token', 'refreshToken', 'userId']);
   const navigate = useNavigate();
+  const tokenString = Cookies.get('token');
+  const tokenData = JSON.parse(tokenString);
+  accessToken = tokenData.token;
   const token = cookies.token;
   const refreshToken = cookies.refreshToken;
   const userId = cookies.userId;
@@ -70,7 +73,7 @@ export default function AccountModal({ rightButton, onClose, open, contents, sub
 
 
   const Withdrawal = () => {
-    PostWithdraw1()
+    PostWithdraw(accessToken)
       .then((res) => {
         console.log(res);
         removeCookie('token');

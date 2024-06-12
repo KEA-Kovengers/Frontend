@@ -40,7 +40,7 @@ export default function AppPost({ filter }) {
 
   // const Component = filterComponentMap[filter] || null;
   if (filter === '전체') {
-    var Component = AppCard;
+    var Component = () => <AppCard />;
   }
   else {
     var Component = () => <AppCard1 tag={filter} />;

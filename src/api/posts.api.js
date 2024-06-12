@@ -8,7 +8,7 @@ import httpApi from './http.api';
 
 // 소셜 피드 전체 조회
 export const GetSocialFeed = (page = 0) => {
-  return httpApi.get(`/articles/posts/social?page=${page}&size=100`);
+  return httpApi.get(`/articles/posts/social?page=${page}&size=20`);
 };
 
 // 소셜 피드 해시태그로 조회
