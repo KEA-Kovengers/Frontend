@@ -251,6 +251,7 @@ export default function CollaborateEditor({
       console.log('json', json);
       if (json.isSuccess) {
         setArticleTitle(json.result.title);
+        setTitle(json.result.title);
         setArticleVersion(json.result.articleVersion);
         storeBlockData(json.result.blockList);
         setHashtagsList(json.result.hashtags);
@@ -511,7 +512,10 @@ export default function CollaborateEditor({
     else if (dto.operationType === 'INSERT') {
       setBlockContents((prev) => {
         const newContents = [...prev];
-        newContents[index] = newContents[index].slice(0, dto.position) + dto.content + newContents[index].slice(dto.position);
+        newContents[index] =
+          newContents[index].slice(0, dto.position) +
+          dto.content +
+          newContents[index].slice(dto.position);
         return newContents;
       });
     }
@@ -578,13 +582,20 @@ export default function CollaborateEditor({
         var newTitle = (prev || '') + dto.content;
         return newTitle;
       });
+      setTitle((prev) => {
+        var newTitle = (prev || '') + dto.content;
+        return newTitle;
+      });
     } else if (dto.operationType === 'DELETE') {
       setArticleTitle((prev) => {
         var newTitle = prev.slice(0, dto.position) + prev.slice(dto.position + dto.content.length);
         return newTitle;
       });
+      setTitle((prev) => {
+        var newTitle = prev.slice(0, dto.position) + prev.slice(dto.position + dto.content.length);
+        return newTitle;
+      });
     }
-    setTitle(articleTitle);
   };
 
   const receiveUpdateHashtags = (dto) => {
@@ -871,7 +882,7 @@ export default function CollaborateEditor({
             // <Viewer initialValue={blockContents[index]} />
             <Markdown
               children={blockContents[index]}
-            // remarkPlugins={[remarkGfm]}
+              // remarkPlugins={[remarkGfm]}
             ></Markdown>
           )}
         </Box>

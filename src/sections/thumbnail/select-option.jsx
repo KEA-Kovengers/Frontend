@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from 'react';
 
-import PropTypes from "prop-types";
+import PropTypes from 'prop-types';
 
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
@@ -19,13 +19,11 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { useToggle } from 'src/hooks/useToggle';
 
 import { useCounter } from 'src/hooks/useCount';
-import { PostObjectUpload } from "src/api/posts.api";
-
+import { PostObjectUpload } from 'src/api/posts.api';
 
 // 어떤 형식의 썸네일을 첨부할건지 선택하는 페이지
 // /select-thumbnail
 export default function SelectOptionView() {
-
   const location = useLocation();
   const [title, setTitle] = useState(location.state.title);
   const [tags, setTags] = useState(location.state.tags);
@@ -67,7 +65,6 @@ export default function SelectOptionView() {
       input.type = 'file';
       input.accept = 'image/*';
       input.onchange = async function (event) {
-
         const file = event.target.files[0];
         const imgUrl = URL.createObjectURL(file);
         const thumbnail = file;
@@ -110,10 +107,32 @@ export default function SelectOptionView() {
       const input = document.createElement('input');
       input.type = 'file';
       input.accept = 'video/*';
-      input.onchange = function (event) {
+      input.onchange = async function (event) {
         const file = event.target.files[0];
         const video = URL.createObjectURL(file);
-        console.log('video', video);
+        const thumbnail = file;
+        // const thumbnailUrl = imgUrl;
+        // const thumbnailUrl = PostObjectUpload(file);
+        const formData = new FormData();
+        formData.append('files', file);
+        try {
+          const response = await PostObjectUpload(formData);
+          console.log('select-option: ', response);
+
+          const thumbnailUrl = response.data;
+          console.log('upload response: ', thumbnailUrl);
+
+          setImgFile(file);
+          setImageUrl(imgUrl);
+          setThumbnail(thumbnail);
+          setThumbnailUrl(thumbnailUrl);
+          // callback(imageUthumbnailUrlrl, 'Uploaded image');
+
+          // const id = response.result.id;
+          // setId(id);
+        } catch (error) {
+          console.error('Failed to upload image', error);
+        }
         setImageUrl(video);
         if (file) {
           videoConfirmModalToggle.toggle();
@@ -137,36 +156,30 @@ export default function SelectOptionView() {
   const ConfirmAiImage = () => {
     console.log('ConfirmAiImage');
     reset();
-    navigate('/confirm-upload',
-      {
-        state: {
-          title,
-          tags,
-          thumbnail,
-          thumbnailUrl,
-          postID,
-          type
-          // articleID 
-        }
-      }
-    );
+    navigate('/confirm-upload', {
+      state: {
+        title,
+        tags,
+        thumbnail,
+        thumbnailUrl,
+        postID,
+        type,
+        // articleID
+      },
+    });
   };
   const ConfirmFile = () => {
-
-
-    navigate('/confirm-upload',
-      {
-        state: {
-          title,
-          tags,
-          thumbnail,
-          thumbnailUrl,
-          postID,
-          type
-          // articleID 
-        }
-      }
-    );
+    navigate('/confirm-upload', {
+      state: {
+        title,
+        tags,
+        thumbnail,
+        thumbnailUrl,
+        postID,
+        type,
+        // articleID
+      },
+    });
   };
 
   const renderHeader = (

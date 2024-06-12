@@ -8,7 +8,7 @@ import Logo from 'src/components/logo';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAccountStore } from 'src/store/useAccountStore';
 import UploadCardInfo from './UploadCardInfo';
-import { PostEdit } from "src/api/posts.api";
+import { PostEdit } from 'src/api/posts.api';
 
 // confirm/upload 페이지
 export default function ConfirmUploadPage() {
@@ -18,15 +18,13 @@ export default function ConfirmUploadPage() {
   const [title, setTitle] = useState(location.state.title);
   const [tags, setTags] = useState(location.state.tags);
   const [thumbnailUrl, setThumbnailUrls] = useState(location.state.thumbnailUrl || []);
+  const type = location.state.type;
   const [postID, setPostID] = useState(location.state.postID);
 
-
-  // useEffect(() => {
-  //   console.log('confirm-upload title: ', title);
-  //   console.log('confirm-upload tags: ', tags);
-  //   console.log('confirm-upload thumbnail Urls: ', thumbnailUrl);
-  //   console.log('confirm-upload postID: ', postID);
-  // }, []);
+  useEffect(() => {
+    console.log('confirm-upload 타입: ', location.state.type);
+    console.log('url', location.state.thumbnailUrl);
+  }, []);
   const { accountInfo } = useAccountStore();
 
   const item = {
@@ -35,14 +33,13 @@ export default function ConfirmUploadPage() {
       title: title,
       userName: accountInfo.blogName,
       hashtags: tags,
-    }
+    },
   };
 
   const editPost = () => {
-
     try {
-      const thumbnails = thumbnailUrl.map(url => ({ url, type: 'IMAGE' }));
-      console.log("===============");
+      const thumbnails = thumbnailUrl.map((url) => ({ url, type: type }));
+      console.log('===============');
       console.log(postID);
       const requestBody = {
         id: postID,
@@ -57,10 +54,9 @@ export default function ConfirmUploadPage() {
 
       if (response.data) {
         console.log('Post created successfully');
-
       }
     } catch (error) {
-      console.error("There has been a problem with your editPost fetch operation: ", error);
+      console.error('There has been a problem with your editPost fetch operation: ', error);
     }
   };
 
@@ -109,7 +105,7 @@ export default function ConfirmUploadPage() {
                   key={index}
                   src={url}
                   alt={`Thumbnail ${index + 1}`}
-                  style={{ width: '100%', marginBottom: 10 }}
+                  style={{ width: '100%', marginBottom: 10, objectFit: 'cover' }}
                   onError={(e) => {
                     console.error(`Failed to load image at ${url}`);
                     e.target.src = 'path/to/default-image.jpg'; // Fallback image
