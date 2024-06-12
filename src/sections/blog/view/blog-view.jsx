@@ -21,6 +21,7 @@ import { Client } from '@stomp/stompjs';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { set } from 'lodash';
 import { useAccountStore } from 'src/store/useAccountStore';
+import CollaborateEditor from '../editor/CollaborateEditor';
 
 export default function BlogView() {
   const navigate = useNavigate();
@@ -59,12 +60,12 @@ export default function BlogView() {
       const requestBody = {
         thumbnail: [
           {
-            "url": "",
-            "type": "IMAGE"
-          }
+            url: '',
+            type: 'IMAGE',
+          },
         ],
-        title: "",
-        body: "",
+        title: '',
+        body: '',
         hashtags: [],
         // status: 'EDIT',
       };
@@ -81,7 +82,7 @@ export default function BlogView() {
         console.error('API response was not successful');
       }
     } catch (error) {
-      console.error("There has been a problem with your createPostEdit fetch operation: ", error);
+      console.error('There has been a problem with your createPostEdit fetch operation: ', error);
     }
   };
   // const GetEditorlist = (postid) => {
@@ -98,15 +99,15 @@ export default function BlogView() {
   // }
   const [userInfo, setUserInfo] = useState([]);
   const Getuserinfo = (userID) => {
-    GetUserInfo(userID).then((res) => {
-      // console.log('userid', res.data.result);
-      setUserInfo(res.data.result);
-    }
-    ).catch((err) => {
-      console.log(err);
-    })
-
-  }
+    GetUserInfo(userID)
+      .then((res) => {
+        // console.log('userid', res.data.result);
+        setUserInfo(res.data.result);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
 
   useEffect(() => {
     createPostEdit();
@@ -143,8 +144,7 @@ export default function BlogView() {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          pr: { lg: 1 }
-
+          pr: { lg: 1 },
         }}
       >
         <Logo sx={{ mt: 3, ml: 2 }} />
@@ -152,14 +152,13 @@ export default function BlogView() {
           {renderContent}
           <Button
             onClick={() => {
-              navigate('/select-thumbnail',
-                {
-                  state: {
-                    title,
-                    tags,
-                    postID,
-                  },
-                })
+              navigate('/select-thumbnail', {
+                state: {
+                  title,
+                  tags,
+                  postID,
+                },
+              });
             }}
             sx={{
               width: 54,
@@ -181,10 +180,6 @@ export default function BlogView() {
     </AppBar>
   );
 
-  console.log('blog-view title: ', title);
-  console.log('blog-view tags: ', tags);
-  console.log('blog-view postID: ', postID);
-
   return (
     <>
       {renderHeader}
@@ -192,13 +187,14 @@ export default function BlogView() {
         <Grid container spacing={3}>
           <Grid item xs={12}>
             <Box mt={9.5}>
-              {/* <WebSocketProvider postID={postID}> */}
-              <MdEditorWithHeader
+              <CollaborateEditor
                 postID={postID}
-                title={title} setTitle={setTitle}
-                tags={tags} setTags={setTags}
-                onChangeContents={onChangeContents} />
-              {/* </WebSocketProvider> */}
+                title={title}
+                setTitle={setTitle}
+                tags={tags}
+                setTags={setTags}
+                onChangeContents={onChangeContents}
+              />
             </Box>
           </Grid>
         </Grid>

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import Container from '@mui/material/Container';
@@ -8,12 +8,12 @@ import Logo from 'src/components/logo';
 import Iconify from 'src/components/iconify';
 import { colors } from 'src/theme/variableColors';
 import CustomModalBig from 'src/components/CustomModalBig/CustomModalBig';
-import CustomModalBig2 from "src/components/CustomModalBig/CustomModalBig2";
-import CustomModalBig3 from "src/components/CustomModalBig/CustomModalBig3";
+import CustomModalBig2 from 'src/components/CustomModalBig/CustomModalBig2';
+import CustomModalBig3 from 'src/components/CustomModalBig/CustomModalBig3';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useToggle } from 'src/hooks/useToggle';
 import { useCounter } from 'src/hooks/useCount';
-import { PostObjectUpload } from "src/api/posts.api";
+import { PostObjectUpload } from 'src/api/posts.api';
 
 export default function SelectOptionView() {
   const location = useLocation();
@@ -70,7 +70,7 @@ export default function SelectOptionView() {
       const input = document.createElement('input');
       input.type = 'file';
       input.accept = 'video/*';
-      input.onchange = function (event) {
+      input.onchange = async function (event) {
         const file = event.target.files[0];
         const video = URL.createObjectURL(file);
         setImageUrl(video);
@@ -103,7 +103,7 @@ export default function SelectOptionView() {
     setThumbnailUrl(childData);
     console.log('커스텀 모달 2로부터 받은 childData:', childData);
   };
-  
+
   console.log('SelectOptionView data:', data);
 
   const ConfirmAiImage = () => {
@@ -115,8 +115,8 @@ export default function SelectOptionView() {
         thumbnail,
         thumbnailUrl,
         postID,
-        type
-      }
+        type,
+      },
     });
   };
 
@@ -128,8 +128,8 @@ export default function SelectOptionView() {
         thumbnail,
         thumbnailUrl,
         postID,
-        type
-      }
+        type,
+      },
     });
   };
 
@@ -224,11 +224,7 @@ export default function SelectOptionView() {
               alignItems: 'center',
             }}
           >
-            <Grid
-              container
-              justifyContent="space-around"
-              sx={{ width: '100%' }}
-            >
+            <Grid container justifyContent="space-around" sx={{ width: '100%' }}>
               <IconButton
                 sx={{ flexDirection: 'column', borderRadius: 2 }}
                 onClick={() => handleOpenModalClick('image')}
@@ -266,7 +262,7 @@ export default function SelectOptionView() {
                   sx={{
                     width: 150,
                     height: 150,
-                    color: colors.textGrey1
+                    color: colors.textGrey1,
                   }}
                 />
                 <div>AI 생성 이미지</div>
